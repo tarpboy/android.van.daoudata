@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:padding="5dp"
+    android:weightSum='1'
+    >
+
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        android:src="@drawable/iconavata" />
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.6"
+        android:gravity="center_vertical"
+        android:text="@string/str_menu_login_not_yet"
+        android:textSize="@dimen/default_text_size" />
+
+    <ImageButton
+        android:id="@+id/btnMMLogin"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        android:src="@drawable/lock" />
+
+</android.support.v7.widget.LinearLayoutCompat>

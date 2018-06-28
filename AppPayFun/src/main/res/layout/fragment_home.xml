@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_main"
+    android:weightSum="100"
+    >
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90"
+        android:orientation="vertical"
+        android:weightSum="100"
+        >
+
+        <!-- Login View -->
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            layout="@layout/item_menu_login"
+            />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            />
+
+        <!-- Main Menu View #1   -->
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="70"
+            android:weightSum="10"
+            >
+            <TableRow
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                >
+                <ImageButton
+                    android:id="@+id/btnMMCreditCard"
+                    style="@style/imageMenuHome"
+                    android:background="@drawable/bg_btn_mm_credit_card_s"
+                    android:src="@drawable/btn_mm_credit_card_s" />
+
+                <ImageButton
+                    android:id="@+id/btnMMCashCard"
+                    style="@style/imageMenuHome"
+                    android:background="@drawable/bg_btn_mm_cash_card_s"
+                    android:src="@drawable/btn_mm_cash_card_s" />
+
+                <ImageButton
+                    android:id="@+id/btnMMCancelList"
+                    style="@style/imageMenuHome"
+                    android:background="@drawable/bg_btn_mm_cancel_list_s"
+                    android:src="@drawable/btn_mm_cancel_list_s" />
+            </TableRow>
+            <TableRow
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                >
+                <ImageButton
+                    android:id="@+id/btnMMCancelPayment"
+                    style="@style/imageMenuHome"
+                    android:background="@drawable/bg_btn_mm_cancel_payment_s"
+                    android:src="@drawable/btn_mm_cancel_payment_s" />
+                <ImageButton
+                    android:id="@+id/btnMMCoupon"
+                    style="@style/imageMenuHome"
+                    android:background="@drawable/bg_btn_mm_coupon_s"
+                    android:src="@drawable/btn_mm_coupon_s" />
+                <ImageButton
+                    android:id="@+id/btnMMMemberShip"
+                    style="@style/imageMenuHome"
+                    android:background="@drawable/bg_btn_mm_member_ship_s"
+                    android:src="@drawable/btn_mm_member_ship_s" />
+            </TableRow>
+        </TableLayout>
+
+        <!-- Notification View  -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:fadingEdge="none"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="공지사항"
+                android:textColor="#828181"
+                android:gravity="center_vertical"/>
+
+            <ListView
+                android:layout_marginTop="10dp"
+                android:id="@+id/lvNotice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@android:color/transparent"
+                android:fadingEdge="none" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.LinearLayoutCompat>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1a75bc"
+    android:weightSum="100"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:weightSum="100"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:id="@+id/txtCard_reading_CompanyNo"
+            android:text=""
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:id="@+id/txtCard_reading_MachineCode"
+            android:gravity="center_vertical|end"
+            android:text=""
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:weightSum="100"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:id="@+id/txtCard_reading_CompanyOwerName"
+            android:text=""
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:id="@+id/txtCard_reading_VanName"
+            android:gravity="center_vertical|end"
+            android:text=""
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</LinearLayout>

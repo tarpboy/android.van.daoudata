@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DaouData2</string>
+
+    <!-- Main Menu :: 1. login-->
+    <string name="str_menu_login_not_yet">payfun에 로그인 해주세요</string>
+
+    <!--    common  -->
+    <string name="str_mark_of_money">원</string>
+    <string name="str_creadit_installment">할부</string>
+    <string name="str_creadit_num_of_month">개월</string>
+    <string name="str_creadit_apply_membership">회원적용</string>
+    <string name="str_creadit_apply_cupon">쿠폰적용</string>
+    <string name="str_signpad_title">사인해주세요</string>
+    <string name="str_program_title">PADD00678</string>
+
+
+</resources>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/whiteflower"
+        android:weightSum="100"
+        >
+
+        <!-- PayFun Header View -->
+        <LinearLayout
+            android:id="@+id/viewHeader"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@drawable/bg_title_no_text"
+            >
+            <TextView
+                android:id="@+id/tvHeaderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/small_text_size" />
+        </LinearLayout>
+
+        <!--    Fragment View Container -->
+        <android.support.v4.view.ViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="80"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <LinearLayout
+            android:id="@+id/layoutMenu"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp" >
+
+            <ImageButton
+                android:id="@+id/menuMainHome"
+                style="@style/imageMenuMain"
+                android:src="@drawable/button_main_home_selector" />
+
+            <ImageButton
+                android:id="@+id/menuMainCredit"
+                style="@style/imageMenuMain"
+                android:src="@drawable/button_main_credit_selector" />
+
+            <ImageButton
+                android:id="@+id/menuMainCash"
+                style="@style/imageMenuMain"
+                android:src="@drawable/button_main_cash_selector" />
+
+            <ImageButton
+                android:id="@+id/menuMainCancelList"
+                style="@style/imageMenuMain"
+                android:src="@drawable/button_main_cancellist_selector" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--
+    ** include customer numeric keyboard
+     -->
+
+    <include
+        android:id="@+id/numeric_keyboard_layout"
+        layout="@layout/numeric_keyboard"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        />
+
+</android.support.constraint.ConstraintLayout>

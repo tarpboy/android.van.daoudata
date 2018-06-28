@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100"
+    >
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        >
+        <TextView
+            android:id="@+id/viewSignTitle"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:textSize="@dimen/default_text_size"
+            android:text="@string/str_signpad_title"
+            android:gravity="bottom|start"
+            />
+        <TextView
+            android:id="@+id/tvSWModelName"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:textSize="@dimen/default_text_size"
+            android:text="@string/str_program_title"
+            android:gravity="bottom|end"
+            />
+    </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90"
+        android:background="@drawable/txt_black_shape"
+        >
+
+    </TableRow>
+</TableLayout>

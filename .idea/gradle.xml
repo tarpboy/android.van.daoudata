@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/AppPayFun" />
+            <option value="$PROJECT_DIR$/../android.van.lib/Van_Daou" />
+            <option value="$PROJECT_DIR$/../android.van.lib/bbdevice" />
+            <option value="$PROJECT_DIR$/../android.van.lib/keyboard" />
+            <option value="$PROJECT_DIR$/../android.van.lib/library" />
+            <option value="$PROJECT_DIR$/../android.van.lib/signpad" />
+          </set>
+        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
