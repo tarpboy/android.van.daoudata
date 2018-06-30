@@ -14,4 +14,14 @@
     <string name="str_program_title">PADD00678</string>
 
 
+    <!--    Bluetooth Message   -->
+    <string name="bluetooth_connected">블루투스 장비가 연결되었습니다.</string>
+    <string name="bluetooth_disconnected">블루투스 장비 연결이 끊겼습니다.</string>
+    <string name="bluetooth_not_configured">MINIBT 장비 연결이 안되어 있습니다. \n 프로필 > 일반설정 > MINI BT 설정을 해주세요.</string>
+    <string name="msg_processing">처리중</string>
+    <string name="bluetooth_2_scan_timeout">블루투스 스캔 타임아웃</string>
+    <string name="bluetooth_2_scan_stopped">블루투스 장비 스캔 중지</string>
+    <string name="bluetooth_2_disconnected">블루투스 장비 연결 끊김</string>
+    <string name="bluetooth_2_connected">블루투스 장비 연결됨</string>
+    <string name="bluetooth_2_detected">블루투스 장비 검색됨</string>
 </resources>

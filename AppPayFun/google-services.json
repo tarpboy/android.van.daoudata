@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1095572132078",
+    "firebase_url": "https://payfun-v1.firebaseio.com",
+    "project_id": "payfun-v1",
+    "storage_bucket": "payfun-v1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1095572132078:android:e123cbe0323da3e3",
+        "android_client_info": {
+          "package_name": "com.payfun.van.daou"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1095572132078-2fs4onudkol2luquffnkld0areotu8b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFGX5VgxTp-HkFLGtksT8uR2FMXVY8ZnI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

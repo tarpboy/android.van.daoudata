@@ -64,6 +64,11 @@
             </intent-filter>
         </activity>
         <activity android:name="ginu.android.library.emv.bbdevice.EmptyActivity" />
+
+        <service
+            android:name="ginu.android.library.emv.bbdevice.EmvReaderService"
+            android:exported="false" />
+
         <activity
             android:name="com.gun0912.tedpermission.TedPermissionActivity"
             android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|screenLayout|fontScale|uiMode|orientation|screenSize|layoutDirection"
