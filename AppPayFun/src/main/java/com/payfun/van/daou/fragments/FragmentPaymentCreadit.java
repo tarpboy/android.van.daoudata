@@ -287,15 +287,25 @@ public class FragmentPaymentCreadit extends Fragment implements ActivityToPaymen
 		 *	link the numeric keyboard to Amount EditText Field
 		 */
 
-		LinearLayout amountLayout = mFragmentView.findViewById(R.id.fragment_creadit_input_money_layout);
+		final LinearLayout amountLayout = mFragmentView.findViewById(R.id.fragment_creadit_input_money_layout);
 		mEditTextAmount = amountLayout.findViewById(R.id.edInputAmount);
 
 		mEditTextAmount.setOnTouchListener( new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				PaymentCreaditToActivity(CommonFragToActivityCmd_ShowNumericKeyboard, mEditTextAmount);
+			    switch( event.getAction() ){
+					case	MotionEvent.ACTION_DOWN:
+						PaymentCreaditToActivity(CommonFragToActivityCmd_ShowNumericKeyboard, mEditTextAmount);
+						break;
+					case	MotionEvent.ACTION_UP:
+						v.performClick();
+						break;
+					default:
+						break;
+				}
 				return true;
 			}
+
 		});
 /*
 		mKbView = mActivity.findViewById(R.id.numeric_keyboard_layout);

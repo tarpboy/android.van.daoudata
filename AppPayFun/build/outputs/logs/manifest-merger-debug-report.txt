@@ -4,12 +4,13 @@ ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\m
 INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:2:1-46:12
 INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:2:1-46:12
 INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:2:1-46:12
-MERGED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-14:12
+MERGED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-34:12
+MERGED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-14:12
 MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-30:12
 MERGED from [com.android.support:multidex:1.0.2] C:\Users\david\.gradle\caches\transforms-1\files-1.1\multidex-1.0.2.aar\fa1737fa2eaa8621574abfa9fef9a6f9\AndroidManifest.xml:17:1-22:12
+MERGED from [:keyboard] D:\BuildUser\Android\Proj_payfun\android.van.lib\keyboard\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:signpad] D:\BuildUser\Android\Proj_payfun\android.van.lib\signpad\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:library] D:\BuildUser\Android\Proj_payfun\android.van.lib\library\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-11:12
-MERGED from [:keyboard] D:\BuildUser\Android\Proj_payfun\android.van.lib\keyboard\build\intermediates\manifests\full\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [com.android.support:design:27.1.1] C:\Users\david\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\1ca96db27e4df108e32d00c388794edf\AndroidManifest.xml:17:1-22:12
 MERGED from [gun0912.ted:tedpermission:2.1.0] C:\Users\david\.gradle\caches\transforms-1\files-1.1\tedpermission-2.1.0.aar\e20dcccf7190aea6601fbe70ee8a205f\AndroidManifest.xml:2:1-17:12
 MERGED from [com.android.support:appcompat-v7:27.1.1] C:\Users\david\.gradle\caches\transforms-1\files-1.1\appcompat-v7-27.1.1.aar\d24be7e90134ebe47a992d21258ca5fb\AndroidManifest.xml:17:1-22:12
@@ -84,6 +85,8 @@ MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevic
 		ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:7:22-78
 application
 ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:9:5-44:19
+MERGED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:14:5-32:19
+MERGED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:14:5-32:19
 MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:16:5-28:19
 MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:16:5-28:19
 MERGED from [gun0912.ted:tedpermission:2.1.0] C:\Users\david\.gradle\caches\transforms-1\files-1.1\tedpermission-2.1.0.aar\e20dcccf7190aea6601fbe70ee8a205f\AndroidManifest.xml:9:5-15:19
@@ -133,7 +136,7 @@ MERGED from [com.google.android.gms:play-services-measurement-base:16.0.0] C:\Us
 	android:theme
 		ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:16:9-40
 	android:name
-		ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:10:9-65
+		ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:10:9-66
 activity#com.payfun.van.daou.Activities.LoadingActivity
 ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml:19:9-30:20
 	android:screenOrientation
@@ -174,18 +177,20 @@ uses-sdk
 INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml
 INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml
-MERGED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
-MERGED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
+MERGED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
+MERGED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
+MERGED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
+MERGED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [com.android.support:multidex:1.0.2] C:\Users\david\.gradle\caches\transforms-1\files-1.1\multidex-1.0.2.aar\fa1737fa2eaa8621574abfa9fef9a6f9\AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:multidex:1.0.2] C:\Users\david\.gradle\caches\transforms-1\files-1.1\multidex-1.0.2.aar\fa1737fa2eaa8621574abfa9fef9a6f9\AndroidManifest.xml:20:5-43
+MERGED from [:keyboard] D:\BuildUser\Android\Proj_payfun\android.van.lib\keyboard\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
+MERGED from [:keyboard] D:\BuildUser\Android\Proj_payfun\android.van.lib\keyboard\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:signpad] D:\BuildUser\Android\Proj_payfun\android.van.lib\signpad\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:signpad] D:\BuildUser\Android\Proj_payfun\android.van.lib\signpad\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:library] D:\BuildUser\Android\Proj_payfun\android.van.lib\library\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:library] D:\BuildUser\Android\Proj_payfun\android.van.lib\library\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
-MERGED from [:keyboard] D:\BuildUser\Android\Proj_payfun\android.van.lib\keyboard\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
-MERGED from [:keyboard] D:\BuildUser\Android\Proj_payfun\android.van.lib\keyboard\build\intermediates\manifests\full\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [com.android.support:design:27.1.1] C:\Users\david\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\1ca96db27e4df108e32d00c388794edf\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:design:27.1.1] C:\Users\david\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\1ca96db27e4df108e32d00c388794edf\AndroidManifest.xml:20:5-44
 MERGED from [gun0912.ted:tedpermission:2.1.0] C:\Users\david\.gradle\caches\transforms-1\files-1.1\tedpermission-2.1.0.aar\e20dcccf7190aea6601fbe70ee8a205f\AndroidManifest.xml:5:5-7:41
@@ -262,22 +267,36 @@ INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\sr
 		INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml
 		ADDED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml
 		INJECTED from D:\BuildUser\Android\Proj_payfun\android.van.daoudata\AppPayFun\src\main\AndroidManifest.xml
-uses-permission#android.permission.READ_PHONE_STATE
-ADDED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:11:5-75
-	android:name
-		ADDED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:11:22-72
-uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:5-81
-	android:name
-		ADDED from [:van_daou] D:\BuildUser\Android\Proj_payfun\android.van.lib\Van_Daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:22-78
 uses-permission#android.permission.BLUETOOTH
-ADDED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:5-68
+ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:11:5-68
+MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:5-68
+MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:5-68
 	android:name
-		ADDED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:22-65
+		ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:11:22-65
 uses-permission#android.permission.BLUETOOTH_ADMIN
-ADDED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:13:5-74
+ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:5-74
+MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:13:5-74
+MERGED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:13:5-74
 	android:name
-		ADDED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:13:22-71
+		ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:22-71
+activity#ginu.android.van.profile.ProfileActivity
+ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:21:9-31:20
+	android:label
+		ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:23:13-45
+	android:windowSoftInputMode
+		ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:25:13-56
+	android:theme
+		ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:24:13-56
+	android:name
+		ADDED from [:profile] D:\BuildUser\Android\Proj_payfun\Android.van.app\profile\build\intermediates\manifests\full\debug\AndroidManifest.xml:22:13-68
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:11:5-75
+	android:name
+		ADDED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:11:22-72
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:5-81
+	android:name
+		ADDED from [:van_app_daou] D:\BuildUser\Android\Proj_payfun\Android.van.app\van_app_daou\build\intermediates\manifests\full\debug\AndroidManifest.xml:12:22-78
 activity#ginu.android.library.emv.bbdevice.EmptyActivity
 ADDED from [:bbdevice] D:\BuildUser\Android\Proj_payfun\android.van.lib\bbdevice\build\intermediates\manifests\full\debug\AndroidManifest.xml:23:9-84
 	android:name

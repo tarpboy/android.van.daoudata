@@ -2,6 +2,7 @@ package com.payfun.van.daou.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.payfun.van.daou.R;
 import com.payfun.van.daou.fragments.FragmentCallbackInterface.*;
 
 import ginu.android.library.keyboard.ApiEditTextAmount;
+import ginu.android.van.app_daou.utils.MyToast;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.*;
 
@@ -243,6 +245,15 @@ public class FragmentHome extends Fragment implements FragmentCallbackInterface.
 */    //  ToDo:: End of onSaveInstanceState
 
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if( requestCode == PROFILE_ACTIVITY_REQUEST_CODE)
+		{
+			HomeToActivity( HomeToActivityCmd_AttachEmvDetectionListener, null);
+		}
+	}
+
     /**
      * @brief   callback function:
      *     - parent Activity tx data to this fragment
@@ -260,13 +271,14 @@ public class FragmentHome extends Fragment implements FragmentCallbackInterface.
 
     }
 
+	//=================================
+	// *  private methods
+	//=================================
     private void HomeToActivity(int cmd, Object obj)
     {
         mCallback.homeToActivityCb(cmd, obj);
     }
-    ///================================
-    // *  private methods
-    //=================================
+
     private void setView(LayoutInflater inflater, ViewGroup container, View containView) {
 
         //  ToDo:: update view if you need
@@ -283,53 +295,62 @@ public class FragmentHome extends Fragment implements FragmentCallbackInterface.
     private void updateView()
     {
         // ToDo: update any view element you want
-		ImageButton btn = mFragmentView.findViewById( mHomeButtonId[1] );
-		btn.setOnClickListener( mOnClickListener );
 
-
-
-
-
-
-        /*
-        TextView tv = (TextView) mFragmentView.findViewById(R.id.section_label);
-        tv.setText("Now Start Scanning !!");
-        */
-        /*
-        CheckBox cbBondable = (CheckBox)mFragmentView.findViewById(R.id.cbBondable);
-
-        cbBondable.setOnClickListener(new CheckBox.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                if( ((CheckBox)v).isChecked() )
-                    HomeToActivity(HomeToActivityCmd_EnableBonding, true);
-                else
-                    HomeToActivity(HomeToActivityCmd_EnableBonding, false);
-            }
-        });
-        */
-    //    ListView deviceListView = (ListView)mFragmentView.findViewById(R.id.deviceList);
-        //   mDeviceAdapter = new DeviceAdapter(getActivity(), new ArrayList<ScannedDevice>());
-     //   deviceListView.setAdapter(mDeviceAdapter);
-        //mCallback.homeToActivityCb();
-
+		for(int i=1; i< mHomeButtonId.length; i++) {
+			ImageButton btn = mFragmentView.findViewById( mHomeButtonId[i] );
+			btn.setOnClickListener( mOnClickListener );
+		}
 
     }
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnClickListener = new View.OnClickListener()
+	{
 		@Override
-		public void onClick(View v) {
-			int btId = v.getId();
-			for(int i=1; i< mHomeButtonId.length; i++) {
-				if (btId == mHomeButtonId[i])
-					HomeToActivity(CommonFragToActivityCmd_ChangePage, i);
+		public void onClick(View view)
+		{
+			switch ( view.getId() )
+			{
+				case	R.id.btnMMCreditCard:			// 카드결제
+					HomeToActivity(CommonFragToActivityCmd_ChangePage, 1);
+					break;
+				case	R.id.btnMMCashCard:			// 현금결제
+					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 2);
+					break;
+				case	R.id.btnMMCancelList:			// 내역조회
+					//	HomeToActivity(CommonFragToActivityCmd_ChangePage, 3);
+					break;
+				case	R.id.btnMMCancelPayment:		// 승인취소
+					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 4);
+					break;
+				case	R.id.btnMMCoupon:				// 쿠폰등록
+					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 5);
+					MyToast.showToast(mActivity, "준비중입니다.");
+					break;
+				case	R.id.btnMMMemberShip:			// 프로파일
+					//	Launch External Profile Activity in profile module
+					Intent intent = null;
+					try {
+						intent = new Intent( mActivity,	Class.forName(PROFILE_ACTIVITY_CLASS_NAME) );
+
+						startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);			// Launch ProfileActivity !!
+						HomeToActivity(HomeToActivityCmd_DetachEmvDetectionListener, null);
+
+					//	startActivity(intent);						// Launch ProfileActivity !!
+					} catch (ClassNotFoundException e)
+					{
+						e.printStackTrace();
+					}
+					break;
+				default:
+					break;
 			}
 		}
 	};
     //================================
     //  private variables
     //================================
+	private final static String	PROFILE_ACTIVITY_CLASS_NAME	= "ginu.android.van.profile.ProfileActivity";
+	private final static int PROFILE_ACTIVITY_REQUEST_CODE	= 9988;			// Must be a 16-bit int
     /*
      *  To communicate with parent activity
      *  #1. declare callback

@@ -24,6 +24,8 @@ public interface FragmentCallbackInterface {
     int ActivityToHomeCmd_ClearStatic		= 20001003;
 
     //  Home to Activity
+    int HomeToActivityCmd_DetachEmvDetectionListener		= 20001100;
+    int HomeToActivityCmd_AttachEmvDetectionListener	= 20001101;
 
     // << Callback Methods  >>
     interface ActivityToHome{

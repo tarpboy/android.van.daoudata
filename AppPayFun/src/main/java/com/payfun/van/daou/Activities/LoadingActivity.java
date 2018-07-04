@@ -17,10 +17,10 @@ import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiPermission;
 import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
-import ginu.android.library.van.database.PayFunDB;
-import ginu.android.library.van.entity.UserEntity;
-import ginu.android.library.van.helper.AppHelper;
-import ginu.android.library.van.manager.ReceiptManager;
+import ginu.android.van.app_daou.database.PayFunDB;
+import ginu.android.van.app_daou.entity.UserEntity;
+import ginu.android.van.app_daou.helper.AppHelper;
+import ginu.android.van.app_daou.manager.ReceiptManager;
 
 
 public class LoadingActivity extends AppCompatActivity {
@@ -36,15 +36,15 @@ public class LoadingActivity extends AppCompatActivity {
 
 
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-		int readerTyppe = AppHelper.getReaderType();
-		ApiLog.Dbg("readerTyppe:"+readerTyppe);
+		int readerType = AppHelper.getReaderType();
+		ApiLog.Dbg("readerType:"+readerType);
 	/*?????? removed by David SH Kim. not need
 		boolean isBT = false;
 		if(readerTyppe == IEmvReader.DeviceType.bluetooth)
 			isBT = true;
 		EmvReader.setIsBluetooth(isBT);
 	*/
-		EmvReader.setEmvReaderType(readerTyppe);
+		EmvReader.setEmvReaderType(readerType);
 	}
 
 	@Override

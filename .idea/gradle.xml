@@ -7,9 +7,10 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/../Android.van.app/profile" />
+            <option value="$PROJECT_DIR$/../Android.van.app/van_app_daou" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/AppPayFun" />
-            <option value="$PROJECT_DIR$/../android.van.lib/Van_Daou" />
             <option value="$PROJECT_DIR$/../android.van.lib/bbdevice" />
             <option value="$PROJECT_DIR$/../android.van.lib/keyboard" />
             <option value="$PROJECT_DIR$/../android.van.lib/library" />

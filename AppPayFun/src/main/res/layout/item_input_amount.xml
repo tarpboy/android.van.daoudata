@@ -21,7 +21,8 @@
 
             android:inputType="numberDecimal"
             android:maxLength="11"
-            android:textSize="@dimen/large_text_size"
+            android:textSize="@dimen/large_xx_text_size"
+            android:textStyle="bold"
             android:paddingEnd="5dp"
             />
 
@@ -31,7 +32,8 @@
             android:layout_weight="20"
             android:gravity="center_vertical|end"
             android:text="@string/str_mark_of_money"
-            android:textSize="@dimen/large_text_size"
+            android:textSize="@dimen/large_xx_text_size"
+            android:textStyle="bold"
             />
     </TableRow>
 </TableLayout>

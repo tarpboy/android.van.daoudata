@@ -50,22 +50,24 @@ import ginu.android.library.utils.common.ApiExtStorage;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
-import ginu.android.library.van.ExternalCall.ReqPara;
-import ginu.android.library.van.cardreader.EmvUtils;
-import ginu.android.library.van.daou.DaouDataContants;
-import ginu.android.library.van.database.PayFunDB;
-import ginu.android.library.van.database.VanStaticData;
-import ginu.android.library.van.entity.BTReaderInfo;
-import ginu.android.library.van.entity.KeyBindingEntity;
-import ginu.android.library.van.helper.AppHelper;
-import ginu.android.library.van.manager.NoticeManager;
-import ginu.android.library.van.utils.IVanString;
-import ginu.android.library.van.utils.MyReaderDevices;
-import ginu.android.library.van.utils.MyToast;
+import ginu.android.van.app_daou.ExternalCall.ReqPara;
+import ginu.android.van.app_daou.cardreader.EmvUtils;
+import ginu.android.van.app_daou.daou.DaouDataContants;
+import ginu.android.van.app_daou.database.PayFunDB;
+import ginu.android.van.app_daou.database.VanStaticData;
+import ginu.android.van.app_daou.entity.BTReaderInfo;
+import ginu.android.van.app_daou.entity.KeyBindingEntity;
+import ginu.android.van.app_daou.helper.AppHelper;
+import ginu.android.van.app_daou.manager.NoticeManager;
+import ginu.android.van.app_daou.utils.IVanString;
+import ginu.android.van.app_daou.utils.MyReaderDevices;
+import ginu.android.van.app_daou.utils.MyToast;
 
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_AttachEmvDetectionListener;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_DetachEmvDetectionListener;
 
 public class MainActivity extends AppCompatActivity implements
 		FragmentCallbackInterface.HomeToActivity,
@@ -184,6 +186,12 @@ public class MainActivity extends AppCompatActivity implements
                 int page = (int)obj;
                 changePage(page);
                 break;
+			case HomeToActivityCmd_AttachEmvDetectionListener:
+				attachDetectEmvServiceListener();
+				break;
+			case HomeToActivityCmd_DetachEmvDetectionListener:
+				detachDetectEmvServiceListener();
+				break;
             default:
                 break;
         }
@@ -770,8 +778,8 @@ public class MainActivity extends AppCompatActivity implements
 	private void attachDetectEmvServiceListener()
 	{
 		//	ToDo:: add additional your services
-		if( mIsExternalCall )
-			mEmvReader.setIsForCancel(true);
+		// if( mIsExternalCall )
+		//	mEmvReader.setIsForCancel(true);
 
 		mEmvReader.mmListenerHelper.attachDetectEmvListener( mEmvDetectListener );
 	}
@@ -789,10 +797,13 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showNumericKeyboard(EditText editTextAmount)
 	{
+
 		LinearLayout kbView = findViewById(R.id.numeric_keyboard_layout);
 
 		ApiEditTextAmount.disableShowSoftInput(editTextAmount);
 		ApiEditTextAmount.showKeyboard(this, kbView, editTextAmount);
+
+		ApiEditTextAmount.setTextChangeListener(editTextAmount);
 	}
 
     private boolean isPlayServiceAvailable(Context context, int requestCode)
@@ -849,6 +860,9 @@ public class MainActivity extends AppCompatActivity implements
 					mEmvReader = AppHelper.getEmvReaderInService();
 					if( mEmvReader != null)
 					{
+						if( mIsExternalCall )
+							mEmvReader.setIsForCancel(true);
+
 						ApiLog.Dbg("initEmvResources");
 						attachDetectEmvServiceListener();
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
