@@ -57,9 +57,13 @@ import ginu.android.van.app_daou.database.PayFunDB;
 import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.BTReaderInfo;
 import ginu.android.van.app_daou.entity.KeyBindingEntity;
+import ginu.android.van.app_daou.entity.UserEntity;
 import ginu.android.van.app_daou.helper.AppHelper;
+import ginu.android.van.app_daou.manager.CompanyManger;
 import ginu.android.van.app_daou.manager.NoticeManager;
+import ginu.android.van.app_daou.manager.UserManager;
 import ginu.android.van.app_daou.utils.IVanString;
+import ginu.android.van.app_daou.utils.MyPhoneNumber;
 import ginu.android.van.app_daou.utils.MyReaderDevices;
 import ginu.android.van.app_daou.utils.MyToast;
 
@@ -68,6 +72,7 @@ import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFrag
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_AttachEmvDetectionListener;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_DetachEmvDetectionListener;
+import static ginu.android.van.app_daou.database.VanStaticData.*;
 
 public class MainActivity extends AppCompatActivity implements
 		FragmentCallbackInterface.HomeToActivity,
@@ -135,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements
 
 		//	register EmvReader Broadcast Receiver
 		attachEmvReaderBroadcastReceiver();
-		attachBluetoothListener();
+	//	attachBluetoothListener();
 		checkDBBeforeRunningApp();
 		mShowingDialogCount = 0;
     }
@@ -266,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onReturnDeviceInfo( Hashtable<String, String> deviceInfoData ) {
 			ApiLog.Dbg("onReturnDeviceInfo in MainActivity");
-			closeMsg();
+			closeDialog();
 
 			EmvUtils.setIsReadyIC(true);
 
@@ -327,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements
 
 			EmvUtils.saveEmvSerial(pinKsn);
 			EmvUtils.saveKeyBinding(entity);
-			KeyBindingEntity bindingEntity = EmvUtils.getKeyBinding(deviceSerial);
+			KeyBindingEntity bindingEntity = EmvUtils.getKeyBinding(mActivity, deviceSerial);
 
 			//reset variables
 			pinKsn = modelName = trackKsn =  emvKsn = uid = csn = batteryLevel = hwModelInfo = swModelInfo = firmwareVersion = deviceSerial = modelNo ="";
@@ -350,11 +355,11 @@ public class MainActivity extends AppCompatActivity implements
 					MyReaderDevices.isHeadsetConnected(mActivity) )
 			{	// earjack is Plug In.
 				mEmvReader.mmDeviceAudio.restartAudio();
-				closeMsg();
+				closeDialog();
 				MyToast.showToast(mActivity, IVanString.userNotification.msg_reconnect_device);	//R.string.msg_reconnect_device);
 			} else
 			{
-				closeMsg();
+				closeDialog();
 				MyToast.showToast(mActivity, IVanString.userNotification.msg_reconnect_device);	//R.string.msg_reconnect_device);
 			}
 			mShowingDialogCount = 0;
@@ -404,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onDeviceUnplugged() {
 			MyReaderDevices.restoreVolume(mActivity);
-			closeMsg();
+			closeDialog();
 			// TODO Auto-generated method stub
 /** ???????	masked by David SH Kim.
  			listener에서 GUI 건디리면 안된다.
@@ -419,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onNoDeviceDetected() {
 			// TODO Auto-generated method stub
-			closeMsg();
+			closeDialog();
 		}
 
 		@Override
@@ -428,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements
 			ApiLog.Dbg("onError on MainActivity");
 
 			ApiLog.Dbg( EmvUtils.getEmvErrorString(mActivity, errorState));
-			if( VanStaticData.mmIsWaitingTurnOnBT && (mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth) )
+			if( mmIsWaitingTurnOnEmvBTReader && (mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth) )
 				return;
 			switch (errorState){
 				case COMM_LINK_UNINITIALIZED:
@@ -439,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements
 								MyReaderDevices.isHeadsetConnected(mActivity) ) {
 							mEmvReader.mmDeviceAudio.restartAudio();
 						}
-						closeMsg();
+						closeDialog();
 						MyToast.showToast(mActivity, IVanString.userNotification.msg_reconnect_device);	//R.string.msg_reconnect_device);
 					}
 					break;
@@ -450,9 +455,9 @@ public class MainActivity extends AppCompatActivity implements
 					break;
 				case FAIL_TO_START_AUDIO:
 				case FAIL_TO_START_BT:
-					VanStaticData.mmIsBTReaderConnected = false;
+					//VanStaticData.mmIsBTReaderConnected = false;
 					AppHelper.AppPref.setIsBTReaderConnected(false);
-					closeMsg();
+					closeDialog();
 					MyToast.showToast(mActivity, IVanString.userNotification.msg_reconnect_device);		//R.string.msg_reconnect_device);
 					break;
 				case INVALID_FUNCTION_IN_CURRENT_CONNECTION_MODE:
@@ -469,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements
 			ApiLog.Dbg("autoConfigSettings:"+autoConfigSettings);
 			if(autoConfigSettings != null)
 				mEmvReader.mmDeviceAudio.setAutoConfig();
-			closeMsg();
+			closeDialog();
 			ApiLog.Dbg("auto config is completed");
 			MyToast.showToast(mActivity, IVanString.userNotification.msg_config_device_success);
 		}
@@ -477,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onAutoConfigError(PayfunBBDeviceController.AudioAutoConfigError autoConfigError) {
 			// TODO Auto-generated method stub
-			closeMsg();
+			closeDialog();
 			ApiLog.Dbg("auto config is error");
 			MyToast.showToast(mActivity, IVanString.userNotification.msg_config_device_failed);
 		}
@@ -523,7 +528,8 @@ public class MainActivity extends AppCompatActivity implements
 		public void onBTConnected(BluetoothDevice bluetoothDevice) {
 			ApiLog.Dbg(getString(R.string.bluetooth_connected) + ": " + bluetoothDevice.getAddress());
 
-			VanStaticData.mmIsBTReaderConnected = true;
+			// VanStaticData.mmIsBTReaderConnected = true;		removed by David SH Kim.
+			AppHelper.AppPref.setIsBTReaderConnected(true);
 
 			VanStaticData.mmIsRequiredWait = true;
 			mEmvReader.integrityCheck();			// wait for onReturnIntegrityCheckResult
@@ -533,8 +539,9 @@ public class MainActivity extends AppCompatActivity implements
 
 		@Override
 		public void onBTDisconnected() {
-			VanStaticData.mmIsBTReaderConnected = false;
-			closeMsg();
+			// VanStaticData.mmIsBTReaderConnected = false;
+			AppHelper.AppPref.setIsBTReaderConnected(false);
+			closeDialog();
 /*	???????	masked by David SH Kim.
 			listener에서 GUI 건디리면 안된다.
  			나중에 별도의 Handler를 이용하여 setting하도록 하자.
@@ -545,14 +552,16 @@ public class MainActivity extends AppCompatActivity implements
 			ApiLog.Dbg(getString(R.string.bluetooth_disconnected));
 			EmvUtils.cleanDeviceValue();
 			if(	(mEmvReader.getEmvReaderType() != IEmvReader.DeviceType.bluetooth) ||
-				! VanStaticData.mmIsRequiredWait || VanStaticData.mmIsWaitingTurnOnBT)
+				! VanStaticData.mmIsRequiredWait || mmIsWaitingTurnOnEmvBTReader)
 				return;
 
-			waitTurnBT();
+			waitTurnBTReader();
 		}
 
-		public void waitTurnBT(){
-			VanStaticData.mmIsWaitingTurnOnBT = true;
+		public void waitTurnBTReader(){
+			mmIsWaitingTurnOnEmvBTReader = true;
+		//	mTotalTime = TOTAL_TIME_LIMIT;			// added by David SH Kim. to try to connect again.
+													// ?????? Must check it makes trouble or not.!!!
 			mHandler.sendEmptyMessage(MessageID.WAIT_FOR_BT_TURN_ON);
 		}
 	}	// end of Class
@@ -583,6 +592,7 @@ public class MainActivity extends AppCompatActivity implements
 				break;
 			case BLUETOOTH:
 				ApiLog.Dbg("BT Already connected");
+				closeDialog();
 				return;
 		}
 
@@ -597,7 +607,7 @@ public class MainActivity extends AppCompatActivity implements
 			mEmvReader.mmDeviceBT.connect(device);
 
 		} else {
-			closeMsg();
+			closeDialog();
 			MyToast.showToast(mActivity, R.string.bluetooth_not_configured);
 		}
 	}
@@ -671,28 +681,30 @@ public class MainActivity extends AppCompatActivity implements
 			switch (msg.what) {
 				case MessageID.WAIT_FOR_BT_TURN_ON:
 					ApiLog.Dbg("Will close dialog after wait 30s to insert card with paras Total: " + mTotalTime +
-							"  isBTReaderConnected: " + VanStaticData.mmIsBTReaderConnected);
-					mTotalTime -= 5;
+							"  isBTReaderConnected: " + AppHelper.AppPref.getIsBTReaderConnected() );
+					//		"  isBTReaderConnected: " + VanStaticData.mmIsBTReaderConnected);		changed by David SH Kim.
+					mTotalTime -= 5;		// 5 Sec :: delay time
 					if	(	(mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth) &&
-							!VanStaticData.mmIsBTReaderConnected )
+							!AppHelper.AppPref.getIsBTReaderConnected() )
+					//		!VanStaticData.mmIsBTReaderConnected )				changed by David SH Kim.
 					{
 						if(mTotalTime > 0) {
 							msg = obtainMessage(MessageID.WAIT_FOR_BT_TURN_ON);
-							sendMessageDelayed(msg, 5000);
+							sendMessageDelayed(msg, 5000);		// 5 Sec :: delay time
 							connectBT();
 							ApiLog.Dbg("Wait to close diaglog:" + mTotalTime);
 						}
 						else
 						{
-							VanStaticData.mmIsWaitingTurnOnBT = false;
-							closeMsg();
+							mmIsWaitingTurnOnEmvBTReader = false;
+							closeDialog();
 						}
 					}
 
 					break;
 
 				case MessageID.STOP_SEARCHING:
-					VanStaticData.mmIsWaitingTurnOnBT = false;
+					mmIsWaitingTurnOnEmvBTReader = false;
 					break;
 
 				default:
@@ -704,7 +716,7 @@ public class MainActivity extends AppCompatActivity implements
 	//==========================================
 	//	Dialogs in Local
 	//==========================================
-	private void closeMsg() {
+	private void closeDialog() {
 		if (mDialog != null) {
 			mDialog.Dismiss();
 			mDialog = null;
@@ -717,6 +729,7 @@ public class MainActivity extends AppCompatActivity implements
 			mDialog = new DialogHandler(mActivity, "");
 			mDialog.setCancelable(false);
 			mDialog.setMessage( getString( R.string.msg_processing) );
+			mDialog.Create();
 			mDialog.Show();
 		}
 	}
@@ -731,6 +744,7 @@ public class MainActivity extends AppCompatActivity implements
 			mDialog.setCancelable(false);
 			mDialog.setMessage( msg );
 			mDialog.setProgressBar(android.R.attr.progressBarStyleHorizontal);
+			mDialog.Create();
 			mDialog.Show();
 		}
 	}
@@ -754,6 +768,24 @@ public class MainActivity extends AppCompatActivity implements
 		mFallbackDlg.Create();
 		mFallbackDlg.Show();
 	}
+
+	private void showDownloadConfirm(String msg) {
+		if(msg==null || msg.equals(""))
+			return;
+		mFallbackDlg = new DialogHandler(mActivity, "가맹점 개통");
+		mFallbackDlg.setCancelable(false);
+		mFallbackDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
+		mFallbackDlg.setMessage(msg);
+		mFallbackDlg.setPositiveButton( new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+				//	ToDo:: Profile Activity를 호출하여 바로 설정에 들어 가게 하는것이 좋을지 모르겠다.
+				//	현재는 그냥 알림으로 끝내자!!
+			}
+		});
+		mFallbackDlg.Create();
+		mFallbackDlg.Show();
+	}
 	//==========================================
 	//	Broadcast Receivers and Listeners
 	//==========================================
@@ -770,6 +802,7 @@ public class MainActivity extends AppCompatActivity implements
 		intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
 
 		registerReceiver(mBluetoothReceiver, intentFilter);
+
 	}
 
 	/**
@@ -791,7 +824,7 @@ public class MainActivity extends AppCompatActivity implements
 	private void detachServices()
 	{
 		unregisterReceiver(mEmvReaderBroadcastReceiver);		// unregister EmvReader
-		unregisterReceiver(mBluetoothReceiver);				// unregister Bluetooth
+	//	unregisterReceiver(mBluetoothReceiver);				// unregister Bluetooth
 		detachDetectEmvServiceListener();
 	}
 
@@ -827,18 +860,55 @@ public class MainActivity extends AppCompatActivity implements
 
     private void autoLogin()
 	{
-	/*		removed David SH Kim. Not support User Login to Payfun Service
-		final String phoneNo = AppHelper.getMyPhoneNumber(this);
+
+		final String phoneNo = MyPhoneNumber.get(this);
 		final String deviceID = android.provider.Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 		final String fcmToken = AppHelper.AppPref.getFcmToken();
 		ApiLog.Dbg("autoLogin");
-		final String f_Passwd = AppHelper.prefGet(key. getF_Password(), "");
+		final String f_Passwd = AppHelper.AppPref.getUserPassword();				// prefGet(mUserEntityKey.getPassword(), "");
 
 		//case user login before by old way then can not login this time. have to do check login in HomeFragment
-		if(!AppHelper.AppPref.getIsLogin() && ! f_Passwd.isEmpty()){
+		if(!AppHelper.AppPref.getIsLogin() && ! f_Passwd.isEmpty()) {
 			ApiLog.Dbg("Already login by old way. so have to update device info first");
 			return;
-	*/
+		}
+
+		MyTaskProgress.CallBackMethod callBackMethod = new MyTaskProgress.CallBackMethod() {
+			@Override
+			public boolean run() {
+				mUserID = UserManager.checkLoginV2(phoneNo, deviceID, fcmToken);
+
+				return ( mUserID != null );
+			}
+
+			@Override
+			public boolean res(boolean result) {
+				ApiLog.Dbg("USER_ID: " + mUserID);
+				if( ! result )
+				{
+					AppHelper.AppPref.setUserEmail("");
+					AppHelper.AppPref.setUserPassword("");
+					return false;
+				}
+
+				AppHelper.AppPref.setUserEmail("");
+				AppHelper.AppPref.setUserPassword("");
+				AppHelper.AppPref.setCurrentUserID(mUserID);
+				AppHelper.AppPref.setIsLogin(true);
+				if( AppHelper.AppPref.getIsLogin() )
+				{
+					String userID = AppHelper.AppPref.getCurrentUserID();
+					if( !CompanyManger.isExistCompanyLocal(userID) )
+					{
+						showDownloadConfirm("개통이 필요합니다.");
+					}
+				}
+				return false;
+			}
+		};
+
+		MyTaskProgress taskProgress = new MyTaskProgress(this, callBackMethod,"Login", null, android.R.attr.progressBarStyleLarge);
+		taskProgress.execute();
 	}
 
 	/*
@@ -906,7 +976,7 @@ public class MainActivity extends AppCompatActivity implements
 					ApiLog.Dbg("saved BT: " + btReaderInfo.getName() );
 					if (device.getName().contains(btReaderInfo.getName()) && !"".equals(btReaderInfo.getName())) {
 
-						VanStaticData.mmIsBTReaderConnected = true;
+						//VanStaticData.mmIsBTReaderConnected = true;
 						AppHelper.AppPref.setIsBTReaderConnected(true);
 
 						MyToast.showToast(mActivity, R.string.bluetooth_connected);
@@ -915,7 +985,7 @@ public class MainActivity extends AppCompatActivity implements
 				case BluetoothDevice.ACTION_ACL_DISCONNECTED:
 					ApiLog.Dbg("disconnected BT:" + device.getName());
 
-					VanStaticData.mmIsBTReaderConnected = false;
+					//VanStaticData.mmIsBTReaderConnected = false;
 					AppHelper.AppPref.setIsBTReaderConnected(false);
 
 					//show show toast for case Reader
@@ -956,19 +1026,18 @@ public class MainActivity extends AppCompatActivity implements
     private int							mShowingDialogCount = 0;
     private int							mTotalTime = 0;
 
-
     private String							mPackageName;
-
+	private String							mUserID = "";
 
 	private	 boolean						mIsExternalCall = false;
 //	private boolean						mIsBTReaderConnected = false;		move to VanStaticData.
 	private boolean						mIsResumeOnMain = false;
 
-
 	private Handler							mHandler	= new MessageHandler();
 	private DialogHandler					mDialog;
 	private DialogHandler					mFallbackDlg;
 
+	private UserEntity						mUserEntityKey = new UserEntity(0);
 
 	private EmvDetectListener				mEmvDetectListener = new EmvDetectListener();
 

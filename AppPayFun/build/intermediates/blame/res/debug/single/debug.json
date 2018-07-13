@@ -12,12 +12,12 @@
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xxxhdpi-v4\\abc_btn_radio_to_on_mtrl_000.png"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ic_star_half_black_36dp.png.flat",
-        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-hdpi-v4\\abc_ic_star_half_black_36dp.png"
-    },
-    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_design_text_input_password_icon.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\1ca96db27e4df108e32d00c388794edf\\res\\layout\\design_text_input_password_icon.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ic_star_half_black_36dp.png.flat",
+        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-hdpi-v4\\abc_ic_star_half_black_36dp.png"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_signpad_white_shape.xml.flat",
@@ -40,12 +40,12 @@
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\btn_dialog_shape_s.xml"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat",
-        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xhdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png"
-    },
-    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_iconhome.png.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\src\\main\\res\\drawable\\iconhome.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat",
+        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xhdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_design_layout_tab_icon.xml.flat",
@@ -64,20 +64,24 @@
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable\\abc_btn_radio_material.xml"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_dialog_custom.xml.flat",
-        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\van_app_daou\\build\\intermediates\\packaged_res\\debug\\layout\\dialog_custom.xml"
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_checkbox.png.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\checkbox.png"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_abc_dialog_material_background.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable\\abc_dialog_material_background.xml"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat",
-        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xhdpi-v4\\abc_textfield_activated_mtrl_alpha.9.png"
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_dialog_custom.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\van_app_daou\\build\\intermediates\\packaged_res\\debug\\layout\\dialog_custom.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_big_media_narrow_custom.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\support-media-compat-27.1.1.aar\\ba09f28cfcf632696f4e12fd9c98f703\\res\\layout\\notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat",
+        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xhdpi-v4\\abc_textfield_activated_mtrl_alpha.9.png"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_ic_star_half_black_48dp.png.flat",
@@ -90,6 +94,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-v21_design_bottom_navigation_item_background.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\1ca96db27e4df108e32d00c388794edf\\res\\drawable-v21\\design_bottom_navigation_item_background.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_fragment_profile_config.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\fragment_profile_config.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat",
@@ -142,6 +150,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-v23_abc_control_background_material.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-v23\\abc_control_background_material.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_orange_shape_.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\btn_orange_shape_.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\mipmap-mdpi_ic_launcher.png.flat",
@@ -226,6 +238,14 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-ldrtl-xhdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-ldrtl-xhdpi-v17\\abc_ic_menu_copy_mtrl_am_alpha.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_checkbox_selector.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\checkbox_selector.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_background_button_register_a.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\background_button_register_a.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_text_select_handle_middle_mtrl_light.png.flat",
@@ -528,6 +548,10 @@
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\border_btn_step1_minibt_active.xml"
     },
     {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_dummy_fragment.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\dummy_fragment.xml"
+    },
+    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_mm_cash_card_.png.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\src\\main\\res\\drawable\\btn_mm_cash_card_.png"
     },
@@ -584,12 +608,20 @@
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\layout\\abc_action_bar_title_item.xml"
     },
     {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_telephone_call_s.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\telephone_call_s.xml"
+    },
+    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_abc_alert_dialog_material.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\layout\\abc_alert_dialog_material.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_dialog_van_dl_step2.xml.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\dialog_van_dl_step2.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_checkboxchecked.png.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\checkboxchecked.png"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat",
@@ -674,6 +706,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_push_keyboard_btn.xml.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.lib\\keyboard\\build\\intermediates\\packaged_res\\debug\\drawable\\push_keyboard_btn.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_background_button_register_.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\background_button_register_.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_mm_cancel_list_a.png.flat",
@@ -802,6 +838,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_notification_media_action.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\support-media-compat-27.1.1.aar\\ba09f28cfcf632696f4e12fd9c98f703\\res\\layout\\notification_media_action.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_button_register_selector.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\button_register_selector.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_abc_ratingbar_small_material.xml.flat",
@@ -938,6 +978,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_text_select_handle_right_mtrl_dark.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-mdpi-v4\\abc_text_select_handle_right_mtrl_dark.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_orange_shape_a.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\btn_orange_shape_a.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_ic_star_black_48dp.png.flat",
@@ -1282,10 +1326,6 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_googleg_standard_color_18.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-base-15.0.1.aar\\11e55fc0320701f87dbd73d820f541ad\\res\\drawable-hdpi-v4\\googleg_standard_color_18.png"
-    },
-    {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_fragment_profile.xml.flat",
-        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\fragment_profile.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_bg_btn_mm_cancel_list_a.xml.flat",
@@ -1892,6 +1932,10 @@
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\border_btn_step1_mini2_inactive.xml"
     },
     {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_telephone_call_a.png.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\telephone_call_a.png"
+    },
+    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_notification_icon_background.xml.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.1.1.aar\\5fd58d2e90aa79b8c213b09e62254095\\res\\drawable\\notification_icon_background.xml"
     },
@@ -1918,6 +1962,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_dialog_back_shape.xml.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\btn_dialog_back_shape.xml"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_orange_shape_s.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\btn_orange_shape_s.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_text_select_handle_left_mtrl_light.png.flat",
@@ -2030,6 +2078,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi_ic_launcher_foreground.png.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\generated\\res\\pngs\\debug\\drawable-ldpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_dialog_van_dl_step4.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\dialog_van_dl_step4.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_ic_star_half_black_16dp.png.flat",
@@ -2416,6 +2468,10 @@
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xhdpi-v4\\abc_text_select_handle_right_mtrl_light.png"
     },
     {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_telephone_call.png.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\telephone_call.png"
+    },
+    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_ic_menu_selectall_mtrl_alpha.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xxhdpi-v4\\abc_ic_menu_selectall_mtrl_alpha.png"
     },
@@ -2474,6 +2530,10 @@
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xxhdpi-v4\\abc_list_selector_disabled_holo_dark.9.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_button_cancel_selector.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\button_cancel_selector.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat",
