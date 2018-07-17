@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2" xmlns:ns2="http://schemas.android.com/tools">
+    <string-array name="user_info_register_arrays">
+        <item>신규가맹점회원가입</item>
+        <item>신규 등록</item>
+        <item>직원 등록</item>
+        <item>정보 수정</item>
+    </string-array>
     <attr format="boolean" name="barrierAllowsGoneWidgets"/>
     <attr format="enum" name="barrierDirection">
         <enum name="left" value="0"/>
@@ -924,6 +930,8 @@
     <string name="device_not_ready">연결된 장비가 없습니다.</string>
     <string name="discovered_devices">Discovered Devices</string>
     <string name="earjack_device_name">MINI2</string>
+    <string name="emv_integrity_check_fail">무결성 검증 실패</string>
+    <string name="emv_integrity_check_success">무결성 검증 성공</string>
     <string name="fail_to_start_audio">Fail to start audio</string>
     <string name="fail_to_start_bluetooth">Fail to start bluetooth</string>
     <string name="fcm_fallback_notification_channel_label">Miscellaneous</string>
@@ -940,14 +948,18 @@
     <string name="machine_division_multiple">다중 사업자</string>
     <string name="machine_division_multiple_explain">해당 사업자는 대리점에 문의바랍니다.</string>
     <string name="msg_correct_device">장치가 확인 되었습니다.</string>
+    <string name="msg_email_invalid">이메일 주소가 옳지않습니다.</string>
     <string name="msg_insert_company_failed">단말기 저장에 실패 하였습니다.</string>
     <string name="msg_insert_company_success">단말기 정보가 저장 되었습니다.</string>
     <string name="msg_insert_company_to_server_failed">서버간 연결이 실패 하였습니다.</string>
     <string name="msg_keybiding_error">단말기 장비인증이 실패하였습니다.</string>
     <string name="msg_keybiding_success">단말기 장비인증 완료.</string>
     <string name="msg_keybinding_during">단말기 절대 분리하지 마세요.</string>
+    <string name="msg_keybinding_during_percent">단말기 절대 분리하지 마세요.[%02d]</string>
     <string name="msg_not_enough_company_number"> 사업자번호가 부족합니다. \n 다시 입력하세요</string>
     <string name="msg_not_enough_machine_code"> 장치번호가 부족합니다. \n 다시 입력하세요</string>
+    <string name="msg_password_confirm_error">암호를 잘 못 입력하셨습니다.</string>
+    <string name="msg_password_minimum_length_error">암호는 최소 6자리 입니다.</string>
     <string name="msg_processing">처리중</string>
     <string name="msg_progressing">다운로딩중</string>
     <string name="msg_van_dl_dialog_ask_connect">장비를 연결해주세요</string>
@@ -955,6 +967,7 @@
     <string name="msg_van_dl_dialog_connected">장비가 연결되었습니다.</string>
     <string name="msg_wrong_company_number"> 사업자번호를 잘못입력하였습니다.\n 다시 입력하세요</string>
     <string name="msg_wrong_machine_code"> 장치번호를 잘못입력하였습니다.\n 다시 입력하세요</string>
+    <string name="msg_wrong_user_name">사용자 이름을 입력해주세요</string>
     <string name="ok">확인</string>
     <string name="out_of_range">Input out of range.</string>
     <string name="paired_devices">Paired Devices</string>
@@ -979,6 +992,7 @@
     <string name="str_menu_login_not_yet">payfun에 로그인 해주세요</string>
     <string name="str_program_title">PADD00678</string>
     <string name="str_signpad_title">사인해주세요</string>
+    <string name="tag_format">[%s]</string>
     <string name="tedpermission_close">Close</string>
     <string name="tedpermission_confirm">Confirm</string>
     <string name="tedpermission_setting">Setting</string>
@@ -2672,5 +2686,16 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="txt_user" parent="android:Widget.EditText">
+        <item name="android:ems">10</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:inputType">textPersonName</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#6c5241</item>
+        <item name="android:background">@drawable/txt_use_while_selector</item>
+        <item name="android:textColorHint">#6c5241</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 </resources>
