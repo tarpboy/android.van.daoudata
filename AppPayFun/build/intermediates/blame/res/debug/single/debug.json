@@ -12,12 +12,12 @@
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xxxhdpi-v4\\abc_btn_radio_to_on_mtrl_000.png"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_design_text_input_password_icon.xml.flat",
-        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\1ca96db27e4df108e32d00c388794edf\\res\\layout\\design_text_input_password_icon.xml"
-    },
-    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ic_star_half_black_36dp.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-hdpi-v4\\abc_ic_star_half_black_36dp.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_design_text_input_password_icon.xml.flat",
+        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\1ca96db27e4df108e32d00c388794edf\\res\\layout\\design_text_input_password_icon.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_signpad_white_shape.xml.flat",
@@ -60,12 +60,12 @@
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\logo_signup.png"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_abc_btn_radio_material.xml.flat",
-        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable\\abc_btn_radio_material.xml"
-    },
-    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_checkbox.png.flat",
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\drawable\\checkbox.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_abc_btn_radio_material.xml.flat",
+        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable\\abc_btn_radio_material.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_abc_dialog_material_background.xml.flat",
@@ -76,12 +76,12 @@
         "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\van_app_daou\\build\\intermediates\\packaged_res\\debug\\layout\\dialog_custom.xml"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_big_media_narrow_custom.xml.flat",
-        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\support-media-compat-27.1.1.aar\\ba09f28cfcf632696f4e12fd9c98f703\\res\\layout\\notification_template_big_media_narrow_custom.xml"
-    },
-    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xhdpi-v4\\abc_textfield_activated_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_big_media_narrow_custom.xml.flat",
+        "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\support-media-compat-27.1.1.aar\\ba09f28cfcf632696f4e12fd9c98f703\\res\\layout\\notification_template_big_media_narrow_custom.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_ic_star_half_black_48dp.png.flat",
@@ -96,12 +96,12 @@
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.1.1.aar\\1ca96db27e4df108e32d00c388794edf\\res\\drawable-v21\\design_bottom_navigation_item_background.xml"
     },
     {
-        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_fragment_profile_config.xml.flat",
-        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\fragment_profile_config.xml"
-    },
-    {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat",
         "source": "C:\\Users\\david\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.1.1.aar\\d24be7e90134ebe47a992d21258ca5fb\\res\\drawable-xxhdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png"
+    },
+    {
+        "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\layout_fragment_profile_config.xml.flat",
+        "source": "D:\\BuildUser\\Android\\Proj_payfun\\Android.van.app\\profile\\build\\intermediates\\packaged_res\\debug\\layout\\fragment_profile_config.xml"
     },
     {
         "merged": "D:\\BuildUser\\Android\\Proj_payfun\\android.van.daoudata\\AppPayFun\\build\\intermediates\\res\\merged\\debug\\drawable_btn_mm_member_ship_a.png.flat",

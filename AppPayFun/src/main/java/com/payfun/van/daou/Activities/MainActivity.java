@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements
 			EmvUtils.saveHwSerialNumber(serialNumber);
 
 			String batteryLevel = "Battery: " + deviceInfoData.get("batteryPercentage") + " %";
-			String hwModelInfo = EmvUtils.getHWModelName() + " " + EmvUtils.getHwModelNo();//JTNet.HWModelNo;
+			String hwModelInfo = EmvUtils.getHWModelName() + " " + EmvUtils.getHwModelNo();
 			String swModelInfo = DaouDataContants.SWModelName + " " + DaouDataContants.SWModelNo;
 
 /*???????	masked by David SH Kim.
