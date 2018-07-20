@@ -1,6 +1,5 @@
 package com.payfun.van.daou.Activities;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -12,13 +11,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,15 +21,12 @@ import android.widget.LinearLayout;
 import com.bbpos.bbdevice.PayfunBBDeviceController;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.payfun.van.daou.R;
-import com.payfun.van.daou.fragments.FragmentPaymentCreadit;
+import com.payfun.van.daou.fragments.AMainFragPages;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.ConnectionResult;
 
 import com.payfun.van.daou.fragments.FragmentCallbackInterface;
-import com.payfun.van.daou.fragments.FragmentDummy;
-import com.payfun.van.daou.fragments.FragmentHome;
 
-import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -75,24 +66,10 @@ import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActi
 import static ginu.android.van.app_daou.database.VanStaticData.*;
 
 public class MainActivity extends AppCompatActivity implements
+		FragmentCallbackInterface.DummyToActivity,
 		FragmentCallbackInterface.HomeToActivity,
-		FragmentCallbackInterface.PaymentCreaditToActivity
+		FragmentCallbackInterface.PaymentCreditToActivity
 {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,19 +77,14 @@ public class MainActivity extends AppCompatActivity implements
 
 		setContentView(R.layout.activity_main);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        //
+		//
 		//	TODO:: Add user code here
-        //
-
+		//
 		mActivity = this;
+
+		if( ! changePage(AMainFragPages.MainHomePage) )
+			return;
+
 		mPackageName = getApplicationInfo().packageName;
 
 		// check Play service available
@@ -176,10 +148,27 @@ public class MainActivity extends AppCompatActivity implements
 	protected void onDestroy() {
 		ApiLog.Dbg("onDestroy");
 		super.onDestroy();
+
+		dismissNumericKeyboard();		// 2. destroy key board
+
 		detachServices();
+
 		if (mEmvApp != null)
 			mEmvApp.stopEmvReaderService();
 	}
+
+	@Override
+	public void onBackPressed()
+	{
+	//	super.onBackPressed();
+
+		hideNumericKeyboard();		// 1. hide key board
+
+		showDownloadFinish("앱을 종료하시겠습니까?");
+
+	}
+
+
     //==========================
     //  Fragment Callback functions
     //==========================
@@ -202,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void paymentCreaditToActivityCb(int cmd, Object obj)
+    public void paymentCreditToActivityCb(int cmd, Object obj)
     {
         switch(cmd)
         {
@@ -218,48 +207,33 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+	/*		<<	==	for Dummy Fragment	==	>>		*/
+	//		Must mask on release
+	public void dummyToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+			case 	CommonFragToActivityCmd_ShowNumericKeyboard:
+				showNumericKeyboard((EditText)obj);
+				break;
+			default:
+				break;
+		}
+	}
     //==========================
     //  Fragment Page Adapter
     //==========================
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            Fragment fragment;
-            switch(position)
-            {
-                case 0:
-                    //return FragmentHome.newInstance(position + 1);
-                    fragment = FragmentHome.newInstance(position+1);
-                    mActivityToHome = (FragmentCallbackInterface.ActivityToHome) fragment;
-                //    mActivityToHome.activityToHomeCb(ActivityToHomeCmd_DeviceAdapter, mDeviceAdapter);
-                    return fragment;
-                case 1:
-                    fragment = FragmentPaymentCreadit.newInstance(position + 1);
-                    mActivityToPaymentCreadit = (FragmentCallbackInterface.ActivityToPaymentCreadit) fragment;
-                    return fragment;
-                default:
-                    break;
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 2;
-        }
-    }
+	/*
+	 *  change Fragment page
+	 **/
+	public static boolean changePage(@AMainFragPages int page)
+	{
+		return MainActivityFragmentMapper.changePage(mActivity, page, null);
+	}
 
 
     //==========================================
@@ -786,6 +760,29 @@ public class MainActivity extends AppCompatActivity implements
 		mFallbackDlg.Create();
 		mFallbackDlg.Show();
 	}
+	private void showDownloadFinish(String msg) {
+		if(msg==null || msg.equals(""))
+			return;
+		mFallbackDlg = new DialogHandler(mActivity, "앱 종료");
+		mFallbackDlg.setCancelable(false);
+		mFallbackDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
+		mFallbackDlg.setMessage(msg);
+		mFallbackDlg.setPositiveButton( new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+				//	ToDo:: exit
+				finish();
+			}
+		});
+		mFallbackDlg.setNegativeButton(new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				changePage(AMainFragPages.MainHomePage);
+			}
+		});
+		mFallbackDlg.Create();
+		mFallbackDlg.Show();
+	}
 	//==========================================
 	//	Broadcast Receivers and Listeners
 	//==========================================
@@ -839,6 +836,15 @@ public class MainActivity extends AppCompatActivity implements
 		ApiEditTextAmount.setTextChangeListener(editTextAmount);
 	}
 
+	private void dismissNumericKeyboard()
+	{
+		ApiEditTextAmount.dissmissKeyboard();
+	}
+
+	private void hideNumericKeyboard()
+	{
+		ApiEditTextAmount.hideKeyboard(mActivity, this);
+	}
     private boolean isPlayServiceAvailable(Context context, int requestCode)
     {
         boolean ret = false;
@@ -911,13 +917,6 @@ public class MainActivity extends AppCompatActivity implements
 		taskProgress.execute();
 	}
 
-	/*
-	 *  change Fragment page
-	 */
-	private void changePage(int page)
-	{
-		mViewPager.setCurrentItem(page);
-	}
 
 	private final BroadcastReceiver mEmvReaderBroadcastReceiver = new BroadcastReceiver()
 	{
@@ -1018,7 +1017,7 @@ public class MainActivity extends AppCompatActivity implements
 	private final static int				SHOWING_DIALOG_LIMIT = 1;
 	private final static int				TOTAL_TIME_LIMIT = 30;
 
-	private Activity						mActivity;
+	private static AppCompatActivity		mActivity;
 	private EmvApplication					mEmvApp;
     private EmvReader						mEmvReader;
 
@@ -1042,7 +1041,7 @@ public class MainActivity extends AppCompatActivity implements
 	private EmvDetectListener				mEmvDetectListener = new EmvDetectListener();
 
     private FragmentCallbackInterface.ActivityToHome        mActivityToHome;
-    private FragmentCallbackInterface.ActivityToPaymentCreadit  mActivityToPaymentCreadit;
+    private FragmentCallbackInterface.ActivityToPaymentCredit  mActivityToPaymentCredit;
 
 
 

@@ -2,50 +2,31 @@ package com.payfun.van.daou.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-
 
 import com.payfun.van.daou.R;
-import com.payfun.van.daou.fragments.FragmentCallbackInterface.*;
+import com.payfun.van.daou.fragments.FragmentCallbackInterface.ActivityToPaymentCredit;
+import com.payfun.van.daou.fragments.FragmentCallbackInterface.PaymentCreditToActivity;
 
-import ginu.android.library.keyboard.ApiEditTextAmount;
-import ginu.android.library.utils.gui.ApiCustomArrayAdapter;
-import ginu.android.van.app_daou.cardreader.EmvUtils;
-import ginu.android.van.app_daou.entity.CompanyEntity;
-import ginu.android.van.app_daou.helper.AppHelper;
-import ginu.android.van.app_daou.manager.CompanyManger;
-import ginu.android.van.app_daou.utils.MyToast;
+import ginu.android.van.app_daou.cardreader.ReaderFragment;
 
-import static com.payfun.van.daou.fragments.FragmentCallbackInterface.*;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.ARG_SECTION_NUM;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
 
 /**
  * Created by david_shkim on 2018-03-13.
  */
 
-public class FragmentHome extends Fragment implements
-		FragmentCallbackInterface.ActivityToHome
-{
-    public static FragmentHome newInstance(int sectionNumber) {
-        FragmentHome fragment = new FragmentHome();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUM, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
+public class FragmentPaymentCredit extends ReaderFragment implements ActivityToPaymentCredit{
 
-    public FragmentHome() {}
+
+    public FragmentPaymentCredit() {}
 
     /**
      * Fragment life: step 1
@@ -57,9 +38,9 @@ public class FragmentHome extends Fragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         // U can get parent activity
-        mActivity = null;
+        mmActivity = null;
         if (context instanceof Activity)
-            mActivity = (Activity) context;
+            mmActivity = (Activity) context;
 
         /*
          *  To communicate with parent activity
@@ -67,9 +48,9 @@ public class FragmentHome extends Fragment implements
          */
         // U make sure that the container hsa implemented the callback interface.
         try {
-            mCallback = (FragmentCallbackInterface.HomeToActivity) mActivity;
+            mCallback = (PaymentCreditToActivity) mmActivity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(mActivity.toString()
+            throw new ClassCastException(mmActivity.toString()
                     + "U must implement CallbackListenerOnBenefit");
         }
 
@@ -113,14 +94,14 @@ public class FragmentHome extends Fragment implements
         //if(savedInstanceState != null)
         //    mCurrentPosition = savedInstanceState.getInt(ARG_POSITION);
 
-        //  allocate the dummy fragment onto container
-        mFragmentView = inflater.inflate(R.layout.fragment_home, container, false);
+       //  allocate the dummy fragment onto container
+        mmFragmentView = inflater.inflate(R.layout.fragment_payment_creadit, container, false);
 
         //  set elements on the fragment
-        setView(inflater, container, mFragmentView);
+        setView(inflater, container, mmFragmentView);
 
         //  Inflate the layout for this fragment
-        return mFragmentView;
+        return mmFragmentView;
     }
     // ToDo:: End of onCreateView
 
@@ -136,8 +117,7 @@ public class FragmentHome extends Fragment implements
     {
         super.onActivityCreated(savedInstanceState);
 
-        updateView(mFragmentView);
-
+		updateView(mmFragmentView);
     }
     // ToDo:: End of onActivityCreated
 
@@ -232,27 +212,32 @@ public class FragmentHome extends Fragment implements
     }
 */    //  ToDo:: End of onDetach
 
+    /**
+     * Fragment life: step 12
+     * @breif   called on the fragment disappeared and activity disappeared simultaneously.
+     *          save the status onto Bundle and get it when return.
+     * @param savedInstanceState
+     */
+/*    //  ToDo:: save status of fragment onto Bundle.
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
 
+        super.onSaveInstanceState(savedInstanceState);
+    }
+*/    //  ToDo:: End of onSaveInstanceState
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		if( requestCode == PROFILE_ACTIVITY_REQUEST_CODE)
-		{
-			HomeToActivity( HomeToActivityCmd_AttachEmvDetectionListener, null);
-		}
-	}
 
     /**
      * @brief   callback function:
      *     - parent Activity tx data to this fragment
      */
-    public void activityToHomeCb(int cmd, Object obj) {
+    public void activityToPaymentCreditCb(int cmd, Object obj) {
         switch(cmd)
         {
-            case    ActivityToHomeCmd_DeviceAdapter:
+            //case    ActivityToHomeCmd_DeviceAdapter:
             //    mDeviceAdapter = (DeviceAdapter) obj;       //deviceAdapter;
-                break;
+            //   break;
 
             default:
                 break;
@@ -260,21 +245,23 @@ public class FragmentHome extends Fragment implements
 
     }
 
-	//=================================
-	// *  private methods
-	//=================================
-    private void HomeToActivity(int cmd, Object obj)
+    private void PaymentCreditToActivity(int cmd, Object obj)
     {
-        mCallback.homeToActivityCb(cmd, obj);
+        mCallback.paymentCreditToActivityCb(cmd, obj);
     }
-
+    ///================================
+    // *  private methods
+    //=================================
     private void setView(LayoutInflater inflater, ViewGroup container, View containView) {
 
+        //  ToDo:: update view if you need
+
+
         //  ToDo:: set all event listeners like button on click listener if you have
-		for(int i=1; i< mHomeButtonId.length; i++) {
-			ImageButton btn = containView.findViewById( mHomeButtonId[i] );
-			btn.setOnClickListener( mOnClickListener );
-		}
+        /*  Ex]
+        Button mBtPayment = (Button)mFragmentView.findViewById(R.id.bt_payment_confirm);
+        mBtPayment.setOnClickListener(new buttonOnClickListener());
+        */
         return;
     }
 
@@ -282,108 +269,43 @@ public class FragmentHome extends Fragment implements
     {
         // ToDo: update any view element you want
 
-		//	set Notification List View
-		setNotificationListView(view);
+		/*
+		 *	link the numeric keyboard to Amount EditText Field
+		 */
+
+		final LinearLayout amountLayout = mmFragmentView.findViewById(R.id.fragment_creadit_input_money_layout);
+		mEditTextAmount = amountLayout.findViewById(R.id.edInputAmount);
+
+		mEditTextAmount.setOnTouchListener( new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+			    switch( event.getAction() ){
+					case	MotionEvent.ACTION_DOWN:
+						PaymentCreditToActivity(CommonFragToActivityCmd_ShowNumericKeyboard, mEditTextAmount);
+						break;
+					default:
+						break;
+				}
+				return true;
+			}
+
+		});
 
     }
 
-    private void setNotificationListView(View view)
-	{
-		mListView = view.findViewById(R.id.lv_home_notification);
-
-		ApiCustomArrayAdapter myAdapter = new ApiCustomArrayAdapter();
-
-		//	get current company entity
-		String vanID = AppHelper.AppPref.getCurrentVanID();
-		CompanyEntity entity = CompanyManger.getCompanyByID(vanID);		// find it by vanID and userID
-
-		String info;
-/*
-		myAdapter.addItem(ContextCompat.getDrawable(mActivity, R.drawable.iconhome_a), "밴사 정보", "A/S 문의");
-*/
-		myAdapter.addItem(ContextCompat.getDrawable(mActivity, R.drawable.personal_32), "밴사", entity.getVanName());
-
-
-		myAdapter.addItem(ContextCompat.getDrawable(mActivity, R.drawable.telephone_call), "전화번호", entity.getVanPhoneNo());
-
-		info = entity.getResellerName();
-		if( info == null || info == "" )	info = "등록정보가 없습니다";
-		myAdapter.addItem(ContextCompat.getDrawable(mActivity, R.drawable.personal_32), "대리점", info);
-
-		info = entity.getResellerName();
-		if( info == null || info == "" )	info = "등록정보가 없습니다";
-		myAdapter.addItem(ContextCompat.getDrawable(mActivity, R.drawable.telephone_call), "전화번호", info);
-
-		mListView.setAdapter(myAdapter);
-	}
-
-    private View.OnClickListener mOnClickListener = new View.OnClickListener()
-	{
-		@Override
-		public void onClick(View view)
-		{
-			switch ( view.getId() )
-			{
-				case	R.id.btnMMCreditCard:			// 카드결제
-					HomeToActivity(CommonFragToActivityCmd_ChangePage, 1);
-					break;
-				case	R.id.btnMMCashCard:			// 현금결제
-					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 2);
-					break;
-				case	R.id.btnMMCancelList:			// 내역조회
-					//	HomeToActivity(CommonFragToActivityCmd_ChangePage, 3);
-					break;
-				case	R.id.btnMMCancelPayment:		// 승인취소
-					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 4);
-					break;
-				case	R.id.btnMMCoupon:				// 쿠폰등록
-					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 5);
-					MyToast.showToast(mActivity, "준비중입니다.");
-					break;
-				case	R.id.btnMMMemberShip:			// 프로파일
-					//	Launch External Profile Activity in profile module
-					Intent intent = null;
-					try {
-						intent = new Intent( mActivity,	Class.forName(PROFILE_ACTIVITY_CLASS_NAME) );
-
-						startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);			// Launch ProfileActivity !!
-						HomeToActivity(HomeToActivityCmd_DetachEmvDetectionListener, null);
-
-					//	startActivity(intent);						// Launch ProfileActivity !!
-					} catch (ClassNotFoundException e)
-					{
-						e.printStackTrace();
-					}
-					break;
-				default:
-					break;
-			}
-		}
-	};
     //================================
     //  private variables
     //================================
-	private final static String	PROFILE_ACTIVITY_CLASS_NAME	= "ginu.android.van.profile.ProfileActivity";
-	private final static int PROFILE_ACTIVITY_REQUEST_CODE	= 9988;			// Must be a 16-bit int
     /*
      *  To communicate with parent activity
      *  #1. declare callback
      */
-    private FragmentCallbackInterface.HomeToActivity mCallback;
+    private PaymentCreditToActivity mCallback;
 
-    private Activity        mActivity;
-    private View            mFragmentView;
+   // private Activity		mActivity;
+   // private View			mFragmentView;
+   // private LinearLayout	mKbView;
+    private EditText		mEditTextAmount;
 
-    private int			mHomeButtonId[]	= {
-    							0,					// dummy id
-								R.id.btnMMCreditCard,
-								R.id.btnMMCashCard,
-								R.id.btnMMCancelList,
-								R.id.btnMMCancelPayment,
-								R.id.btnMMCoupon,
-								R.id.btnMMMemberShip
-							};
-
-	private ListView				mListView;
 
 }

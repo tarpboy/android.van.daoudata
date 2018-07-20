@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100"
+    android:gravity="center_vertical"
+    android:background="@android:color/holo_blue_light"
+    >
+    <TextView
+        android:id="@+id/tv_main_status_sw_cert_no"
+        android:layout_width="0dp"
+        android:layout_weight="40"
+        android:layout_height="match_parent"
+        android:textSize="@dimen/default_text_size"
+        android:textColor="@android:color/darker_gray"
+        android:text="@string/str_ktc_hw_certification_no"
+        android:gravity="center_vertical"
+        />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_weight="10"
+        android:layout_height="match_parent"
+        />
+
+    <!-- Bluetooth Status   -->
+    <LinearLayout
+        android:id="@+id/layout_main_status_bluetooth"
+        android:layout_width="0dp"
+        android:layout_weight="25"
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        >
+
+        <ImageView
+            android:id="@+id/iv_main_status_bluetooth_conn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/iconconnection"
+            android:scaleType="fitCenter"
+            />
+        <ImageView
+            android:id="@+id/iv_main_status_bluetooth_battery"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/battery_green"
+            android:scaleType="centerInside"
+            />
+        <TextView
+            android:id="@+id/tv_main_status_bluetooth_battery_level"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/default_text_size"
+            android:text="20"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+    <!-- Printer Status   -->
+    <LinearLayout
+        android:id="@+id/layout_main_status_printer"
+        android:layout_width="0dp"
+        android:layout_weight="25"
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        >
+
+        <ImageView
+            android:id="@+id/iv_main_status_printer_conn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/iconconnection"
+            android:scaleType="fitCenter"
+            />
+        <ImageView
+            android:id="@+id/iv_main_status_printer_battery"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/battery_green"
+            android:scaleType="centerInside"
+            />
+        <TextView
+            android:id="@+id/tv_main_status_printer_battery_level"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/default_text_size"
+            android:text="20"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+</LinearLayout>

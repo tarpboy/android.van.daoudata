@@ -48,10 +48,23 @@ public interface FragmentCallbackInterface {
     int ConfigWifiToActivityCmd_SaveURL     = 20002104;
 
     // << Callback Methods  >>
-    interface ActivityToPaymentCreadit{
-        void activityToPaymentCreaditCb(int cmd, Object obj);
+    interface ActivityToPaymentCredit{
+        void activityToPaymentCreditCb(int cmd, Object obj);
     }
-    interface PaymentCreaditToActivity{
-        void paymentCreaditToActivityCb(int cmd, Object obj);
+    interface PaymentCreditToActivity{
+        void paymentCreditToActivityCb(int cmd, Object obj);
     }
+
+	//==================================================//
+	/*		<<	==	Default Dummy Fragment	==	>>		*/
+	/**
+	 *	for Dummy Fragment Callbacks
+	 */
+	// << Callback Methods  >>
+	interface ActivityToDummy{			// implements @ fragment
+		void activityToDummyCb(int cmd, Object obj);
+    }
+    interface DummyToActivity{			// implements @ Activity
+		void dummyToActivityCb(int cmd, Object obj);
+	}
 }
