@@ -59,7 +59,7 @@
             android:layout_width="0dp"
             android:layout_weight="30"
 
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|center_horizontal"
             />
 
         <TextView
@@ -100,4 +100,11 @@
         android:visibility="invisible"
         />
 
+    <include
+        android:id="@+id/viewFootButtons"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:layout_width="match_parent"
+        layout="@layout/item_yes_no_buttons"
+        />
 </android.support.v7.widget.LinearLayoutCompat>
