@@ -295,6 +295,9 @@ public class FragmentHome extends Fragment implements
 
 		//	get current company entity
 		String vanID = AppHelper.AppPref.getCurrentVanID();
+		if(vanID == "")
+			return;
+
 		CompanyEntity entity = CompanyManger.getCompanyByID(vanID);		// find it by vanID and userID
 
 		String info;

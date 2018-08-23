@@ -28,6 +28,7 @@ import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
 import ginu.android.van.app_daou.daou.CreditCard;
 import ginu.android.van.app_daou.daou.DaouDataContants;
+import ginu.android.van.app_daou.daou.PaymentBase;
 import ginu.android.van.app_daou.database.IVanSpecification;
 import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.EncPayInfo;
@@ -433,7 +434,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			result = mmPaymentMsr.pay(receiptEntity, encPayInfo);
 
 
-
+		// ????????????? added by David SH Kim. to debug. Must remove this.
+		onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
 		return result;
 	}
 
