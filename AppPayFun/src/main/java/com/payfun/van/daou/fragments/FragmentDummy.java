@@ -10,20 +10,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import ginu.android.library.utils.common.ApiLog;
-import ginu.android.van.profile.R;
-import ginu.android.van.profile.fragments.AProfileFragPages;
+import com.payfun.van.daou.R;
 
+import ginu.android.library.utils.common.ApiLog;
+
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
-import static ginu.android.van.profile.fragments.IFragmentCallback.CommonFragToActivityCmd_ChangePage;
-import static ginu.android.van.profile.fragments.IFragmentCallback.DummyToProfileActivity;
-import static ginu.android.van.profile.fragments.IFragmentCallback.ProfileActivityToDummy;
 
 /**
  * Created by david_shkim on 2018-03-13.
  */
 
-public class FragmentDummy extends Fragment implements ProfileActivityToDummy
+public class FragmentDummy extends Fragment implements FragmentCallbackInterface.ActivityToDummy
 {
 
     /**
@@ -47,7 +45,7 @@ public class FragmentDummy extends Fragment implements ProfileActivityToDummy
 
 		// U make sure that the container hsa implemented the callback interface.
 		try {
-			mCallback = (DummyToProfileActivity) mActivity;
+			mCallback = (FragmentCallbackInterface.DummyToActivity) mActivity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(mActivity.toString()
 					+ "U must implement CallbackListenerOnBenefit");
@@ -280,7 +278,7 @@ public class FragmentDummy extends Fragment implements ProfileActivityToDummy
 					@Override
 					public void onClick(View view)
 					{
-						dummyToActivity(CommonFragToActivityCmd_ChangePage, AProfileFragPages.ProfileHomePage);
+						dummyToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					}
 				}
 		);
@@ -294,7 +292,7 @@ public class FragmentDummy extends Fragment implements ProfileActivityToDummy
 	 *  To communicate with parent activity
 	 *  #1. declare callback
 	 */
-	private DummyToProfileActivity mCallback;
+	private FragmentCallbackInterface.DummyToActivity mCallback;
 
 	private Activity        mActivity;
 	private View            mFragmentView;

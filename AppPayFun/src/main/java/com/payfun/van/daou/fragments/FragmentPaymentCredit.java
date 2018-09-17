@@ -27,14 +27,19 @@ import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
 import ginu.android.van.app_daou.daou.CreditCard;
+import ginu.android.van.app_daou.daou.DaouData;
 import ginu.android.van.app_daou.daou.DaouDataContants;
+import ginu.android.van.app_daou.daou.EmvTc;
 import ginu.android.van.app_daou.daou.PaymentBase;
 import ginu.android.van.app_daou.database.IVanSpecification;
 import ginu.android.van.app_daou.database.VanStaticData;
+import ginu.android.van.app_daou.entity.EmvTcEntity;
 import ginu.android.van.app_daou.entity.EncPayInfo;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
+import ginu.android.van.app_daou.entity.TerminalInfo;
 import ginu.android.van.app_daou.helper.AppHelper;
 import ginu.android.van.app_daou.helper.CalculateHelper;
+import ginu.android.van.app_daou.helper.VanHelper;
 import ginu.android.van.app_daou.utils.PaymentTask;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
@@ -312,6 +317,43 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			else
 				showDialog("카드리드오류");
 		}
+
+		public void doUserTransactionResult(String result)
+		{
+			if( "DECLINED".equalsIgnoreCase(result) )
+			{
+				resetToPayAgain(true);
+				showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+			}
+			else
+			if( "APPROVED".equalsIgnoreCase(result)) {
+				//	ToDo:: save receipt entity in json.
+				ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
+				String receiptEnJson = VanHelper.payment(receiptEntity);        // make receiptEntity to Json data
+				if (receiptEnJson != null)
+					VanStaticData.setResultPayment(receiptEnJson);
+
+				//	ToDo:: remove receipt entity.
+				AppHelper.resetReceiptEntity();
+
+				//	ToDo:: 2nd Generation if need
+				EmvTcEntity emvTcEntity = AppHelper.getEmvTcInfo();
+				if ((emvTcEntity != null) && emvTcEntity.getApprovalNo().equals("") && emvTcEntity.getEmvOption().equals("Y")) {
+					DaouData daouData = new EmvTc(emvTcEntity);
+					daouData.req(new TerminalInfo());
+				}
+
+				//	ToDo:: display Van Message when complete transaction
+				showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+
+				//	ToDo:: remove EmvData.
+				AppHelper.AppPref.resetEmvData();
+
+				//	ToDo:: goto ReceiptViewFragment
+				if (VanStaticData.isReadyShowReceipt())
+					PaymentCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+			}
+		}
 	}
 
 	private void showDialog(String msg)
@@ -385,7 +427,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 	}
 
 	private void doSendVanServer(final ReceiptEntity receiptEntity) {
-		final String cardToCancel = receiptEntity.getCardNo();
+		// final String cardToCancel = receiptEntity.getCardNo();
 		VanStaticData.mmPaymentSuccess = IVanSpecification.SuccessMsg.ForPayment.PaymentSuccess_Credit;
 
 		PaymentTask.CallBackMethod callBackMethod = new PaymentTask.CallBackMethod() {
@@ -394,12 +436,47 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 				mPaymentTask.updateCDialog(R.drawable.progress_sending);
 
 				String result = setReceiptPayment(receiptEntity);
-				return null;
+				return result;
 			}
 
 			@Override
 			public boolean res(String result) {
-				return false;
+				ApiLog.Dbg(Tag+"setReceiptPayment Result: "+result);
+				mPaymentTask.updateCDialog(R.drawable.progress_exiting);
+
+				checkNetworkResult( CreditCard.getVanNetworkResult() );
+/*	???? David SH Kim. moved this to doTransactionResult()
+				// check NetworkResult is incomplete or not
+				if( CreditCard.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
+				{
+					// ToDo:: nothing Yet!
+				}
+				else if( VanStaticData.isReadyShowReceipt() && (result != null) && (result.length() > 0) )
+				{
+				//	if( mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.GIFT) ||
+				//		mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.ICC_SWIPE)	)
+					if(! AppHelper.isEmvCardProcessing(mmReceiptEntity) )
+					{
+						//	ToDo:: remove EMV Data
+						AppHelper.AppPref.resetEmvData();
+
+						//	ToDo:: show ReceiptViewFragment
+						//	???? Must implement showReceiptFragment David SH Kim. ??????
+
+						//	ToDo:: show Van Display Message
+						showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+					}
+
+				}
+
+				if( result == null || result.equals("") )
+				{
+					resetToPayAgain(true);
+					showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+					return false;
+				}
+*/
+				return true;
 			}
 		};
 		mPaymentTask = new PaymentTask(mmActivity, callBackMethod, 0, R.drawable.progress_ing);
@@ -409,11 +486,12 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 	private String setReceiptPayment(ReceiptEntity receiptEntity) {
 		String result = null;
-		ApiLog.Dbg("Vanname:" + mVanName);
+		ApiLog.Dbg(Tag+"VanName:" + mVanName);
 
 		mmPaymentEmv = new CreditCard();
 		mmPaymentMsr = new CreditCard();
 
+		//	make SignData to String
 		String signData = "";
 		if( (mmSignImageByte != null) && (mmSignImageByte.length > 0) )
 		{
@@ -425,7 +503,10 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			}
 		}
 
+		//	get EMV Data saved
 		String emvData = EmvUtils.getEmvData();
+
+		//	make EncPayInfo to will be Encrypted.
 		EncPayInfo encPayInfo = new EncPayInfo("", emvData, signData);
 
 		if (receiptEntity.getCardInputMethod().equals(DaouDataContants.VAL_WCC_IC))
@@ -433,9 +514,38 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		else
 			result = mmPaymentMsr.pay(receiptEntity, encPayInfo);
 
+		// mmIsMsgReceivedFromVan = true;		//removed by David SH Kim.
+		if(	! (	mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.GIFT) ||
+				mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.ICC_SWIPE) ) )
+		{
 
-		// ????????????? added by David SH Kim. to debug. Must remove this.
-		onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
+			// check NetworkResult incomplete transaction or not
+			if( CreditCard.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
+			{
+				ApiLog.Dbg(Tag +"receiptEntry: "+ mmReceiptEntity.toString() );
+				return "";
+			}
+
+			ApiLog.Dbg(Tag+"sendOnlineProgressResult:" + result);
+			if( result != null && !result.equals("") )
+			{
+				//onlineProgressResp(OnlineProgressReturnType.NORMAL_RESP, CreditCard.getCardType(),result);
+					// ???? full_chip_data_option @ EmvResponse Field이 N일때 처리방안을 아직 확정못했다.????
+				if( VanStaticData.mmCreditSuccessWithEmv )
+					onlineProgressResp(OnlineProgressReturnType.NORMAL_RESP, CreditCard.getCardType(),result);
+				else
+					onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
+
+			}
+			else
+				onlineProgressResp(OnlineProgressReturnType.DECLINE_RESP,null,null);
+		}
+
+		//	clear sensitive data
+		emvData = null;
+		encPayInfo = null;
+	//	mmReceiptEntity = null;
+
 		return result;
 	}
 
@@ -451,7 +561,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 		super.setEmvReaderFragCB( new UserEmvReaderFragCb() );
 
-		mReceiptEntity = new ReceiptEntity();
+//		mReceiptEntity = new ReceiptEntity();
 	}
 
     private void setView(LayoutInflater inflater, ViewGroup container, View containView) {
@@ -545,6 +655,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
     //##########################################
     //  private variables
     //##########################################
+	private String Tag=String.format("[%s]",FragmentPaymentCredit.class.getSimpleName() );
     /*
      *  To communicate with parent activity
      *  #1. declare callback
@@ -558,7 +669,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
  //   private EmvReader						mEmvReader;
 
 	private PaymentTask						mPaymentTask;
-    private ReceiptEntity					mReceiptEntity;
+ //   private ReceiptEntity					mReceiptEntity;
     private Spinner 						mSpinnerDiviMonth;
 
 	private String							mVanName;

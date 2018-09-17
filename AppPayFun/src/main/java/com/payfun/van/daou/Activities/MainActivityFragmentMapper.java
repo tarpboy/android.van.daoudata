@@ -45,6 +45,9 @@ public class MainActivityFragmentMapper
 			case AMainFragPages.CouponPage:
 				fragment = new FragmentDummy();
 				break;
+			case AMainFragPages.ReceiptViewPage:
+				fragment = new FragmentDummy();
+				break;
 			default:
 				Log.e("[MainFragMapper]", "Unmapped fragment page" + page);
 				return false;

@@ -16,7 +16,8 @@ import java.lang.annotation.RetentionPolicy;
 				AMainFragPages.PaymentCashPage,
 				AMainFragPages.HistoryListPage,
 				AMainFragPages.CancelPaymentPage,
-				AMainFragPages.CouponPage
+				AMainFragPages.CouponPage,
+				AMainFragPages.ReceiptViewPage
 		}
 )
 
@@ -28,5 +29,6 @@ public @interface AMainFragPages {
 	int PaymentCashPage		= 2;
 	int HistoryListPage		= 3;
 	int CancelPaymentPage		= 4;
-	int CouponPage			= 5;
+	int CouponPage				= 5;
+	int ReceiptViewPage		= 6;
 }

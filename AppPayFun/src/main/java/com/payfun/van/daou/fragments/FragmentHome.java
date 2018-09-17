@@ -328,16 +328,16 @@ public class FragmentHome extends Fragment implements
 			switch ( view.getId() )
 			{
 				case	R.id.btnMMCreditCard:			// 카드결제
-					HomeToActivity(CommonFragToActivityCmd_ChangePage, 1);
+					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.PaymentCreditPage);
 					break;
 				case	R.id.btnMMCashCard:			// 현금결제
-					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 2);
+					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.PaymentCashPage);
 					break;
 				case	R.id.btnMMCancelList:			// 내역조회
-					//	HomeToActivity(CommonFragToActivityCmd_ChangePage, 3);
+					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.HistoryListPage);
 					break;
 				case	R.id.btnMMCancelPayment:		// 승인취소
-					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 4);
+					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.CancelPaymentPage);
 					break;
 				case	R.id.btnMMCoupon:				// 쿠폰등록
 					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 5);
