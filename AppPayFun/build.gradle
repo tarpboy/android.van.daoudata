@@ -43,6 +43,7 @@ dependencies {
     api project(':bbdevice')
     implementation project(':keyboard')
     implementation project(':signpad')
+    implementation project(':receipt')
     implementation project(':van_app_daou')
     implementation project(':profile')
 }

@@ -66,9 +66,10 @@ import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActi
 import static ginu.android.van.app_daou.database.VanStaticData.*;
 
 public class MainActivity extends AppCompatActivity implements
-		FragmentCallbackInterface.DummyToActivity,
 		FragmentCallbackInterface.HomeToActivity,
-		FragmentCallbackInterface.PaymentCreditToActivity
+		FragmentCallbackInterface.PaymentCreditToActivity,
+		FragmentCallbackInterface.ReceiptToActivity,
+		FragmentCallbackInterface.DummyToActivity
 {
 
     @Override
@@ -207,6 +208,20 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+	public void receiptToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+
+			default:
+				break;
+		}
+	}
+
 	/*		<<	==	for Dummy Fragment	==	>>		*/
 	//		Must mask on release
 	public void dummyToActivityCb(int cmd, Object obj)
@@ -217,9 +232,7 @@ public class MainActivity extends AppCompatActivity implements
 				int page = (int)obj;
 				changePage(page);
 				break;
-			case 	CommonFragToActivityCmd_ShowNumericKeyboard:
-				showNumericKeyboard((EditText)obj);
-				break;
+
 			default:
 				break;
 		}

@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/../android.van.lib/bbdevice" />
             <option value="$PROJECT_DIR$/../android.van.lib/keyboard" />
             <option value="$PROJECT_DIR$/../android.van.lib/library" />
+            <option value="$PROJECT_DIR$/../android.van.lib/receipt" />
             <option value="$PROJECT_DIR$/../android.van.lib/signpad" />
           </set>
         </option>

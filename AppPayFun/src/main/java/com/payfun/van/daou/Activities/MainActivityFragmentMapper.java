@@ -10,6 +10,7 @@ import com.payfun.van.daou.fragments.AMainFragPages;
 import com.payfun.van.daou.fragments.FragmentDummy;
 import com.payfun.van.daou.fragments.FragmentHome;
 import com.payfun.van.daou.fragments.FragmentPaymentCredit;
+import com.payfun.van.daou.fragments.FragmentReceipt;
 
 import ginu.android.library.utils.gui.ApiFragment;
 
@@ -46,7 +47,7 @@ public class MainActivityFragmentMapper
 				fragment = new FragmentDummy();
 				break;
 			case AMainFragPages.ReceiptViewPage:
-				fragment = new FragmentDummy();
+				fragment = new FragmentReceipt();
 				break;
 			default:
 				Log.e("[MainFragMapper]", "Unmapped fragment page" + page);

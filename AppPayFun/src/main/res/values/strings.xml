@@ -5,6 +5,7 @@
     <string name="str_menu_login_not_yet">payfun에 로그인 해주세요</string>
 
     <!--    common  -->
+    <string name="fragment_section_format">Fragment Page: %1$d</string>
     <string name="str_mark_of_money">원</string>
     <string name="str_creadit_installment">할부</string>
     <string name="str_creadit_num_of_month">개월</string>
@@ -42,4 +43,6 @@
         <item>24</item>
         <item>36</item>
     </string-array>
+    <string name="receipt_button_cancel">종료</string>
+    <string name="receipt_button_ok">인쇄</string>
 </resources>

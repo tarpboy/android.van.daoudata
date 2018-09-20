@@ -12,7 +12,15 @@ import android.widget.TextView;
 
 import com.payfun.van.daou.R;
 
+import java.lang.reflect.Type;
+import java.util.Hashtable;
+
+import ginu.android.library.receipt.ApiReceipt;
 import ginu.android.library.utils.common.ApiLog;
+import ginu.android.library.utils.common.ApiString;
+import ginu.android.van.app_daou.BaseFragment.FragmentReceiptBase;
+import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
+import ginu.android.van.app_daou.entity.ReceiptEntity;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
@@ -21,7 +29,7 @@ import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBE
  * Created by david_shkim on 2018-03-13.
  */
 
-public class FragmentDummy extends Fragment implements FragmentCallbackInterface.ActivityToDummy
+public class FragmentReceipt extends FragmentReceiptBase implements FragmentCallbackInterface.ActivityToReceipt
 {
 
     /**
@@ -33,10 +41,6 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		// U can get parent activity
-		mActivity = null;
-		if (context instanceof Activity)
-			mActivity = (Activity) context;
 
 		/*
 		 *  To communicate with parent activity
@@ -45,10 +49,10 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 
 		// U make sure that the container hsa implemented the callback interface.
 		try {
-			mCallback = (FragmentCallbackInterface.DummyToActivity) mActivity;
+			mCallback = (FragmentCallbackInterface.ReceiptToActivity) mmActivity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(mActivity.toString()
-					+ "U must implement CallbackListenerOnBenefit");
+			throw new ClassCastException(mmActivity.toString()
+					+ "U must implement CallbackListener");
 		}
 
 	}
@@ -99,13 +103,13 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 		ApiLog.Dbg(getString( R.string.fragment_section_format, mSectionNumber) + "onCreateView");
 
 		//  allocate the dummy fragment onto container
-		mFragmentView = inflater.inflate(R.layout.dummy_fragment, container, false);
+		mmFragmentView = inflater.inflate(R.layout.fragment_receipt, container, false);
 
 		//  set elements on the fragment
-		setView(inflater, container, mFragmentView);
+		setView(inflater, container, mmFragmentView);
 
 		//  Inflate the layout for this fragment
-		return mFragmentView;
+		return mmFragmentView;
 	}
 	// ToDo:: End of onCreateView
 
@@ -121,7 +125,7 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	{
 		super.onActivityCreated(savedInstanceState);
 
-		updateView(mFragmentView);
+		updateView(mmFragmentView);
 
 	}
 	// ToDo:: End of onActivityCreated
@@ -150,6 +154,8 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	{
 		super.onResume();
 		ApiLog.Dbg(getString( R.string.section_format, mSectionNumber) + "onResume");
+
+		showReceiptView();
 	}
 	//  ToDo:: End of onResume
 
@@ -241,7 +247,7 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	 *     - parent Activity tx data to this fragment
 	 */
 
-	public void activityToDummyCb(int cmd, Object obj) {
+	public void activityToReceiptCb(int cmd, Object obj) {
 		switch(cmd)
 		{
 			//case    ActivityToHomeCmd_DeviceAdapter:
@@ -253,38 +259,57 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
         }
 	}
 
-	private void dummyToActivity(int cmd, Object obj)
+	private void receiptToActivity(int cmd, Object obj)
     {
-        mCallback.dummyToActivityCb(cmd, obj);
+        mCallback.receiptToActivityCb(cmd, obj);
     }
-	///================================
-	// *  private methods
-	//=================================
+
+	//##########################################
+	//	Private Methods
+	//##########################################
 	private void setView(LayoutInflater inflater, ViewGroup container, View view) {
 
-
 		//  ToDo:: set all event listeners like button on click listener if you have
-		TextView tv = (TextView) view.findViewById(R.id.tv_dummy_fragment);
-		tv.setText("This is a dummy fragment!!"+mSectionNumber);
+		Button btn = (Button)mmFragmentView.findViewById(R.id.btn_foot_confirm);
+		btn.setText( getString( R.string.receipt_button_ok) );
+		btn.setOnClickListener(mButtonListener);
+
+		btn = mmFragmentView.findViewById(R.id.btn_foot_cancel);
+		btn.setText( getString( R.string.receipt_button_cancel) );
+		btn.setOnClickListener(mButtonListener);
 		return;
 	}
 
 	private void updateView(View view)
 	{
 		// ToDo: update any view element you want
-		Button btnHome = view.findViewById(R.id.btn_home);
-		btnHome.setOnClickListener(
-				new View.OnClickListener(){
-					@Override
-					public void onClick(View view)
-					{
-						dummyToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
-					}
-				}
-		);
 
 	}
 
+	private View.OnClickListener mButtonListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			switch(v.getId())
+			{
+				case	R.id.btn_foot_cancel:
+					// ToDo:: go to Home
+					receiptToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
+					break;
+				case	R.id.btn_foot_confirm:
+					// ToDo:: print out
+					receiptToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
+					break;
+				default:
+					break;
+			}
+		}
+	};
+
+	private void showReceiptView()
+	{
+		ReceiptEntity receiptEntity = getReceiptEntityFromVanStaticData();
+		makeReceiptData(receiptEntity);
+	}
 	//================================
 	//  private variables
 	//================================
@@ -292,12 +317,10 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	 *  To communicate with parent activity
 	 *  #1. declare callback
 	 */
-	private FragmentCallbackInterface.DummyToActivity mCallback;
+	private FragmentCallbackInterface.ReceiptToActivity mCallback;
 
-	private Activity        mActivity;
-	private View            mFragmentView;
 
 	private static int mSectionNumber = -1;
 
-
+	private	 ApiReceipt		mApiReceipt;
 }

@@ -327,33 +327,43 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			}
 			else
 			if( "APPROVED".equalsIgnoreCase(result)) {
-				//	ToDo:: save receipt entity in json.
-				ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
-				String receiptEnJson = VanHelper.payment(receiptEntity);        // make receiptEntity to Json data
-				if (receiptEnJson != null)
-					VanStaticData.setResultPayment(receiptEnJson);
-
-				//	ToDo:: remove receipt entity.
-				AppHelper.resetReceiptEntity();
-
-				//	ToDo:: 2nd Generation if need
-				EmvTcEntity emvTcEntity = AppHelper.getEmvTcInfo();
-				if ((emvTcEntity != null) && emvTcEntity.getApprovalNo().equals("") && emvTcEntity.getEmvOption().equals("Y")) {
-					DaouData daouData = new EmvTc(emvTcEntity);
-					daouData.req(new TerminalInfo());
-				}
-
-				//	ToDo:: display Van Message when complete transaction
-				showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
-
-				//	ToDo:: remove EmvData.
-				AppHelper.AppPref.resetEmvData();
-
-				//	ToDo:: goto ReceiptViewFragment
-				if (VanStaticData.isReadyShowReceipt())
-					PaymentCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+				doTransactionComplete();
+			}else
+			if( "ICC_CARD_REMOVED".equals(result) &&
+				AppHelper.AppPref.getVanNetworkStatus().equals(IVanSpecification.NetworkResult.Success) )
+			{
+				doTransactionComplete();
 			}
 		}
+	}
+
+	private void doTransactionComplete()
+	{
+		//	ToDo:: save receipt entity in json.
+		ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
+		String receiptEnJson = VanHelper.payment(receiptEntity);        // make receiptEntity to Json data
+		if (receiptEnJson != null)
+			VanStaticData.setResultPayment(receiptEnJson);
+
+		//	ToDo:: remove receipt entity.
+		AppHelper.resetReceiptEntity();
+
+		//	ToDo:: 2nd Generation if need
+		EmvTcEntity emvTcEntity = AppHelper.getEmvTcInfo();
+		if ((emvTcEntity != null) && emvTcEntity.getApprovalNo().equals("") && emvTcEntity.getEmvOption().equals("Y")) {
+			DaouData daouData = new EmvTc(emvTcEntity);
+			daouData.req(new TerminalInfo());
+		}
+
+		//	ToDo:: display Van Message when complete transaction
+		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+
+		//	ToDo:: remove EmvData.
+		AppHelper.AppPref.resetEmvData();
+
+		//	ToDo:: goto ReceiptViewFragment
+		if (VanStaticData.isReadyShowReceipt())
+			PaymentCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 	}
 
 	private void showDialog(String msg)
@@ -638,7 +648,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			switch(v.getId())
 			{
 				case	R.id.btn_foot_cancel:
-					activityToPaymentCreditCb(CommonFragToActivityCmd_ChangePage, null);
+					PaymentCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
 					String amount = ApiString.requireText(mEditTextAmount);
