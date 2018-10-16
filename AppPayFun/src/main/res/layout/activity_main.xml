@@ -24,7 +24,7 @@
             android:layout_weight="3"
             />
         <!-- PayFun Header View -->
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/viewHeader"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -33,14 +33,24 @@
             android:layout_gravity="start|top"
             >
             <TextView
-                android:id="@+id/tvHeaderTitle"
+                android:id="@+id/tvProgramTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|center_horizontal"
                 android:textColor="@android:color/darker_gray"
                 android:text="@string/str_program_title"
                 android:textSize="@dimen/small_text_size" />
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tvHeaderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="@android:color/white"
+                android:text=""
+                android:textSize="@dimen/large_xxx_text_size"
+                />
+
+        </FrameLayout>
 
         <!--    Fragment View Container -->
         <FrameLayout

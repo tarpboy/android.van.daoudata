@@ -15,7 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import com.bbpos.bbdevice.PayfunBBDeviceController;
@@ -60,6 +62,7 @@ import ginu.android.van.app_daou.utils.IVanString;
 import ginu.android.van.app_daou.utils.MyPhoneNumber;
 import ginu.android.van.app_daou.utils.MyReaderDevices;
 import ginu.android.van.app_daou.utils.MyToast;
+import ginu.android.van.app_daou.utils.MyTypeFace;
 
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
@@ -318,6 +321,20 @@ public class MainActivity extends AppCompatActivity implements
 		return MainActivityFragmentMapper.changePage(mActivity, page, null);
 	}
 
+	public static void setHeaderView(String title)
+	{
+		FrameLayout headerView = mActivity.findViewById(R.id.viewHeader);
+		TextView tvHeaderTitle = mActivity.findViewById(R.id.tvHeaderTitle);
+		if(title == null) {
+			headerView.setBackgroundResource(R.drawable.bg_title_no_text);
+			tvHeaderTitle.setText("");
+			return;
+		}
+
+		headerView.setBackgroundResource(R.drawable.bg_title_text);
+		MyTypeFace.setTypeFace(mActivity, headerView);
+		tvHeaderTitle.setText(title);
+	}
 
     //==========================================
 	//	Emv Detect Callbacks
