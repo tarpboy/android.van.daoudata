@@ -7,9 +7,13 @@ import android.util.Log;
 
 import com.payfun.van.daou.R;
 import com.payfun.van.daou.fragments.AMainFragPages;
+import com.payfun.van.daou.fragments.FragmentCancelCredit;
+import com.payfun.van.daou.fragments.FragmentCancelSelector;
 import com.payfun.van.daou.fragments.FragmentDummy;
 import com.payfun.van.daou.fragments.FragmentHome;
+import com.payfun.van.daou.fragments.FragmentPaymentCash;
 import com.payfun.van.daou.fragments.FragmentPaymentCredit;
+import com.payfun.van.daou.fragments.FragmentPrint;
 import com.payfun.van.daou.fragments.FragmentReceipt;
 
 import ginu.android.library.utils.gui.ApiFragment;
@@ -35,19 +39,28 @@ public class MainActivityFragmentMapper
 				fragment = new FragmentPaymentCredit();
 				break;
 			case AMainFragPages.PaymentCashPage:
-				fragment = new FragmentDummy();
+				fragment = new FragmentPaymentCash();
 				break;
 			case AMainFragPages.HistoryListPage:
 				fragment = new FragmentDummy();
 				break;
-			case AMainFragPages.CancelPaymentPage:
-				fragment = new FragmentDummy();
+			case AMainFragPages.CancelSelectorPage:
+				fragment = new FragmentCancelSelector();
 				break;
 			case AMainFragPages.CouponPage:
 				fragment = new FragmentDummy();
 				break;
 			case AMainFragPages.ReceiptViewPage:
 				fragment = new FragmentReceipt();
+				break;
+			case	AMainFragPages.PrintViewPage:
+				fragment = new FragmentPrint();
+				break;
+			case	AMainFragPages.CancelCreditPage:
+				fragment = new FragmentCancelCredit();
+				break;
+			case	AMainFragPages.CancelCashPage:
+				fragment = new FragmentDummy();
 				break;
 			default:
 				Log.e("[MainFragMapper]", "Unmapped fragment page" + page);

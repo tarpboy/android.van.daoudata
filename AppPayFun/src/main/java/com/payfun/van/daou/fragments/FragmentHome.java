@@ -337,7 +337,7 @@ public class FragmentHome extends Fragment implements
 					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.HistoryListPage);
 					break;
 				case	R.id.btnMMCancelPayment:		// 승인취소
-					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.CancelPaymentPage);
+					HomeToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.CancelSelectorPage);
 					break;
 				case	R.id.btnMMCoupon:				// 쿠폰등록
 					// HomeToActivity(CommonFragToActivityCmd_ChangePage, 5);

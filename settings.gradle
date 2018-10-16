@@ -1,9 +1,10 @@
-include ':AppPayFun', ':library', ':bbdevice', ':keyboard', ':signpad', 'receipt', 'van_app_daou', 'profile'
+include ':AppPayFun', ':library', ':bbdevice', ':keyboard', ':signpad', 'receipt', 'print', 'van_app_daou', 'profile'
 
 project(':library').projectDir=new File('../android.van.lib/library')
 project(':bbdevice').projectDir=new File('../android.van.lib/bbdevice')
 project(':keyboard').projectDir=new File('../android.van.lib/keyboard')
 project(':signpad').projectDir=new File('../android.van.lib/signpad')
 project(':receipt').projectDir=new File('../android.van.lib/receipt')
+project(':print').projectDir=new File('../android.van.lib/print')
 project(':van_app_daou').projectDir=new File('../android.van.app/van_app_daou')
 project(':profile').projectDir=new File('../android.van.app/profile')

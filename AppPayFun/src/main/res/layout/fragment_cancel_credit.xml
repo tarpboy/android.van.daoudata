@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
+    >
+
+    <!--    Fragment Creadit Top View   -->
+    <include
+        android:id="@+id/fragment_credit_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        layout="@layout/item_credit_card_top"
+        />
+
+    <!--    payFun Status View  -->
+    <TextView
+        android:id="@+id/fragment_credit_tvPaymentStatus"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:gravity="center_horizontal|center_vertical"
+        android:textSize="@dimen/small_text_size"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        >
+
+        <TextView
+            android:id="@+id/tv_cancel_credit_req_date"
+            android:layout_width="0dp"
+            android:layout_weight="70"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/txt_input_amount"
+            android:text="거래일시"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold"
+            />
+        <Button
+            android:id="@+id/btn_cancel_credit_reading_card"
+            android:layout_width="0dp"
+            android:layout_weight="30"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_confirm_selector"
+            android:text="카드읽기"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        android:background="@drawable/txt_input_amount"
+        >
+
+        <TextView
+            android:id="@+id/tv_cancel_credit_amount"
+            android:layout_width="0dp"
+            android:layout_weight="90"
+            android:layout_height="match_parent"
+            android:gravity="end|center_vertical"
+            android:text="0"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/tv_cancel_credit_mark_of_money"
+            android:layout_width="0dp"
+            android:layout_weight="10"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/str_mark_of_money"
+            android:textSize="@dimen/large_text_size"
+            />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    <TextView
+        android:id="@+id/tv_cancel_credit_approval_no"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@drawable/txt_input_amount"
+        android:gravity="center"
+        android:text="승인번호"
+        android:textSize="@dimen/large_text_size"
+        android:textStyle="bold"
+        />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="28"
+        />
+
+    <include
+        android:id="@+id/viewFootButtons"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:layout_width="match_parent"
+        layout="@layout/item_yes_no_buttons"
+        />
+</android.support.v7.widget.LinearLayoutCompat>

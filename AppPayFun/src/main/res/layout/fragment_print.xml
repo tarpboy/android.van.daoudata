@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
+    >
+
+    <include
+        android:id="@+id/fragment_print_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90"
+        layout="@layout/print_view"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        />
+    <include
+        android:id="@+id/viewFootButtons"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:layout_width="match_parent"
+        layout="@layout/item_yes_no_buttons"
+        />
+</android.support.v7.widget.LinearLayoutCompat>

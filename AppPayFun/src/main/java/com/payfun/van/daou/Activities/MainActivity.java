@@ -36,6 +36,9 @@ import ginu.android.library.emv.bbdevice.EmvReader;
 import ginu.android.library.emv.bbdevice.IEmvReader;
 import ginu.android.library.emv.bbdevice.listeners.IDetectEmvListenerCb;
 import ginu.android.library.keyboard.ApiEditTextAmount;
+import ginu.android.library.keyboard.ApiEditTextCompanyNo;
+import ginu.android.library.keyboard.ApiEditTextPhoneNo;
+import ginu.android.library.keyboard.KeyboardHandler;
 import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiExtStorage;
 import ginu.android.library.utils.common.ApiLog;
@@ -60,7 +63,9 @@ import ginu.android.van.app_daou.utils.MyToast;
 
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowCompanyNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowPhoneNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_AttachEmvDetectionListener;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_DetachEmvDetectionListener;
 import static ginu.android.van.app_daou.database.VanStaticData.*;
@@ -68,7 +73,11 @@ import static ginu.android.van.app_daou.database.VanStaticData.*;
 public class MainActivity extends AppCompatActivity implements
 		FragmentCallbackInterface.HomeToActivity,
 		FragmentCallbackInterface.PaymentCreditToActivity,
+		FragmentCallbackInterface.PaymentCashToActivity,
+		FragmentCallbackInterface.CancelSelectorToActivity,
 		FragmentCallbackInterface.ReceiptToActivity,
+		FragmentCallbackInterface.PrintToActivity,
+		FragmentCallbackInterface.CancelCreditToActivity,
 		FragmentCallbackInterface.DummyToActivity
 {
 
@@ -208,6 +217,41 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+	public void paymentCashToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+			case 	CommonFragToActivityCmd_ShowNumericKeyboard:
+				showNumericKeyboard((EditText)obj);
+				break;
+			case CommonFragToActivityCmd_ShowPhoneNumericKeyboard:
+				showPhoneNumberKeyboard( (EditText) obj);
+				break;
+			case CommonFragToActivityCmd_ShowCompanyNumericKeyboard:
+				showCompanyNumberKeyboard( (EditText) obj);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public void cancelSelectorToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+			default:
+				break;
+		}
+	}
+
 	public void receiptToActivityCb(int cmd, Object obj)
 	{
 		switch(cmd)
@@ -222,6 +266,32 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	}
 
+	public void printToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	public void cancelCreditToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+			default:
+				break;
+		}
+	}
 	/*		<<	==	for Dummy Fragment	==	>>		*/
 	//		Must mask on release
 	public void dummyToActivityCb(int cmd, Object obj)
@@ -843,10 +913,45 @@ public class MainActivity extends AppCompatActivity implements
 
 		LinearLayout kbView = findViewById(R.id.numeric_keyboard_layout);
 
+		if( KeyboardHandler.isShow() ) {
+			ApiLog.Dbg("MainActivity" + "keyboard already runs");
+			return;
+		}
 		ApiEditTextAmount.disableShowSoftInput(editTextAmount);
 		ApiEditTextAmount.showKeyboard(this, kbView, editTextAmount);
 
 		ApiEditTextAmount.setTextChangeListener(editTextAmount);
+	}
+
+	private void showPhoneNumberKeyboard(EditText editText)
+	{
+		LinearLayout kbView = findViewById(R.id.numeric_keyboard_layout);
+
+		if( KeyboardHandler.isShow() ) {
+			ApiLog.Dbg(Tag + "keyboard already runs");
+			return;
+		}
+
+		ApiEditTextPhoneNo.disableShowSoftInput(editText);
+		ApiEditTextPhoneNo.showKeyboard(this, kbView, editText);
+
+		ApiEditTextPhoneNo.setTextChangeListener(editText);
+
+	}
+
+	private void showCompanyNumberKeyboard(EditText editText)
+	{
+		LinearLayout kbView = findViewById(R.id.numeric_keyboard_layout);
+
+		if( KeyboardHandler.isShow() ) {
+			ApiLog.Dbg(Tag + "keyboard already runs");
+			return;
+		}
+
+		ApiEditTextCompanyNo.disableShowSoftInput(editText);
+		ApiEditTextCompanyNo.showKeyboard(this, kbView, editText);
+
+		ApiEditTextCompanyNo.setTextChangeListener(editText);
 	}
 
 	private void dismissNumericKeyboard()
@@ -1021,6 +1126,7 @@ public class MainActivity extends AppCompatActivity implements
     //##########################################
     //  Private variables
     //##########################################
+	private final String Tag = String.format("[%s] ", MainActivity.class.getSimpleName() );
 	private interface MessageID{
 		int		WAIT_FOR_BT_TURN_ON	= 0;
 		int		STOP_SEARCHING			= 100;

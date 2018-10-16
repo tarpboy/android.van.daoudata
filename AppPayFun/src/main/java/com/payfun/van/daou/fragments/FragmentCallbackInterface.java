@@ -13,6 +13,8 @@ public interface FragmentCallbackInterface {
     **/
     int CommonFragToActivityCmd_ChangePage		= 10001000;
     int CommonFragToActivityCmd_ShowNumericKeyboard = 10001001;
+	int CommonFragToActivityCmd_ShowPhoneNumericKeyboard = 10001002;		// only for cash payment
+	int CommonFragToActivityCmd_ShowCompanyNumericKeyboard = 10001003;		// only for cash payment
 
 	//==================================================//
 	/*		<<	==		Home Fragment		==	>>		*/
@@ -56,13 +58,24 @@ public interface FragmentCallbackInterface {
         void paymentCreditToActivityCb(int cmd, Object obj);
     }
 
-	//==================================================//
-	/*		<<	==	Payment Credit Fragment	==	>>		*/
+	//=================================================//
+	/*		<<	==	Payment Cash Fragment	==	>>			*/
 	/**
-	 *  for Payment Credit Fragment Callbacks
+	 *  for Payment Cash Fragment Callbacks
 	 **/
-	// Activity to ConfigWifi Command
+	// << Callback Methods  >>
+	interface ActivityToPaymentCash{
+		void activityToPaymentCashCb(int cmd, Object obj);
+	}
+	interface PaymentCashToActivity{
+		void paymentCashToActivityCb(int cmd, Object obj);
+	}
 
+	//=================================================//
+	/*		<<	==	Receipt Fragment	==	>>			*/
+	/**
+	 *  for Receipt Fragment Callbacks
+	 **/
 	// << Callback Methods  >>
 	interface ActivityToReceipt{
 		void activityToReceiptCb(int cmd, Object obj);
@@ -70,6 +83,58 @@ public interface FragmentCallbackInterface {
 	interface ReceiptToActivity{
 		void receiptToActivityCb(int cmd, Object obj);
 	}
+	//=================================================//
+	/*		<<	==	Print Fragment	==	>>				*/
+	/**
+	 *  for Print Fragment Callbacks
+	 **/
+	// << Callback Methods  >>
+	interface ActivityToPrint{
+		void activityToPrintCb(int cmd, Object obj);
+	}
+	interface PrintToActivity{
+		void printToActivityCb(int cmd, Object obj);
+	}
+
+	//=================================================//
+	/*		<<	==	Cancel Selector Fragment	==	>>	*/
+	/**
+	 *  for Cancel Selector Fragment Callbacks
+	 **/
+	// << Callback Methods  >>
+	interface ActivityToCancelSelector{
+		void activityToCancelSelectorCb(int cmd, Object obj);
+	}
+	interface CancelSelectorToActivity{
+		void cancelSelectorToActivityCb(int cmd, Object obj);
+	}
+
+	//=================================================//
+	/*		<<	==	Cancel Credit Fragment	==	>>	*/
+	/**
+	 *  for Cancel Credit Fragment Callbacks
+	 **/
+	// << Callback Methods  >>
+	interface ActivityToCancelCredit{
+		void activityToCancelCreditCb(int cmd, Object obj);
+	}
+	interface CancelCreditToActivity{
+		void cancelCreditToActivityCb(int cmd, Object obj);
+	}
+
+	//=================================================//
+	/*		<<	==	Cancel Cash Fragment	==	>>	*/
+	/**
+	 *  for Cancel Cach Fragment Callbacks
+	 **/
+	// << Callback Methods  >>
+	interface ActivityToCancelCash{
+		void activityToCancelCashCb(int cmd, Object obj);
+	}
+	interface CancelCashToActivity{
+		void cancelCashToActivityCb(int cmd, Object obj);
+	}
+
 	//==================================================//
 	/*		<<	==	Default Dummy Fragment	==	>>		*/
 	/**

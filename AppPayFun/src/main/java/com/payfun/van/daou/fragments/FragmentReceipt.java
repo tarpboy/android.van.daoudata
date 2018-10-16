@@ -153,7 +153,7 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 	public void onResume()
 	{
 		super.onResume();
-		ApiLog.Dbg(getString( R.string.section_format, mSectionNumber) + "onResume");
+		ApiLog.Dbg(getString( R.string.fragment_section_format, mSectionNumber) + "onResume");
 
 		showReceiptView();
 	}
@@ -222,7 +222,7 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 	public void onDetach()
 	{
 		super.onDetach();
-		ApiLog.Dbg(getString( R.string.section_format, mSectionNumber) + "onDetach");
+		ApiLog.Dbg(getString( R.string.fragment_section_format, mSectionNumber) + "onDetach");
 	}
 	//  ToDo:: End of onDetach
 
@@ -297,7 +297,7 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 					break;
 				case	R.id.btn_foot_confirm:
 					// ToDo:: print out
-					receiptToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
+					receiptToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.PrintViewPage);
 					break;
 				default:
 					break;

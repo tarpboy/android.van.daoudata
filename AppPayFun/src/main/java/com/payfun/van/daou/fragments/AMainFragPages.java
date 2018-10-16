@@ -15,9 +15,12 @@ import java.lang.annotation.RetentionPolicy;
 				AMainFragPages.PaymentCreditPage,
 				AMainFragPages.PaymentCashPage,
 				AMainFragPages.HistoryListPage,
-				AMainFragPages.CancelPaymentPage,
+				AMainFragPages.CancelSelectorPage,
 				AMainFragPages.CouponPage,
-				AMainFragPages.ReceiptViewPage
+				AMainFragPages.ReceiptViewPage,
+				AMainFragPages.PrintViewPage,
+				AMainFragPages.CancelCreditPage,
+				AMainFragPages.CancelCashPage
 		}
 )
 
@@ -25,10 +28,13 @@ import java.lang.annotation.RetentionPolicy;
 
 public @interface AMainFragPages {
 	int	MainHomePage			= 0;
-	int PaymentCreditPage		= 1;
+	int PaymentCreditPage	= 1;
 	int PaymentCashPage		= 2;
 	int HistoryListPage		= 3;
-	int CancelPaymentPage		= 4;
-	int CouponPage				= 5;
+	int CancelSelectorPage	= 4;
+	int CouponPage			= 5;
 	int ReceiptViewPage		= 6;
+	int PrintViewPage			= 7;
+	int CancelCreditPage		= 8;
+	int CancelCashPage		= 9;
 }

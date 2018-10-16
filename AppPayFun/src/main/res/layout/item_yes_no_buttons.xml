@@ -33,7 +33,7 @@
         android:layout_height="match_parent"
         android:text="@string/ok"
         android:textSize="@dimen/large_text_size"
-        android:background="@drawable/background_button_comfirm"
+        android:background="@drawable/background_button_confirm"
         />
     <Space
         android:layout_width="0dp"

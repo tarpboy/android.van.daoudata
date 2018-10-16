@@ -46,6 +46,7 @@ dependencies {
     implementation project(':receipt')
     implementation project(':van_app_daou')
     implementation project(':profile')
+    implementation project(':print')
 }
 
 //  MUST ADD THIS AT THE BOTTOM

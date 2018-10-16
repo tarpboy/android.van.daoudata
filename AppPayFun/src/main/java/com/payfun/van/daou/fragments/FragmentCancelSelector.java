@@ -21,7 +21,7 @@ import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBE
  * Created by david_shkim on 2018-03-13.
  */
 
-public class FragmentDummy extends Fragment implements FragmentCallbackInterface.ActivityToDummy
+public class FragmentCancelSelector extends Fragment implements FragmentCallbackInterface.ActivityToCancelSelector
 {
 
     /**
@@ -45,7 +45,7 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 
 		// U make sure that the container hsa implemented the callback interface.
 		try {
-			mCallback = (FragmentCallbackInterface.DummyToActivity) mActivity;
+			mCallback = (FragmentCallbackInterface.CancelSelectorToActivity) mActivity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(mActivity.toString()
 					+ "U must implement CallbackListenerOnBenefit");
@@ -99,7 +99,7 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 		ApiLog.Dbg(getString( R.string.fragment_section_format, mSectionNumber) + "onCreateView");
 
 		//  allocate the dummy fragment onto container
-		mFragmentView = inflater.inflate(R.layout.dummy_fragment, container, false);
+		mFragmentView = inflater.inflate(R.layout.fragment_cancel_selector, container, false);
 
 		//  set elements on the fragment
 		setView(inflater, container, mFragmentView);
@@ -241,7 +241,7 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	 *     - parent Activity tx data to this fragment
 	 */
 
-	public void activityToDummyCb(int cmd, Object obj) {
+	public void activityToCancelSelectorCb(int cmd, Object obj) {
 		switch(cmd)
 		{
 			//case    ActivityToHomeCmd_DeviceAdapter:
@@ -253,9 +253,9 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
         }
 	}
 
-	private void dummyToActivity(int cmd, Object obj)
+	private void cancelSelectorToActivity(int cmd, Object obj)
     {
-        mCallback.dummyToActivityCb(cmd, obj);
+        mCallback.cancelSelectorToActivityCb(cmd, obj);
     }
 	///================================
 	// *  private methods
@@ -264,24 +264,28 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 
 
 		//  ToDo:: set all event listeners like button on click listener if you have
-		TextView tv = (TextView) view.findViewById(R.id.tv_dummy_fragment);
-		tv.setText("This is a dummy fragment!!"+mSectionNumber);
+		Button btn = mFragmentView.findViewById(R.id.btn_cancel_selector_credit);
+		btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				cancelSelectorToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.CancelCreditPage);
+			}
+		});
+
+		btn = mFragmentView.findViewById(R.id.btn_cancel_selector_cash);
+		btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				cancelSelectorToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.CancelCashPage);
+			}
+		});
 		return;
 	}
 
 	private void updateView(View view)
 	{
 		// ToDo: update any view element you want
-		Button btnHome = view.findViewById(R.id.btn_home);
-		btnHome.setOnClickListener(
-				new View.OnClickListener(){
-					@Override
-					public void onClick(View view)
-					{
-						dummyToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
-					}
-				}
-		);
+
 
 	}
 
@@ -292,7 +296,7 @@ public class FragmentDummy extends Fragment implements FragmentCallbackInterface
 	 *  To communicate with parent activity
 	 *  #1. declare callback
 	 */
-	private FragmentCallbackInterface.DummyToActivity mCallback;
+	private FragmentCallbackInterface.CancelSelectorToActivity mCallback;
 
 	private Activity        mActivity;
 	private View            mFragmentView;

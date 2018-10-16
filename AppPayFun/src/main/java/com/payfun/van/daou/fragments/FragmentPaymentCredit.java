@@ -19,7 +19,6 @@ import com.payfun.van.daou.fragments.FragmentCallbackInterface.PaymentCreditToAc
 
 import java.util.Hashtable;
 
-import ginu.android.library.emv.bbdevice.EmvReader;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
@@ -30,7 +29,6 @@ import ginu.android.van.app_daou.daou.CreditCard;
 import ginu.android.van.app_daou.daou.DaouData;
 import ginu.android.van.app_daou.daou.DaouDataContants;
 import ginu.android.van.app_daou.daou.EmvTc;
-import ginu.android.van.app_daou.daou.PaymentBase;
 import ginu.android.van.app_daou.database.IVanSpecification;
 import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.EmvTcEntity;
@@ -119,7 +117,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
         //    mCurrentPosition = savedInstanceState.getInt(ARG_POSITION);
 
        //  allocate the dummy fragment onto container
-        mFragmentView = inflater.inflate(R.layout.fragment_payment_creadit, container, false);
+        mFragmentView = inflater.inflate(R.layout.fragment_payment_credit, container, false);
 
         //  set elements on the fragment
         setView(inflater, container, mFragmentView);
@@ -335,6 +333,11 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 				doTransactionComplete();
 			}
 		}
+
+		public void doEmvCardDataResult(boolean isSuccess)
+		{
+			//	ToDo:: Nothing in here
+		}
 	}
 
 	private void doTransactionComplete()
@@ -455,37 +458,6 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 				mPaymentTask.updateCDialog(R.drawable.progress_exiting);
 
 				checkNetworkResult( CreditCard.getVanNetworkResult() );
-/*	???? David SH Kim. moved this to doTransactionResult()
-				// check NetworkResult is incomplete or not
-				if( CreditCard.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
-				{
-					// ToDo:: nothing Yet!
-				}
-				else if( VanStaticData.isReadyShowReceipt() && (result != null) && (result.length() > 0) )
-				{
-				//	if( mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.GIFT) ||
-				//		mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.ICC_SWIPE)	)
-					if(! AppHelper.isEmvCardProcessing(mmReceiptEntity) )
-					{
-						//	ToDo:: remove EMV Data
-						AppHelper.AppPref.resetEmvData();
-
-						//	ToDo:: show ReceiptViewFragment
-						//	???? Must implement showReceiptFragment David SH Kim. ??????
-
-						//	ToDo:: show Van Display Message
-						showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
-					}
-
-				}
-
-				if( result == null || result.equals("") )
-				{
-					resetToPayAgain(true);
-					showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
-					return false;
-				}
-*/
 				return true;
 			}
 		};
@@ -499,7 +471,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		ApiLog.Dbg(Tag+"VanName:" + mVanName);
 
 		mmPaymentEmv = new CreditCard();
-		mmPaymentMsr = new CreditCard();
+		mmPayment = new CreditCard();
 
 		//	make SignData to String
 		String signData = "";
@@ -522,17 +494,17 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		if (receiptEntity.getCardInputMethod().equals(DaouDataContants.VAL_WCC_IC))
 			result = mmPaymentEmv.payEmv(receiptEntity, encPayInfo);
 		else
-			result = mmPaymentMsr.pay(receiptEntity, encPayInfo);
+			result = mmPayment.pay(receiptEntity, encPayInfo);
 
 		// mmIsMsgReceivedFromVan = true;		//removed by David SH Kim.
 		if(	! (	mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.GIFT) ||
 				mmReceiptEntity.getTypeSub().equals(IVanSpecification.CreditSubType.ICC_SWIPE) ) )
-		{
+		{	//	ToDo:: terminating EMV Procedure
 
 			// check NetworkResult incomplete transaction or not
 			if( CreditCard.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
 			{
-				ApiLog.Dbg(Tag +"receiptEntry: "+ mmReceiptEntity.toString() );
+				ApiLog.Dbg(Tag +"NoEOT::receiptEntry: "+ mmReceiptEntity.toString() );
 				return "";
 			}
 
@@ -542,7 +514,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 				//onlineProgressResp(OnlineProgressReturnType.NORMAL_RESP, CreditCard.getCardType(),result);
 					// ???? full_chip_data_option @ EmvResponse Field이 N일때 처리방안을 아직 확정못했다.????
 				if( VanStaticData.mmCreditSuccessWithEmv )
-					onlineProgressResp(OnlineProgressReturnType.NORMAL_RESP, CreditCard.getCardType(),result);
+					onlineProgressResp(OnlineProgressReturnType.NORMAL_RESP, CreditCard.getCardType(), result);
 				else
 					onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
 
@@ -550,8 +522,26 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			else
 				onlineProgressResp(OnlineProgressReturnType.DECLINE_RESP,null,null);
 		}
+		else
+		{	//	ToDo:: terminate MSR Swipe procedure
 
+			// check NetworkResult incomplete transaction or not
+			if( CreditCard.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
+			{
+				ApiLog.Dbg(Tag +"NoEOT::receiptEntry: "+ mmReceiptEntity.toString() );
+				return "";
+			}
+
+			ApiLog.Dbg(Tag+"sendOnlineProgressResult:" + result);
+			if( result != null && !result.equals("") )
+				onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
+			else
+				onlineProgressResp(OnlineProgressReturnType.DECLINE_RESP,null,null);
+
+		}
 		//	clear sensitive data
+		signData="";
+		mmSignImageByte = null;
 		emvData = null;
 		encPayInfo = null;
 	//	mmReceiptEntity = null;
