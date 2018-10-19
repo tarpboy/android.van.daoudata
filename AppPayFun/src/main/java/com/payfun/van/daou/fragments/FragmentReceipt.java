@@ -22,6 +22,7 @@ import ginu.android.van.app_daou.BaseFragment.FragmentReceiptBase;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
 
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangeHeaderTitle;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
 
@@ -308,6 +309,8 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 	private void showReceiptView()
 	{
 		ReceiptEntity receiptEntity = getReceiptEntityFromVanStaticData();
+		String title = getReceiptHeader(receiptEntity);
+		receiptToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, title);
 		makeReceiptData(receiptEntity);
 	}
 	//================================

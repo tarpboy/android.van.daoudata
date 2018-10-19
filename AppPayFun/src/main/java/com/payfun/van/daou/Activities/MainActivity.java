@@ -65,6 +65,7 @@ import ginu.android.van.app_daou.utils.MyToast;
 import ginu.android.van.app_daou.utils.MyTypeFace;
 
 
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangeHeaderTitle;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowCompanyNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
@@ -228,6 +229,10 @@ public class MainActivity extends AppCompatActivity implements
 				int page = (int)obj;
 				changePage(page);
 				break;
+			case	CommonFragToActivityCmd_ChangeHeaderTitle:
+				String title = (String)obj;
+				setHeaderView(title);
+				break;
 			case 	CommonFragToActivityCmd_ShowNumericKeyboard:
 				showNumericKeyboard((EditText)obj);
 				break;
@@ -263,7 +268,10 @@ public class MainActivity extends AppCompatActivity implements
 				int page = (int)obj;
 				changePage(page);
 				break;
-
+			case	CommonFragToActivityCmd_ChangeHeaderTitle:
+				String title = (String)obj;
+				setHeaderView(title);
+				break;
 			default:
 				break;
 		}

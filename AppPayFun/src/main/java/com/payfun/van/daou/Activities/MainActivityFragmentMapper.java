@@ -62,7 +62,7 @@ public class MainActivityFragmentMapper
 				fragment = new FragmentReceipt();
 				break;
 			case	AMainFragPages.PrintViewPage:
-				MainActivity.setHeaderView(IVanString.title.print_credit);
+			//	MainActivity.setHeaderView(IVanString.title.print_credit);
 				fragment = new FragmentPrint();
 				break;
 			case	AMainFragPages.CancelCreditPage:

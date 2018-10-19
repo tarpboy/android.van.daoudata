@@ -20,20 +20,36 @@ import com.payfun.van.daou.R;
 import java.util.Hashtable;
 
 import ginu.android.library.keyboard.ApiEditTextAmount;
+import ginu.android.library.keyboard.ApiEditTextCardNo;
 import ginu.android.library.keyboard.ApiEditTextCompanyNo;
 import ginu.android.library.keyboard.ApiEditTextPhoneNo;
 import ginu.android.library.keyboard.KeyboardHandler;
+import ginu.android.library.utils.common.ApiAux;
+import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
+import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
+import ginu.android.van.app_daou.daou.CashReceipt;
+import ginu.android.van.app_daou.daou.DaouDataContants;
 import ginu.android.van.app_daou.database.IVanSpecification;
+import ginu.android.van.app_daou.database.VanStaticData;
+import ginu.android.van.app_daou.entity.EncPayInfo;
+import ginu.android.van.app_daou.entity.ReceiptEntity;
 import ginu.android.van.app_daou.helper.AppHelper;
+import ginu.android.van.app_daou.helper.CalculateHelper;
+import ginu.android.van.app_daou.helper.VanHelper;
+import ginu.android.van.app_daou.utils.IVanString;
+import ginu.android.van.app_daou.utils.MyToast;
+import ginu.android.van.app_daou.utils.PaymentTask;
 
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangeHeaderTitle;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowCompanyNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowPhoneNumericKeyboard;
+import static ginu.android.library.utils.common.ApiDate.getDatePreferenceBasicFormat;
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
 
 /**
@@ -77,7 +93,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 	 *          initialize essential components for paused, stopped, and resumed.
 	 * @param savedInstanceState
 	 */
-/*	// ToDo:: Enable, if you want to initialize essential components.
+	// ToDo:: Enable, if you want to initialize essential components.
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -86,7 +102,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		//  initialize essential components here
 		initComponents();
 	}
-*/	// ToDo:: End of onCreate
+	// ToDo:: End of onCreate
 
 	/**
 	 * Fragment life: step 3
@@ -296,23 +312,34 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		public void doCheckCard(String strCheckCardMode)
 		{
 
-
 		}
 
 		public void doStartEmv(String strCheckCardMode)
 		{
 
-
 		}
 
 		public void endCardReader(Hashtable<String, Object> result)
 		{
+			boolean finalResult = (boolean) result.get(IEmvUserMessages.UserKeys.finalResult);
 
+			if(finalResult)
+				doOnLineProgress();
+			else
+				showDialog("카드리드오류");
 		}
 
 		public void doUserTransactionResult(String result)
 		{
-
+			if( "DECLINED".equalsIgnoreCase(result) )
+			{
+				resetToPayAgain(true);
+				showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+			}
+			else
+			if( "APPROVED".equalsIgnoreCase(result)) {
+				doTransactionComplete();
+			}
 		}
 
 		public void doEmvCardDataResult(boolean isSuccess)
@@ -321,9 +348,199 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		}
 	}
 
-	///================================
+	private void doTransactionComplete()
+	{
+		//	ToDo:: save receipt entity in json.
+		ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
+		String receiptEnJson = VanHelper.payment(receiptEntity);        // make receiptEntity to Json data
+		if (receiptEnJson != null)
+			VanStaticData.setResultPayment(receiptEnJson);
+
+		//	ToDo:: remove receipt entity.
+		AppHelper.resetReceiptEntity();
+
+		//	ToDo:: display Van Message when complete transaction
+		if( mIsVanRequest )											// Van Accessing Procedure only
+			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+
+		//	ToDo:: goto ReceiptViewFragment
+		if (VanStaticData.isReadyShowReceipt())
+			paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+
+		resetToPayAgain();
+	}
+
+	//##########################################
 	// *  private methods
-	//=================================
+	//##########################################
+	private void doOnLineProgress(){
+		/*
+		 *	prevent a consequence onLineProgress Request
+		 */
+		if(	! AppHelper.checkLastPayment() ) {
+			super.resetToPayAgain();
+			return;
+		}
+
+		//	save last transaction date:: yyyy-MM-dd a hh:mm:ss
+		String currentDate = getDatePreferenceBasicFormat();
+		AppHelper.AppPref.setLastPaymentInfo(currentDate);
+
+		doPaymentCash();
+	}
+
+	private void doPaymentCash()
+	{
+		String amount = mEditTextAmount.getText().toString().replace(",", "");
+		String cardNo;
+
+		if(amount.equals("")) {
+			showDialog(IVanString.payment.please_input_total_amount);
+			return;
+		}
+
+		if( mmBankCardData.equals("")) {
+			cardNo = getKeyInData();
+			if( cardNo.equals("") )
+			{
+				showDialog(IVanString.payment.please_input_card_value);
+				return;
+			}
+		}
+		else {
+			cardNo = mmBankCardData;
+			String formattedCardNumber = ApiString.formattedCardNumber(cardNo);
+			mEditTextSelectedTarget.setText(formattedCardNumber);
+		}
+
+		mVanName = mmCompanyEntity.getVanName();
+
+		//	account for point
+		String point = "0";
+		if (! mmPointRate.equals("0") ) {
+			point = CalculateHelper.getPoint(mmPointRate, amount);
+			amount = CalculateHelper.getTAmount(point, amount);
+		}
+
+		//	account for tax
+		if (mmCompanyEntity.getWithTax())
+			mmReceiptEntity = CalculateHelper.calWithTax( amount, point, mmCompanyEntity.getTaxRate(), mmCompanyEntity.getServiceTaxRate() );
+		else
+			mmReceiptEntity = CalculateHelper.calNoTax( amount, point, mmCompanyEntity.getTaxRate(), mmCompanyEntity.getServiceTaxRate() );
+
+		mmReceiptEntity.setVanName(mVanName);
+		mmReceiptEntity.setCompanyNo( mmCompanyEntity.getCompanyNo() );
+		mmReceiptEntity.setMachineCode( mmCompanyEntity.getMachineCode() );
+		mmReceiptEntity.setTypeSub( mCashTypeSub );
+		mmReceiptEntity.setType( IVanSpecification.PaymentType.Cash );
+		mmReceiptEntity.setReciptImage("");
+		mmReceiptEntity.setCardInputMethod(VanStaticData.mmCardInputMethod);
+		mmReceiptEntity.setStaffName(AppHelper.AppPref.getCurrentUserName());
+		mmReceiptEntity.setUserID(AppHelper.AppPref.getCurrentUserID());
+		mmReceiptEntity.setRequestDate(ApiDate.getYYYYMMDD());			//DateHelper.getCurrentDateFull()//
+		if( IVanSpecification.CashSubType.EVIDENCE_EXPENDITURE.equals(mCashTypeSub) )
+			mmReceiptEntity.setMonth( "01" );
+		else
+			mmReceiptEntity.setMonth( "00" );
+
+		mmReceiptEntity.setApprovalCode("");
+
+
+
+		cardNo = EmvUtils.formatMaskedTrack2(cardNo);
+		mmReceiptEntity.setCardNo(cardNo);
+
+		//	ToDo:: for Not Access Van Server, fake some information for receipt processing.
+		if( ! mIsVanRequest )
+		{
+			mmReceiptEntity.setBuyerName( mCashTypeSub );
+			mmReceiptEntity.setApprovalCode( ApiAux.getUnique10Num() );
+			mmReceiptEntity.setRevDate( ApiDate.getCurrentDateFull() );
+			mmReceiptEntity.setRevStatus( IVanSpecification.ReceiptStatus.PaymentReceipt );
+/*
+			String result = VanHelper.payment(mmReceiptEntity, true);
+			VanStaticData.setResultPayment(result);							// backup for Receipt Fragment
+
+			paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);	// End
+*/
+			AppHelper.setReceiptEntity(mmReceiptEntity);
+			doTransactionComplete();
+			return;
+		}
+
+		resetCardNo();
+		ApiLog.Dbg("receipt to pay:" + mmReceiptEntity.toString());
+
+		doSendVanServer(mmReceiptEntity);
+	}
+
+	private void doSendVanServer(final ReceiptEntity receiptEntity)
+	{
+		VanStaticData.mmPaymentSuccess = IVanSpecification.SuccessMsg.ForPayment.PaymentSuccess_Cash;
+
+		PaymentTask.CallBackMethod callBackMethod = new PaymentTask.CallBackMethod() {
+			@Override
+			public String run() {
+				mPaymentTask.updateCDialog(R.drawable.progress_sending);
+
+				String result = setReceiptPayment(receiptEntity);
+				return result;
+			}
+
+			@Override
+			public boolean res(String result) {
+				ApiLog.Dbg(Tag+"setReceiptPayment Result: "+result);
+				mPaymentTask.updateCDialog(R.drawable.progress_exiting);
+
+				checkNetworkResult( CashReceipt.getVanNetworkResult() );
+				return true;
+			}
+		};
+		mPaymentTask = new PaymentTask(mmActivity, callBackMethod, 0, R.drawable.progress_ing);
+		mPaymentTask.execute();
+	}
+
+	private String setReceiptPayment(ReceiptEntity receiptEntity)
+	{
+		String result = null;
+		ApiLog.Dbg(Tag+"VanName:" + mVanName);
+
+		mmPayment = new CashReceipt();
+
+		result = mmPayment.pay(receiptEntity, new EncPayInfo());
+
+		// check NetworkResult incomplete transaction or not
+		if( CashReceipt.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
+		{
+			ApiLog.Dbg(Tag +"NoEOT::receiptEntry: "+ mmReceiptEntity.toString() );
+			return "";
+		}
+
+		//	ToDo:: terminate Swipe procedure
+		ApiLog.Dbg(Tag+"sendOnlineProgressResult:" + result);
+		if( result != null && !result.equals("") )
+			onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
+		else
+			onlineProgressResp(OnlineProgressReturnType.DECLINE_RESP,null,null);
+
+		//	clear sensitive data
+
+		return result;
+	}
+
+	private String getKeyInData()
+	{
+		String keyInData = mEditTextSelectedTarget.getText().toString().replace("-","");
+		if( ! keyInData.equals("") )
+		{
+			keyInData.replace("-", "");
+		}
+		return keyInData;
+	}
+
+	//==========================================
+	//	Initialize Fragment View.
+	//==========================================
 	private void initComponents()
 	{
 		super.setEmvReaderFragCB( new FragmentPaymentCash.UserEmvReaderFragCb() );
@@ -346,11 +563,10 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		 *	link the numeric keyboard to Amount EditText Field
 		 */
 		mEditTextPhone = mFragmentView.findViewById(R.id.fragment_cash_input_phone);
-		mEditTextPhone.setOnTouchListener( mTouchListener);
-		//ApiEditTextCompanyNo.setTextChangeListener(mEditTextPhoneOrCompanyCode);
 
 		mEditTextCompanyCode = mFragmentView.findViewById(R.id.fragment_cash_input_company_code);
-		mEditTextCompanyCode.setOnTouchListener( mTouchListener);
+
+		mEditTextCardNo = mFragmentView.findViewById(R.id.fragment_cash_input_card_number);
 
 		final LinearLayout amountLayout = mFragmentView.findViewById(R.id.fragment_cash_input_money_layout);
 		mEditTextAmount = amountLayout.findViewById(R.id.edInputAmount);
@@ -372,7 +588,13 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 	private void updateView(View view)
 	{
 		// ToDo: update any view element you want
-		selectPhoneOrCompanyNoView("phone");
+		VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn.
+
+		//	ToDo:: default Cash Category: 현금매출
+		mCashTypeSub = IVanSpecification.CashSubType.CASH_SALES;
+		selectCategory( R.id.fragment_cash_image_btn_select1 );
+		selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
+
 	}
 
 
@@ -387,13 +609,17 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					break;
 				case R.id.fragment_cash_input_phone:
 					if( event.getAction() == MotionEvent.ACTION_DOWN)
-						showLocalNumberKeyboard("phone", mEditTextPhone);
+						showLocalNumberKeyboard(CashTransactionMethod.PhoneNo, mEditTextPhone);
 						//paymentCashToActivity(CommonFragToActivityCmd_ShowPhoneNumericKeyboard, mEditTextPhone);
 					break;
 				case R.id.fragment_cash_input_company_code:
 					if( event.getAction() == MotionEvent.ACTION_DOWN)
-						showLocalNumberKeyboard("company",mEditTextCompanyCode);
+						showLocalNumberKeyboard(CashTransactionMethod.CompanyNo,mEditTextCompanyCode);
 						//paymentCashToActivity(CommonFragToActivityCmd_ShowCompanyNumericKeyboard, mEditTextCompanyCode);
+					break;
+				case	R.id.fragment_cash_input_card_number:
+					if( event.getAction() == MotionEvent.ACTION_DOWN)
+						showLocalNumberKeyboard(CashTransactionMethod.CardNo,mEditTextCardNo);
 					break;
 			}
 
@@ -410,10 +636,13 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
-					paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
+					doPaymentCash();
 					break;
 				case R.id.fragment_cash_btn_card_read:
-					//	ToDo:: start reading card
+					//	ToDo:: start reading card by swipe
+					VanStaticData.setIsCashJob(true);
+					startCheckCard(IEmvUserMessages.CheckCardMode.SWIPE);
+					selectCashTransactionMethodView(CashTransactionMethod.CardNo);		// view EditTextCardNo
 					break;
 				default:
 					break;
@@ -425,27 +654,51 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		@Override
 		public void onClick(View v) {
 			int cashCategoryId = v.getId();
+			ApiLog.Dbg(Tag+"imageButton OnClickListener: "+ cashCategoryId);
+
+			VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn.
+
 			switch ( cashCategoryId )
 			{
 				case	R.id.fragment_cash_image_btn_select1:		// ToDo:: 현금매출
-					selectPhoneOrCompanyNoView("phone");
+					paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "현금 매출");
+					selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 					selectCategory( cashCategoryId );
+					mIsVanRequest = false;							// Not allow accessing Van
+					setCardReaderOnClick(false);						// Not allow Reading Card
+					mCashTypeSub = IVanSpecification.CashSubType.CASH_SALES;			// 현금매출
 					break;
 				case R.id.fragment_cash_image_btn_select2:			// ToDo:: 일반영수증
-					selectPhoneOrCompanyNoView("phone");
+					paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "일반 영수증");
+					selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 					selectCategory( cashCategoryId );
+					mIsVanRequest = false;							// Not allow accessing Van
+					setCardReaderOnClick(false);						// Not allow Reading Card
+					mCashTypeSub = IVanSpecification.CashSubType.RECEIPT_PRINTING;		// 일반영수증
 					break;
 				case R.id.fragment_cash_image_btn_select3:			// ToDo:: 소득공제영수증
-					selectPhoneOrCompanyNoView("phone");
+					paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "소득공제영수증");
+					selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 					selectCategory( cashCategoryId );
+					mIsVanRequest = true;
+					setCardReaderOnClick(true);
+					mCashTypeSub = IVanSpecification.CashSubType.INCOME_DEDUCTION;		// 소득공제
 					break;
 				case R.id.fragment_cash_image_btn_select4:			// ToDo:: 사업자지출증빙영수증
-					selectPhoneOrCompanyNoView("company");
+					paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "사업자지출증빙영수증");
+					selectCashTransactionMethodView(CashTransactionMethod.CompanyNo);
 					selectCategory( cashCategoryId );
+					mIsVanRequest = true;
+					setCardReaderOnClick(true);
+					mCashTypeSub = IVanSpecification.CashSubType.EVIDENCE_EXPENDITURE;	// 지출증빙
 					break;
 				case R.id.fragment_cash_image_btn_select5:			// ToDo:: 자진발급
-					selectPhoneOrCompanyNoView("phone");
+					paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "자진발급 영수증");
+					selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 					selectCategory( cashCategoryId );
+					mIsVanRequest = true;
+					setCardReaderOnClick(true);
+					mCashTypeSub = IVanSpecification.CashSubType.VOLUNTARY_ISSUANCE;	// 자진발급
 					break;
 				default:
 					break;
@@ -455,7 +708,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 	private void setCardReaderOnClick(boolean enable)
 	{
-		if(true) {
+		if(enable) {
 			mBtnCardRead.setOnClickListener(mButtonListener);
 			mBtnCardRead.setBackgroundResource(R.drawable.button_confirm_selector);
 		} else {
@@ -482,15 +735,45 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		}
 	}
 
-	private void selectPhoneOrCompanyNoView(String mode)
+	private void selectCashTransactionMethodView(String method)
 	{
-		if("phone".equalsIgnoreCase(mode)){
-			mEditTextPhone.setVisibility(View.VISIBLE);
-			mEditTextCompanyCode.setVisibility(View.GONE);
-		}else{
-			mEditTextPhone.setVisibility(View.GONE);
-			mEditTextCompanyCode.setVisibility(View.VISIBLE);
+		switch(method)
+		{
+			case	CashTransactionMethod.PhoneNo:
+				mEditTextPhone.setOnTouchListener( mTouchListener);				// PhoneNumber		:: ON
+				mEditTextPhone.setVisibility(View.VISIBLE);
+				mEditTextCompanyCode.setOnTouchListener( null );				// CompanyNumber	:: OFF
+				mEditTextCompanyCode.setVisibility(View.GONE);
+				mEditTextCardNo.setOnTouchListener(null);						// CardNumber		:: OFF
+				mEditTextCardNo.setVisibility(View.GONE);
+
+				mEditTextSelectedTarget = mEditTextPhone;						// selected Target input method
+				break;
+			case	CashTransactionMethod.CompanyNo:
+				mEditTextPhone.setOnTouchListener( null);						// PhoneNumber		:: OFF
+				mEditTextPhone.setVisibility(View.GONE);
+				mEditTextCompanyCode.setOnTouchListener( mTouchListener );		// CompanyNumber	:: ON
+				mEditTextCompanyCode.setVisibility(View.VISIBLE);
+				mEditTextCardNo.setOnTouchListener(null);						// CardNumber		:: OFF
+				mEditTextCardNo.setVisibility(View.GONE);
+
+				mEditTextSelectedTarget = mEditTextCompanyCode;				// selected Target input method
+				break;
+			case	CashTransactionMethod.CardNo:
+				mEditTextPhone.setOnTouchListener( null);						// PhoneNumber		:: OFF
+				mEditTextPhone.setVisibility(View.GONE);
+				mEditTextCompanyCode.setOnTouchListener( null );				// CompanyNumber	:: OFF
+				mEditTextCompanyCode.setVisibility(View.GONE);
+				mEditTextCardNo.setOnTouchListener(mTouchListener);				// CardNumber		:: ON
+				mEditTextCardNo.setVisibility(View.VISIBLE);
+
+				mEditTextSelectedTarget = mEditTextCardNo;						// selected Target input method
+				break;
+			default:
+				ApiLog.Dbg(Tag+"Unknown Cash Transaction Input Method: "+ method);
+				break;
 		}
+
 	}
 
 	private void showLocalNumberKeyboard(String mode, EditText editText)
@@ -501,38 +784,66 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			ApiLog.Dbg(Tag + "keyboard already runs");
 			return;
 		}
-		if("phone".equalsIgnoreCase(mode)) {
-			//ApiEditTextCompanyNo.dissmissKeyboard();			// ToDo:: toggle keyboard. kill company keyboard
-			ApiEditTextPhoneNo.disableShowSoftInput(editText);
-			ApiEditTextPhoneNo.showKeyboard(mmActivity, kbView, editText);
+		switch(mode)
+		{
+			case	CashTransactionMethod.PhoneNo:
+				//ApiEditTextCompanyNo.dissmissKeyboard();			// ToDo:: toggle keyboard. kill company keyboard
+				ApiEditTextPhoneNo.disableShowSoftInput(editText);
+				ApiEditTextPhoneNo.showKeyboard(mmActivity, kbView, editText);
 
-			ApiEditTextPhoneNo.setTextChangeListener(editText);
-		} else {
-			//ApiEditTextPhoneNo.dissmissKeyboard();				// ToDo:: toggle keyboard. kill Phone keyboard.
-			ApiEditTextCompanyNo.disableShowSoftInput(editText);
-			ApiEditTextCompanyNo.showKeyboard(mmActivity, kbView, editText);
+				ApiEditTextPhoneNo.setTextChangeListener(editText);
+				break;
+			case	CashTransactionMethod.CompanyNo:
+				ApiEditTextCompanyNo.disableShowSoftInput(editText);
+				ApiEditTextCompanyNo.showKeyboard(mmActivity, kbView, editText);
 
-			ApiEditTextCompanyNo.setTextChangeListener(editText);
+				ApiEditTextCompanyNo.setTextChangeListener(editText);
+				break;
+			case	CashTransactionMethod.CardNo:
+				ApiEditTextCardNo.disableShowSoftInput(editText);
+				ApiEditTextCardNo.showKeyboard(mmActivity,kbView, editText);
+
+				ApiEditTextCardNo.setTextChangeListener(editText);
+				break;
+			default:
+				break;
 		}
 	}
 
+	private void showDialog(String msg)
+	{
+		showUserMessage(msg);
+	}
 
 	//##########################################
 	//  private variables
 	//##########################################
 	private final String Tag = String.format("[%s]", FragmentPaymentCash.class.getSimpleName() );
+
+	private interface CashTransactionMethod{
+		String PhoneNo		= "phoneNumber";
+		String CompanyNo	= "companyNumber";
+		String CardNo		= "cardNumber";
+	}
+
 	/*
 	 *  To communicate with parent activity
 	 *  #1. declare callback
 	 */
 	private FragmentCallbackInterface.PaymentCashToActivity mCallback;
 
-	private View            mFragmentView;
+	private View					mFragmentView;
 
-	private static int mSectionNumber = -1;
+	private static int 			mSectionNumber = -1;
 
-	private Button				mBtnCardRead;
-	private EditText			mEditTextPhone, mEditTextCompanyCode, mEditTextAmount;
-	private ImageButton		mImgBtnSelect1, mImgBtnSelect2, mImgBtnSelect3, mImgBtnSelect4, mImgBtnSelect5;
+	private Button					mBtnCardRead;
+	private EditText				mEditTextAmount;
+	private EditText				mEditTextPhone, mEditTextCompanyCode, mEditTextCardNo, mEditTextSelectedTarget;
+	private ImageButton			mImgBtnSelect1, mImgBtnSelect2, mImgBtnSelect3, mImgBtnSelect4, mImgBtnSelect5;
 
+	private boolean				mIsVanRequest = false;
+
+	private String					mVanName;
+	private String					mCashTypeSub;
+	private PaymentTask			mPaymentTask;
 }

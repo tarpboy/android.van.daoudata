@@ -15,6 +15,7 @@ public interface FragmentCallbackInterface {
     int CommonFragToActivityCmd_ShowNumericKeyboard = 10001001;
 	int CommonFragToActivityCmd_ShowPhoneNumericKeyboard = 10001002;		// only for cash payment
 	int CommonFragToActivityCmd_ShowCompanyNumericKeyboard = 10001003;		// only for cash payment
+	int CommonFragToActivityCmd_ChangeHeaderTitle	= 10001100;
 
 	//==================================================//
 	/*		<<	==		Home Fragment		==	>>		*/

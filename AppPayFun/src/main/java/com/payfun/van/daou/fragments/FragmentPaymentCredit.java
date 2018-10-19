@@ -424,7 +424,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		mmReceiptEntity.setCompanyNo( mmCompanyEntity.getCompanyNo() );
 		mmReceiptEntity.setMachineCode( mmCompanyEntity.getMachineCode() );
 		mmReceiptEntity.setTypeSub( VanStaticData.mmPayTypeSub );
-		mmReceiptEntity.setType( IVanSpecification.PaymentType.Credit );
+		mmReceiptEntity.setType( IVanSpecification.PaymentType.Cash );
 		mmReceiptEntity.setReciptImage("");
 		mmReceiptEntity.setCardInputMethod(VanStaticData.mmCardInputMethod);
 		mmReceiptEntity.setStaffName(AppHelper.AppPref.getCurrentUserName());
@@ -523,7 +523,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 				onlineProgressResp(OnlineProgressReturnType.DECLINE_RESP,null,null);
 		}
 		else
-		{	//	ToDo:: terminate MSR Swipe procedure
+		{	//	ToDo:: terminate Swipe procedure
 
 			// check NetworkResult incomplete transaction or not
 			if( CreditCard.getVanNetworkResult().equals(IVanSpecification.NetworkResult.NoEOT) )
