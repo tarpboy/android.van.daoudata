@@ -658,6 +658,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 			VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn.
 
+			mEditTextSelectedTarget.setText("");					// clear selected EditText.		2018/10/25
+
 			switch ( cashCategoryId )
 			{
 				case	R.id.fragment_cash_image_btn_select1:		// ToDo:: 현금매출
@@ -697,8 +699,9 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 					selectCategory( cashCategoryId );
 					mIsVanRequest = true;
-					setCardReaderOnClick(true);
+					setCardReaderOnClick(false);						// Not allow Reading Card
 					mCashTypeSub = IVanSpecification.CashSubType.VOLUNTARY_ISSUANCE;	// 자진발급
+					mEditTextPhone.setText("01-0000-1234");
 					break;
 				default:
 					break;
