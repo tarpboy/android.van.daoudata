@@ -629,7 +629,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 		});
 
-
+		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
+		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
     }
 
     private View.OnClickListener mButtonListener = new View.OnClickListener() {
