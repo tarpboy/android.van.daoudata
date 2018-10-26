@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.payfun.van.daou.R;
@@ -28,6 +29,7 @@ import ginu.android.van.app_daou.daou.DaouDataContants;
 import ginu.android.van.app_daou.daou.EmvTc;
 import ginu.android.van.app_daou.database.IVanSpecification;
 import ginu.android.van.app_daou.database.VanStaticData;
+import ginu.android.van.app_daou.entity.CompanyEntity;
 import ginu.android.van.app_daou.entity.EmvTcEntity;
 import ginu.android.van.app_daou.entity.EncPayInfo;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
@@ -37,6 +39,7 @@ import ginu.android.van.app_daou.helper.VanHelper;
 import ginu.android.van.app_daou.utils.DialogCancelList;
 import ginu.android.van.app_daou.utils.IVanString;
 import ginu.android.van.app_daou.utils.MyToast;
+import ginu.android.van.app_daou.utils.MyTypeFace;
 import ginu.android.van.app_daou.utils.PaymentTask;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
@@ -592,6 +595,8 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		mTvApprovalNo = mFragmentView.findViewById(R.id.tv_cancel_credit_approval_no);
 		mTvReqDate = mFragmentView.findViewById(R.id.tv_cancel_credit_req_date);
 
+		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
+		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
 	}
 
 	private View.OnClickListener mButtonListener = new View.OnClickListener() {

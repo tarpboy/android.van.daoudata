@@ -595,6 +595,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		selectCategory( R.id.fragment_cash_image_btn_select1 );
 		selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 
+		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
+		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
 	}
 
 

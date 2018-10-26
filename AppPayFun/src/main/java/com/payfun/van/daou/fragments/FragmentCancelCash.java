@@ -593,7 +593,8 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 	private void updateView(View view)
 	{
 		// ToDo: update any view element you want
-
+		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
+		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
 	}
 
 	private View.OnTouchListener mTouchListener = new View.OnTouchListener(){

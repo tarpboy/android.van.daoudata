@@ -7,9 +7,9 @@
     android:weightSum="100"
     >
 
-    <!--    Fragment Creadit Top View   -->
+    <!--    Fragment Credit Top View   -->
     <include
-        android:id="@+id/fragment_credit_top_layout"
+        android:id="@+id/fragment_top_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="20"
