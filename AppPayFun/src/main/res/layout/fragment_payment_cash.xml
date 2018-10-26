@@ -42,7 +42,7 @@
             android:layout_width="0dp"
             android:layout_weight="70"
             android:layout_height="match_parent"
-            android:inputType="phone"
+            android:inputType="number"
             android:maxLength="12"
             android:textSize="@dimen/large_text_size"
             android:textStyle="bold"
@@ -53,7 +53,7 @@
             android:layout_width="0dp"
             android:layout_weight="70"
             android:layout_height="match_parent"
-            android:inputType="phone"
+            android:inputType="number"
             android:maxLength="19"
             android:textSize="@dimen/large_text_size"
             android:textStyle="bold"
@@ -68,8 +68,7 @@
             android:textColor="@android:color/white"
             android:text="카드읽기"
             android:textSize="@dimen/large_x_text_size"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_margin="5dp"
             />
     </LinearLayout>
 

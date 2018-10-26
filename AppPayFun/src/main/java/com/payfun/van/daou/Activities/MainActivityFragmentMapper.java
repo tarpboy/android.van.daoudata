@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.payfun.van.daou.R;
 import com.payfun.van.daou.fragments.AMainFragPages;
+import com.payfun.van.daou.fragments.FragmentCancelCash;
 import com.payfun.van.daou.fragments.FragmentCancelCredit;
 import com.payfun.van.daou.fragments.FragmentCancelSelector;
 import com.payfun.van.daou.fragments.FragmentDummy;
@@ -71,7 +72,7 @@ public class MainActivityFragmentMapper
 				break;
 			case	AMainFragPages.CancelCashPage:
 				MainActivity.setHeaderView(IVanString.title.cancel_cash);
-				fragment = new FragmentDummy();
+				fragment = new FragmentCancelCash();
 				break;
 			default:
 				Log.e("[MainFragMapper]", "Unmapped fragment page" + page);

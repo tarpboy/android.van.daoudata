@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements
 		FragmentCallbackInterface.ReceiptToActivity,
 		FragmentCallbackInterface.PrintToActivity,
 		FragmentCallbackInterface.CancelCreditToActivity,
+		FragmentCallbackInterface.CancelCashToActivity,
 		FragmentCallbackInterface.DummyToActivity
 {
 
@@ -292,6 +293,18 @@ public class MainActivity extends AppCompatActivity implements
 	}
 
 	public void cancelCreditToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+			default:
+				break;
+		}
+	}
+	public void cancelCashToActivityCb(int cmd, Object obj)
 	{
 		switch(cmd)
 		{
