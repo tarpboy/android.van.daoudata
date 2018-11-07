@@ -28,6 +28,7 @@ import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
+import ginu.android.library.utils.security.ApiBase64;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
@@ -346,6 +347,14 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		{
 			//	ToDo:: Nothing in here
 		}
+
+		public void doEncryptedKeyInCardNoResult(boolean isSuccess, String message)
+		{
+			if( isSuccess )
+				doOnLineProgress();
+			else
+				showDialog(message);
+		}
 	}
 
 	private void doTransactionComplete()
@@ -394,22 +403,27 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		String amount = mEditTextAmount.getText().toString().replace(",", "");
 		String cardNo;
 
-		if(amount.equals("")) {
+		if(amount.equals("") || amount.equals("0")) {
 			showDialog(IVanString.payment.please_input_total_amount);
 			return;
 		}
 
 		if( mmBankCardData.equals("")) {
-			cardNo = getKeyInData();
+			cardNo = mmEncryptedKeyInCardNo;
 			if( cardNo.equals("") )
 			{
 				showDialog(IVanString.payment.please_input_card_value);
 				return;
 			}
+			cardNo = ApiBase64.base64Encode( ApiString.hexStringToByteArray(cardNo) );
+			ApiLog.Dbg(Tag+"Base64EncryptedKeyInData: "+cardNo);
 		}
 		else {
 			cardNo = mmBankCardData;
-			String formattedCardNumber = ApiString.formattedCardNumber(cardNo);
+			cardNo = new String( ApiString.hexStringToByteArray(cardNo) );
+			ApiLog.Dbg(Tag+"Base64EncryptedCardNo: "+cardNo);
+
+			String formattedCardNumber = ApiString.formattedCardNumber(mmTrack2Data);
 			mEditTextSelectedTarget.setText(formattedCardNumber);
 		}
 
@@ -447,7 +461,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 
 
-		cardNo = EmvUtils.formatMaskedTrack2(cardNo);
+		//cardNo = EmvUtils.formatMaskedTrack2(cardNo); //removed by David SH Kim. unformatmasking.
 		mmReceiptEntity.setCardNo(cardNo);
 
 		//	ToDo:: for Not Access Van Server, fake some information for receipt processing.
@@ -588,7 +602,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 	private void updateView(View view)
 	{
 		// ToDo: update any view element you want
-		VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn.
+		VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn. updated by EmvReadFSM for Swiping Card
 
 		//	ToDo:: default Cash Category: 현금매출
 		mCashTypeSub = IVanSpecification.CashSubType.CASH_SALES;
@@ -638,7 +652,17 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
-					doPaymentCash();
+					String keyInCardNo = getKeyInData();
+					if( keyInCardNo.equals("") )
+					{
+						showDialog(IVanString.payment.please_input_card_value);
+						return;
+					}
+					//	ToDo:: Encrypt key in card number.
+					keyInCardNo = ApiString.toHexString( keyInCardNo.getBytes() );
+					encryptKeyInCardNo(keyInCardNo);
+					ApiLog.Dbg(Tag+"Start Cash Payment by KeyIn");
+					// doPaymentCash();
 					break;
 				case R.id.fragment_cash_btn_card_read:
 					//	ToDo:: start reading card by swipe

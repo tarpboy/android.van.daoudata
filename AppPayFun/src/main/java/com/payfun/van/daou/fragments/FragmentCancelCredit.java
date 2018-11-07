@@ -358,6 +358,11 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_receipt_failure);
 			}
 		}
+
+		public void doEncryptedKeyInCardNoResult(boolean isSuccess, String message)
+		{
+			// ToDo:: Nothing in here
+		}
 	}
 
 	///================================

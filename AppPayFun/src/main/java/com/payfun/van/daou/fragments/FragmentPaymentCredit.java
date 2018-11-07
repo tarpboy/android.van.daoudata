@@ -338,6 +338,11 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		{
 			//	ToDo:: Nothing in here
 		}
+
+		public void doEncryptedKeyInCardNoResult(boolean isSuccess, String message)
+		{
+			// ToDo:: Nothing in here
+		}
 	}
 
 	private void doTransactionComplete()
@@ -416,7 +421,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 		if( VanStaticData.mmPayTypeSub == IVanSpecification.CreditSubType.ICC_SWIPE	||
 			VanStaticData.mmPayTypeSub == IVanSpecification.CreditSubType.GIFT)
-			mmReceiptEntity.setCardNo(mmBankCardData);
+			mmReceiptEntity.setCardNo(mmTrack2Data);				// mmReceiptEntity.setCardNo(mmBankCardData);
         else
 			mmReceiptEntity.setCardNo("");
 
@@ -424,7 +429,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		mmReceiptEntity.setCompanyNo( mmCompanyEntity.getCompanyNo() );
 		mmReceiptEntity.setMachineCode( mmCompanyEntity.getMachineCode() );
 		mmReceiptEntity.setTypeSub( VanStaticData.mmPayTypeSub );
-		mmReceiptEntity.setType( IVanSpecification.PaymentType.Cash );
+		mmReceiptEntity.setType( IVanSpecification.PaymentType.Credit );
 		mmReceiptEntity.setReciptImage("");
 		mmReceiptEntity.setCardInputMethod(VanStaticData.mmCardInputMethod);
 		mmReceiptEntity.setStaffName(AppHelper.AppPref.getCurrentUserName());
