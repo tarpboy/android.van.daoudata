@@ -319,32 +319,37 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			//	ToDo:: do onlineProgress
 			boolean finalResult = (boolean) result.get(IEmvUserMessages.UserKeys.finalResult);
 
-			if(finalResult)
+			if(finalResult) {
+				if(mmReceiptEntity == null)
+				{	// ToDo:: 1st Fallback to find receipts
+					String cardNo = mmTrack2Data;		// Swipe Card No
+					findUsageHistory(cardNo);
+					return;
+				}
+				//	ToDo:: 2nd Fallback to cancel transaction
 				doOnLineProgress();
-			else
+			}
+			else {
 				showDialog("카드리드오류");
+			}
 		}
 
 		public void doUserTransactionResult(String result)
 		{
-			//	ToDo:: save receipt entity in json.
-			ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
-			String receiptEnJson = VanHelper.cancel(receiptEntity);        // make receiptEntity to Json data
-			if (receiptEnJson != null)
-				VanStaticData.setResultPayment(receiptEnJson);
-
-			//	ToDo:: remove receipt entity.
-			AppHelper.resetReceiptEntity();
-
-			//	ToDo:: display Van Message when complete transaction
-			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
-
-			//	ToDo:: remove EmvData.
-			AppHelper.AppPref.resetEmvData();
-
-			//	ToDo:: goto ReceiptViewFragment
-			if (VanStaticData.isReadyShowReceipt())
-				cancelCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+			if( "DECLINED".equalsIgnoreCase(result) )
+			{
+				resetToPayAgain(true);
+				showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+			}
+			else
+			if( "APPROVED".equalsIgnoreCase(result)) {
+				doTransactionComplete();
+			}else
+			if( "ICC_CARD_REMOVED".equals(result) &&
+					AppHelper.AppPref.getVanNetworkStatus().equals(IVanSpecification.NetworkResult.Success) )
+			{
+				doTransactionComplete();
+			}
 		}
 
 		public void doEmvCardDataResult(boolean isSuccess)
@@ -352,7 +357,11 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			//	ToDo:: to cancel procedure if success
 
 			if(isSuccess)
-				findUsageHistory(mmBankCardData);
+			{
+				String cardNo = AppHelper.isEmvCardProcessing() ? mmBankCardData: mmTrack2Data;	// added by David SH Kim. to select ICC or Swipe data
+
+				findUsageHistory(cardNo);			// (mmBankCardData); changed by David SH Kim.
+			}
 			else
 			{
 				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_receipt_failure);
@@ -365,6 +374,29 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		}
 	}
 
+	private void doTransactionComplete( )
+	{
+		//	ToDo:: save receipt entity in json.
+		ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
+		String receiptEnJson = VanHelper.cancel(receiptEntity);        // make receiptEntity to Json data
+		if (receiptEnJson != null)
+			VanStaticData.setResultPayment(receiptEnJson);
+
+		//	ToDo:: remove receipt entity.
+		//AppHelper.resetReceiptEntity();
+
+		//	ToDo:: display Van Message when complete transaction
+		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+
+		//	ToDo:: remove EmvData.
+		//AppHelper.AppPref.resetEmvData();
+
+		//	ToDo:: goto ReceiptViewFragment
+		if (VanStaticData.isReadyShowReceipt())
+			cancelCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+
+		resetToStartPayment();
+	}
 	///================================
 	// *  private methods
 	//=================================
@@ -474,7 +506,8 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		//	make EncPayInfo to will be Encrypted.
 		EncPayInfo encPayInfo = new EncPayInfo("", emvData, signData);
 
-		if( receiptEntity.getCardInputMethod().equals(DaouDataContants.VAL_WCC_IC) )
+		//if( receiptEntity.getCardInputMethod().equals(DaouDataContants.VAL_WCC_IC) )	// 이전거래(ICC/ICC_SWIPE)와 동일한 방식으로 해야만된다.????
+		if( VanStaticData.mmCardInputMethod.equals(DaouDataContants.VAL_WCC_IC))
 		{
 			result = mmPaymentEmv.cancelEmv(receiptEntity, encPayInfo);
 		}
@@ -491,7 +524,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 				return "";
 			}
 
-			ApiLog.Dbg(Tag+"sendOnlineProgressResult:" + result);
+			ApiLog.Dbg(Tag+"sendOnlineProgressResult[ICC]:" + result);
 			if( result != null && !result.equals("") )
 			{
 				if( VanStaticData.mmCreditSuccessWithEmv )
@@ -512,7 +545,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 				return "";
 			}
 
-			ApiLog.Dbg(Tag+"sendOnlineProgressResult:" + result);
+			ApiLog.Dbg(Tag+"sendOnlineProgressResult[SWIPE]:" + result);
 			if( result != null && !result.equals("") )
 				onlineProgressResp(OnlineProgressReturnType.SIMPLE_RESP,null,null);
 			else

@@ -38,6 +38,8 @@ import ginu.android.van.app_daou.entity.TerminalInfo;
 import ginu.android.van.app_daou.helper.AppHelper;
 import ginu.android.van.app_daou.helper.CalculateHelper;
 import ginu.android.van.app_daou.helper.VanHelper;
+import ginu.android.van.app_daou.utils.IVanString;
+import ginu.android.van.app_daou.utils.MyToast;
 import ginu.android.van.app_daou.utils.PaymentTask;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
@@ -354,7 +356,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			VanStaticData.setResultPayment(receiptEnJson);
 
 		//	ToDo:: remove receipt entity.
-		AppHelper.resetReceiptEntity();
+		//AppHelper.resetReceiptEntity();
 
 		//	ToDo:: 2nd Generation if need
 		EmvTcEntity emvTcEntity = AppHelper.getEmvTcInfo();
@@ -367,11 +369,13 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
 
 		//	ToDo:: remove EmvData.
-		AppHelper.AppPref.resetEmvData();
+		//AppHelper.AppPref.resetEmvData();
 
 		//	ToDo:: goto ReceiptViewFragment
 		if (VanStaticData.isReadyShowReceipt())
 			PaymentCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+
+		resetToStartPayment();
 	}
 
 	private void showDialog(String msg)
@@ -421,7 +425,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 		if( VanStaticData.mmPayTypeSub == IVanSpecification.CreditSubType.ICC_SWIPE	||
 			VanStaticData.mmPayTypeSub == IVanSpecification.CreditSubType.GIFT)
-			mmReceiptEntity.setCardNo(mmTrack2Data);				// mmReceiptEntity.setCardNo(mmBankCardData);
+			mmReceiptEntity.setCardNo(mmBankCardData);				// mmReceiptEntity.setCardNo(mmTrack2Data);
         else
 			mmReceiptEntity.setCardNo("");
 
@@ -648,7 +652,10 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 					break;
 				case	R.id.btn_foot_confirm:
 					String amount = ApiString.requireText(mEditTextAmount);
-					// startReadCard(amount);
+					if( amount == null || amount.equals("") || amount.equals("0") ) {
+						MyToast.showToast(mmActivity, IVanString.payment.please_input_total_amount);
+						break;
+					}
 					startCheckCard( IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
 					break;
 				default:
