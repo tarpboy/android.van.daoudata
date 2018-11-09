@@ -326,8 +326,8 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 					findUsageHistory(cardNo);
 					return;
 				}
-				//	ToDo:: 2nd Fallback to cancel transaction
-				doOnLineProgress();
+				//	ToDo:: 2nd Fallback to cancel transaction, when ICC ==>ICC_SWIPE
+				doOnLineProgress();		// really happen? who makes this? Don't I remove this??
 			}
 			else {
 				showDialog("카드리드오류");
@@ -401,16 +401,45 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 	// *  private methods
 	//=================================
 
+	/**
+	 * @Notice:
+	 * 다우서버에서 허용하는 취소 시나리오
+	 * 	승인		취소		결과
+	 * 	ICC		ICC		OK
+	 * 	ICC		SWIPE	OK
+	 * 	SWIPE	ICC		NOK
+	 * 	SWIPE	SWIPE	OK
+	 */
+	private boolean isRightInputMethod()
+	{
+		boolean isRight = true;
+		String paymentInputMethod = mmReceiptEntity.getCardInputMethod();
+		String cancelInputMethod = VanStaticData.mmCardInputMethod;
+
+		if(	paymentInputMethod.equals( DaouDataContants.VAL_WCC_SWIPE ) &&
+			cancelInputMethod.equals( DaouDataContants.VAL_WCC_IC ) ) {
+			isRight = false;
+		}
+
+		return isRight;
+	}
+
 	private void startCancelCredit()
 	{
-		ApiLog.Dbg(">>==========	do CANCEL:: CREDIT	========<<");
-		ApiLog.Dbg(Tag+"ReceiptType: " + mmReceiptEntity.getType() );
-
 		if(mmReceiptEntity == null)
 		{
-			showDialog(IVanString.payment.no_receipt_to_be_cancel);
+			showDialog(IVanString.userNotification.msg_search_receipt_failure);
 			return;
 		}
+
+		// ToDo:: check input method is right or not
+		if( ! isRightInputMethod() ) {
+			showDialog(IVanString.userNotification.msg_cancel_receipt_type_error);
+			return;
+		}
+
+		ApiLog.Dbg(">>==========	do CANCEL:: CREDIT	========<<");
+		ApiLog.Dbg(Tag+"ReceiptType: " + mmReceiptEntity.getType() );
 
 		if(	AppHelper.isEmvCardProcessing()	)
 		{	//	ToDo:: start cancel Emv procedure

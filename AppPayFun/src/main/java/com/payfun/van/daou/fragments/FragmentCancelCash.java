@@ -372,7 +372,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 		if(mmReceiptEntity == null)
 		{
-			showDialog(IVanString.payment.no_receipt_to_be_cancel);
+			showDialog(IVanString.userNotification.msg_search_receipt_failure);
 			return;
 		}
 
