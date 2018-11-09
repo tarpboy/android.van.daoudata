@@ -376,7 +376,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		if (VanStaticData.isReadyShowReceipt())
 			paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 
-		resetToPayAgain();
+		resetToStartPayment();
 	}
 
 	//##########################################
@@ -408,7 +408,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			return;
 		}
 
-		if( mmBankCardData.equals("")) {
+		if( mmBankCardData.equals(""))
+		{	//	ToDo:: KeyIn Card Data
 			cardNo = mmEncryptedKeyInCardNo;
 			if( cardNo.equals("") )
 			{
@@ -418,7 +419,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			cardNo = ApiBase64.base64Encode( ApiString.hexStringToByteArray(cardNo) );
 			ApiLog.Dbg(Tag+"Base64EncryptedKeyInData: "+cardNo);
 		}
-		else {
+		else
+		{	//	ToDo:: SWIPE Card Data
 			cardNo = mmBankCardData;
 			cardNo = new String( ApiString.hexStringToByteArray(cardNo) );
 			ApiLog.Dbg(Tag+"Base64EncryptedCardNo: "+cardNo);
@@ -459,14 +461,13 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 		mmReceiptEntity.setApprovalCode("");
 
-
-
-		//cardNo = EmvUtils.formatMaskedTrack2(cardNo); //removed by David SH Kim. unformatmasking.
 		mmReceiptEntity.setCardNo(cardNo);
 
 		//	ToDo:: for Not Access Van Server, fake some information for receipt processing.
 		if( ! mIsVanRequest )
 		{
+			String maskedKeyInData = EmvUtils.formatMaskedTrack2( getKeyInData() );
+			mmReceiptEntity.setCardNo( maskedKeyInData );
 			mmReceiptEntity.setBuyerName( mCashTypeSub );
 			mmReceiptEntity.setApprovalCode( ApiAux.getUnique10Num() );
 			mmReceiptEntity.setRevDate( ApiDate.getCurrentDateFull() );

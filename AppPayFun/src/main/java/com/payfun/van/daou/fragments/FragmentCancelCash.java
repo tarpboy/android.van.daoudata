@@ -25,6 +25,7 @@ import ginu.android.library.utils.common.ApiString;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
+import ginu.android.van.app_daou.daou.CashReceipt;
 import ginu.android.van.app_daou.daou.CreditCard;
 import ginu.android.van.app_daou.daou.DaouDataContants;
 import ginu.android.van.app_daou.database.IVanSpecification;
@@ -450,8 +451,8 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 		String result = null;
 		String signData = "";
 
-		mmPaymentEmv = new CreditCard();
-		mmPayment = new CreditCard();
+
+		mmPayment = new CashReceipt();
 		//	make SignData to String
 
 		if( (mmSignImageByte != null) && (mmSignImageByte.length > 0) )
@@ -470,11 +471,6 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 		//	make EncPayInfo to will be Encrypted.
 		EncPayInfo encPayInfo = new EncPayInfo("", emvData, signData);
 
-		if( receiptEntity.getCardInputMethod().equals(DaouDataContants.VAL_WCC_IC) )
-		{
-			result = mmPaymentEmv.cancelEmv(receiptEntity, encPayInfo);
-		}
-		else
 		{
 			result = mmPayment.cancel(receiptEntity, encPayInfo);
 		}
