@@ -179,8 +179,10 @@ public class MainActivity extends AppCompatActivity implements
 
 		hideNumericKeyboard();		// 1. hide key board
 
-		showDownloadFinish("앱을 종료하시겠습니까?");
-
+		if( MainActivityFragmentMapper.atHome() )
+			showDownloadFinish("앱을 종료하시겠습니까?");
+		else
+			changePage(AMainFragPages.MainHomePage);
 	}
 
 

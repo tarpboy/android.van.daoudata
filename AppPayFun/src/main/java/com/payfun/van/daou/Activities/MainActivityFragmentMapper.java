@@ -26,17 +26,23 @@ import ginu.android.van.app_daou.utils.IVanString;
  */
 public class MainActivityFragmentMapper
 {
+	static boolean atHome()
+	{
+		return mIsAtHome;
+	}
+
 	static boolean changePage(AppCompatActivity activity, @AMainFragPages int page, Bundle savedInstanceState)
 	{
 		Fragment fragment = null;
 		boolean isBackStack = false;
 		String backStackTag = null;
-
+		mIsAtHome = false;
 		switch (page)
 		{
 			case	AMainFragPages.MainHomePage:
 				MainActivity.setHeaderView(null);
 				fragment = new FragmentHome();
+				mIsAtHome = true;
 				break;
 			case AMainFragPages.PaymentCreditPage:
 				MainActivity.setHeaderView(IVanString.title.payment_credit);
@@ -106,4 +112,9 @@ public class MainActivityFragmentMapper
 
 		return ret;
 	}
+
+	//##########################################
+	//	private Variables
+	//##########################################
+	private static boolean			mIsAtHome = false;
 }
