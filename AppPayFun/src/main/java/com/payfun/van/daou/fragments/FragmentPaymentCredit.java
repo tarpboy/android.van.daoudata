@@ -355,8 +355,6 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		if (receiptEnJson != null)
 			VanStaticData.setResultPayment(receiptEnJson);
 
-		//	ToDo:: remove receipt entity.
-		//AppHelper.resetReceiptEntity();
 
 		//	ToDo:: 2nd Generation if need
 		EmvTcEntity emvTcEntity = AppHelper.getEmvTcInfo();
@@ -367,9 +365,6 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 		//	ToDo:: display Van Message when complete transaction
 		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
-
-		//	ToDo:: remove EmvData.
-		//AppHelper.AppPref.resetEmvData();
 
 		//	ToDo:: goto ReceiptViewFragment
 		if (VanStaticData.isReadyShowReceipt())

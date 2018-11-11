@@ -365,9 +365,6 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		if (receiptEnJson != null)
 			VanStaticData.setResultPayment(receiptEnJson);
 
-		//	ToDo:: remove receipt entity.
-		AppHelper.resetReceiptEntity();
-
 		//	ToDo:: display Van Message when complete transaction
 		if( mIsVanRequest )											// Van Accessing Procedure only
 			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
@@ -376,7 +373,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		if (VanStaticData.isReadyShowReceipt())
 			paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 
-		resetToPayAgain();
+		resetToStartPayment();
 	}
 
 	//##########################################
@@ -408,7 +405,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			return;
 		}
 
-		if( mmBankCardData.equals("")) {
+		if( mmBankCardData.equals(""))
+		{	//	ToDo:: KeyIn Card Data
 			cardNo = mmEncryptedKeyInCardNo;
 			if( cardNo.equals("") )
 			{
@@ -418,7 +416,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			cardNo = ApiBase64.base64Encode( ApiString.hexStringToByteArray(cardNo) );
 			ApiLog.Dbg(Tag+"Base64EncryptedKeyInData: "+cardNo);
 		}
-		else {
+		else
+		{	//	ToDo:: SWIPE Card Data
 			cardNo = mmBankCardData;
 			cardNo = new String( ApiString.hexStringToByteArray(cardNo) );
 			ApiLog.Dbg(Tag+"Base64EncryptedCardNo: "+cardNo);
@@ -442,6 +441,10 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		else
 			mmReceiptEntity = CalculateHelper.calNoTax( amount, point, mmCompanyEntity.getTaxRate(), mmCompanyEntity.getServiceTaxRate() );
 
+		mmReceiptEntity.setCouponDiscountRate(mmPointRate);
+		mmReceiptEntity.setCouponDiscountAmount(point);
+		mmReceiptEntity.setCouponID(mmCouponID);
+
 		mmReceiptEntity.setVanName(mVanName);
 		mmReceiptEntity.setCompanyNo( mmCompanyEntity.getCompanyNo() );
 		mmReceiptEntity.setMachineCode( mmCompanyEntity.getMachineCode() );
@@ -459,14 +462,13 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 		mmReceiptEntity.setApprovalCode("");
 
-
-
-		//cardNo = EmvUtils.formatMaskedTrack2(cardNo); //removed by David SH Kim. unformatmasking.
 		mmReceiptEntity.setCardNo(cardNo);
 
 		//	ToDo:: for Not Access Van Server, fake some information for receipt processing.
 		if( ! mIsVanRequest )
 		{
+			String maskedKeyInData = EmvUtils.formatMaskedTrack2( getKeyInData(mEditTextSelectedTarget) );
+			mmReceiptEntity.setCardNo( maskedKeyInData );
 			mmReceiptEntity.setBuyerName( mCashTypeSub );
 			mmReceiptEntity.setApprovalCode( ApiAux.getUnique10Num() );
 			mmReceiptEntity.setRevDate( ApiDate.getCurrentDateFull() );
@@ -542,16 +544,6 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		return result;
 	}
 
-	private String getKeyInData()
-	{
-		String keyInData = mEditTextSelectedTarget.getText().toString().replace("-","");
-		if( ! keyInData.equals("") )
-		{
-			keyInData.replace("-", "");
-		}
-		return keyInData;
-	}
-
 	//==========================================
 	//	Initialize Fragment View.
 	//==========================================
@@ -613,7 +605,6 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
 	}
 
-
 	private View.OnTouchListener mTouchListener = new View.OnTouchListener(){
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -652,7 +643,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
-					String keyInCardNo = getKeyInData();
+					String keyInCardNo = getKeyInData(mEditTextSelectedTarget);
 					if( keyInCardNo.equals("") )
 					{
 						showDialog(IVanString.payment.please_input_card_value);
@@ -714,7 +705,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					break;
 				case R.id.fragment_cash_image_btn_select4:			// ToDo:: 사업자지출증빙영수증
 					paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "사업자지출증빙영수증");
-					selectCashTransactionMethodView(CashTransactionMethod.CompanyNo);
+					selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
 					selectCategory( cashCategoryId );
 					mIsVanRequest = true;
 					setCardReaderOnClick(true);
@@ -816,7 +807,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		switch(mode)
 		{
 			case	CashTransactionMethod.PhoneNo:
-				//ApiEditTextCompanyNo.dissmissKeyboard();			// ToDo:: toggle keyboard. kill company keyboard
+				//ApiEditTextCompanyNo.dismissKeyboard();			// ToDo:: toggle keyboard. kill company keyboard
 				ApiEditTextPhoneNo.disableShowSoftInput(editText);
 				ApiEditTextPhoneNo.showKeyboard(mmActivity, kbView, editText);
 

@@ -382,14 +382,8 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		if (receiptEnJson != null)
 			VanStaticData.setResultPayment(receiptEnJson);
 
-		//	ToDo:: remove receipt entity.
-		//AppHelper.resetReceiptEntity();
-
 		//	ToDo:: display Van Message when complete transaction
 		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
-
-		//	ToDo:: remove EmvData.
-		//AppHelper.AppPref.resetEmvData();
 
 		//	ToDo:: goto ReceiptViewFragment
 		if (VanStaticData.isReadyShowReceipt())
@@ -616,12 +610,8 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 
 	private void findUsageHistory(String cardNo)
 	{
-		ApiLog.Dbg(Tag+"cardNo for search:" + cardNo);
-		DialogCancelList dialogCancelList = new DialogCancelList( mmActivity, cardNo, mCancelListListener);
-		dialogCancelList.setCancelable(false);
-		dialogCancelList.show();
+		findReceiptsForCancel(cardNo, mCancelListListener);
 	}
-
 	//==========================================
 	//	Initialize Fragment Components
 	//==========================================
