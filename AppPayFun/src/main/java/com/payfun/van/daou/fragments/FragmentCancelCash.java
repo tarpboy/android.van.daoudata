@@ -22,6 +22,7 @@ import ginu.android.library.keyboard.KeyboardHandler;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
+import ginu.android.library.utils.security.ApiBase64;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
@@ -300,14 +301,12 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 		public void doCheckCard(String strCheckCardMode)
 		{
 			//	ToDo:: Fallback ??? really Need ???
-			mCheckCardMode = strCheckCardMode;			// backup for starEmv()
 			startCheckCard(strCheckCardMode);
 		}
 
 		public void doStartEmv(String strCheckCardMode)
 		{
 			//	ToDo:: Start get Emv Card Data
-			mCheckCardMode = strCheckCardMode;
 			getEmvCardData();					// call FragmentPaymentBase.getEmvCardData()
 		}
 
@@ -317,49 +316,61 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 			boolean finalResult = (boolean) result.get(IEmvUserMessages.UserKeys.finalResult);
 
 			if(finalResult)
-				doOnLineProgress();
+			{
+				String cardNo = mmTrack2Data;		// added by David SH Kim. Swipe data
+
+				findUsageHistory(cardNo);			// (mmBankCardData); changed by David SH Kim.
+			}
 			else
+			{
 				showDialog("카드리드오류");
+			}
 		}
 
 		public void doUserTransactionResult(String result)
 		{
-			//	ToDo:: save receipt entity in json.
-			ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
-			String receiptEnJson = VanHelper.cancel(receiptEntity);        // make receiptEntity to Json data
-			if (receiptEnJson != null)
-				VanStaticData.setResultPayment(receiptEnJson);
-
-			//	ToDo:: remove receipt entity.
-			AppHelper.resetReceiptEntity();
-
-			//	ToDo:: display Van Message when complete transaction
-			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
-
-			//	ToDo:: remove EmvData.
-			AppHelper.AppPref.resetEmvData();
-
-			//	ToDo:: goto ReceiptViewFragment
-			if (VanStaticData.isReadyShowReceipt())
-				cancelCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+			if( "DECLINED".equalsIgnoreCase(result) )
+			{
+				mEdCardNo.setText( "" );
+				resetToPayAgain(true);
+				showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+			}
+			else
+			if( "APPROVED".equalsIgnoreCase(result)) {
+				doTransactionComplete();
+			}
 		}
 
 		public void doEmvCardDataResult(boolean isSuccess)
 		{
-			//	ToDo:: to cancel procedure if success
-
-			if(isSuccess)
-				findUsageHistory(mmBankCardData);
-			else
-			{
-				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_receipt_failure);
-			}
+			//	ToDo:: Nothing in here
 		}
 
 		public void doEncryptedKeyInCardNoResult(boolean isSuccess, String message)
 		{
-			// ToDo:: Nothing in here
+			if( isSuccess )
+				doOnLineProgress();
+			else
+				showDialog(message);
 		}
+	}
+
+	private void doTransactionComplete( )
+	{
+		//	ToDo:: save receipt entity in json.
+		ReceiptEntity receiptEntity = AppHelper.getReceiptEntity();
+		String receiptEnJson = VanHelper.cancel(receiptEntity);        // make receiptEntity to Json data
+		if (receiptEnJson != null)
+			VanStaticData.setResultPayment(receiptEnJson);
+
+		//	ToDo:: display Van Message when complete transaction
+		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+
+		//	ToDo:: goto ReceiptViewFragment
+		if (VanStaticData.isReadyShowReceipt())
+			cancelCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
+
+		resetToStartPayment();
 	}
 
 	///================================
@@ -368,22 +379,14 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 	private void startCancelCash()
 	{
-		ApiLog.Dbg(">>==========	do CANCEL:: CASH	========<<");
-		ApiLog.Dbg(Tag+"ReceiptType: " + mmReceiptEntity.getType() );
-
 		if(mmReceiptEntity == null)
 		{
 			showDialog(IVanString.userNotification.msg_search_receipt_failure);
 			return;
 		}
 
-		if(	AppHelper.isEmvCardProcessing()	)
-		{	//	ToDo:: start cancel Emv procedure
-			startEmv( mCheckCardMode, mTvTotal.getText().toString() );
-		}
-		else
 		{	//	ToDo:: start cancel Swipe procedure
-			doCancelCash();
+			doOnLineProgress();
 		}
 
 	}
@@ -391,12 +394,15 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 	private void doOnLineProgress()
 	{
 		//	ToDo :: start cancel transaction
+		ApiLog.Dbg(">>==========	do CANCEL:: CASH	========<<");
+		ApiLog.Dbg(Tag+"ReceiptType: " + mmReceiptEntity.getType() );
 		doCancelCash();
 	}
 
 	private void doCancelCash()
 	{
-		//	ToDo :: update receipt to cancel Credit procedure
+		//	ToDo :: update receipt to cancel Cash procedure
+		String cardNo;
 		String vanName = mmReceiptEntity.getVanName();
 		ApiLog.Dbg(Tag+"VanName on Receipt:" + vanName);
 		if(! vanName.equals( mmCompanyEntity.getVanName() ) )
@@ -405,13 +411,33 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 			return;
 		}
 
-		if(! mmReceiptEntity.getType().equals(IVanSpecification.PaymentType.Credit) )
+		if(! mmReceiptEntity.getType().equals(IVanSpecification.PaymentType.Cash) )
 		{
 			showDialog(IVanString.userNotification.msg_cancel_receipt_type_error);
 			return;
 		}
 
-		mmReceiptEntity.setCardNo(mmBankCardData);		// renew CardNo
+		if( mmBankCardData.equals("") )
+		{
+			cardNo = mmEncryptedKeyInCardNo;
+			if( cardNo.equals("") )
+			{
+				showDialog(IVanString.payment.please_input_card_value);
+				return;
+			}
+			cardNo = ApiBase64.base64Encode( ApiString.hexStringToByteArray(cardNo) );
+			ApiLog.Dbg(Tag+"Base64EncryptedKeyInData: " + cardNo);
+		}
+		else
+		{
+			cardNo = mmBankCardData;
+			cardNo = new String( ApiString.hexStringToByteArray(cardNo) );
+			ApiLog.Dbg(Tag+"Base64EncryptedCardNo: "+cardNo);
+
+			String formattedCardNumber = ApiString.formattedCardNumber(mmTrack2Data);
+			mEdCardNo.setText(formattedCardNumber);
+		}
+		mmReceiptEntity.setCardNo(cardNo);		// renew CardNo
 
 		String reqDate = ApiDate.formatCancelDateDaouData( mmReceiptEntity.getRequestDate() );
 		mmReceiptEntity.setRequestDate(reqDate);			// fit date format :: YYYYMMDD
@@ -538,6 +564,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 			ApiLog.Dbg(Tag+"searched Receipt: "+ mmReceiptEntity.toString() );
 
+			mEdCardNo.setText( mmReceiptEntity.getCardNo() );
 			mTvTotal.setText( ApiString.formatNumberExcel( mmReceiptEntity.getTotalAmount() ) );
 			mTvReqDate.setText( mmReceiptEntity.getRequestDate() );
 			mTvApprovalNo.setText( mmReceiptEntity.getApprovalCode() );
@@ -546,10 +573,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 	private void findUsageHistory(String cardNo)
 	{
-		ApiLog.Dbg(Tag+"cardNo for search:" + cardNo);
-		DialogCancelList dialogCancelList = new DialogCancelList( mmActivity, cardNo, mCancelListListener);
-		dialogCancelList.setCancelable(false);
-		dialogCancelList.show();
+		findReceiptsForCancel(cardNo, mCancelListListener);
 	}
 
 	//==========================================
@@ -578,7 +602,18 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 			@Override
 			public void onClick(View v) {
 				VanStaticData.setIsCancelJob(true);
-				startCheckCard(IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
+				VanStaticData.setIsCashJob(true);
+				mKeyInCardNo = getKeyInData(mEdCardNo);
+				if( ! mKeyInCardNo.equals("") )
+				{	// ToDo:: Key In
+					String maskedKeyInCardNo = EmvUtils.formatMaskedTrack2(mKeyInCardNo);
+					findUsageHistory(maskedKeyInCardNo);
+					return;
+				}
+				else
+				{	// ToDo:: Swipe Card
+					startCheckCard(IEmvUserMessages.CheckCardMode.SWIPE);
+				}
 			}
 		});
 
@@ -604,8 +639,9 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 			switch( v.getId() )
 			{
 				case	R.id.ed_cancel_cash_card_no:
-					if( event.getAction() == MotionEvent.ACTION_DOWN)
-						showLocalNumberKeyboard(CashTransactionMethod.CardNo,mEdCardNo);			// default method
+					if( event.getAction() == MotionEvent.ACTION_DOWN) {
+						showLocalNumberKeyboard(CashTransactionMethod.CardNo, mEdCardNo);            // default method
+					}
 					break;
 			}
 
@@ -655,7 +691,25 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 					cancelCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
-					startCancelCash();
+					//	ToDo:: case of Start Cancel Job with Swipe
+					if(! mmTrack2Data.equals("") )
+					{
+						startCancelCash();
+						break;
+					}
+					//	ToDo:: case of Start Cancel Job with Key-In
+					if( mKeyInCardNo.equals("") )
+					{
+						showDialog( IVanString.payment.please_input_card_value );
+						break;
+					}
+					//	ToDo:: Encrypt key in card number.
+					String hexKeyInCardNo = ApiString.toHexString( mKeyInCardNo.getBytes() );
+					encryptKeyInCardNo(hexKeyInCardNo);
+
+					mKeyInCardNo = "";
+					//ApiLog.Dbg(Tag+"Start Cancel Cash by KeyIn");
+					//startCancelCash();
 					break;
 				default:
 					break;
@@ -682,6 +736,6 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 	private EditText						mEdCardNo;
 	private TextView						mTvTotal, mTvApprovalNo, mTvReqDate;
-	private String							mCheckCardMode = "";
 	private PaymentTask					mPaymentTask;
+	private String							mKeyInCardNo = "";
 }
