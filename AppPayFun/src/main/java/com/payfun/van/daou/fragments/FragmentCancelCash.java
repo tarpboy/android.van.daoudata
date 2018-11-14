@@ -370,7 +370,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 		if (VanStaticData.isReadyShowReceipt())
 			cancelCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 
-		resetToStartPayment();
+		resetToTerminatePayment();
 	}
 
 	///================================
@@ -379,11 +379,6 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 	private void startCancelCash()
 	{
-		if(mmReceiptEntity == null)
-		{
-			showDialog(IVanString.userNotification.msg_search_receipt_failure);
-			return;
-		}
 
 		{	//	ToDo:: start cancel Swipe procedure
 			doOnLineProgress();
@@ -558,7 +553,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 			if( (mmReceiptEntity == null) || mmReceiptEntity.getRevStatus().equals(IVanSpecification.ReceiptStatus.CancelReceipt) )
 			{
 				resetCardNo();
-				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_receipt_failure);
+				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_cash_receipt_failure);
 				return;
 			}
 
@@ -573,7 +568,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 
 	private void findUsageHistory(String cardNo)
 	{
-		findReceiptsForCancel(cardNo, mCancelListListener);
+		findReceiptsForCancel(cardNo, IVanSpecification.PaymentType.Cash, mCancelListListener);
 	}
 
 	//==========================================
@@ -691,6 +686,12 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 					cancelCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
+					if(mmReceiptEntity == null)
+					{
+						showDialog(IVanString.userNotification.msg_search_cash_receipt_failure);
+						return;
+					}
+
 					//	ToDo:: case of Start Cancel Job with Swipe
 					if(! mmTrack2Data.equals("") )
 					{

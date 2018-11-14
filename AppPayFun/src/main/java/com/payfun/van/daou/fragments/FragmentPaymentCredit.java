@@ -370,7 +370,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		if (VanStaticData.isReadyShowReceipt())
 			PaymentCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 
-		resetToStartPayment();
+		resetToTerminatePayment();
 	}
 
 	private void showDialog(String msg)

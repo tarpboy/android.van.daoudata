@@ -373,7 +373,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		if (VanStaticData.isReadyShowReceipt())
 			paymentCashToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 
-		resetToStartPayment();
+		resetToTerminatePayment();
 	}
 
 	//##########################################

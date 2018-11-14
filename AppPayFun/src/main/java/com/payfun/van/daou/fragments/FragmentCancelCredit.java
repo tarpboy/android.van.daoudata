@@ -364,7 +364,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			}
 			else
 			{
-				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_receipt_failure);
+				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_credit_receipt_failure);
 			}
 		}
 
@@ -389,7 +389,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		if (VanStaticData.isReadyShowReceipt())
 			cancelCreditToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 
-		resetToStartPayment();
+		resetToTerminatePayment();
 	}
 	///================================
 	// *  private methods
@@ -422,13 +422,13 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 	{
 		if(mmReceiptEntity == null)
 		{
-			showDialog(IVanString.userNotification.msg_search_receipt_failure);
+			showDialog(IVanString.userNotification.msg_search_credit_receipt_failure);
 			return;
 		}
 
 		// ToDo:: check input method is right or not
 		if( ! isRightInputMethod() ) {
-			showDialog(IVanString.userNotification.msg_cancel_receipt_type_error);
+			showDialog(IVanString.userNotification.msg_cancel_receipt_subtype_error);
 			return;
 		}
 
@@ -596,7 +596,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			if( (mmReceiptEntity == null) || mmReceiptEntity.getRevStatus().equals(IVanSpecification.ReceiptStatus.CancelReceipt) )
 			{
 				resetCardNo();
-				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_receipt_failure);
+				MyToast.showToast(mmActivity, IVanString.userNotification.msg_search_credit_receipt_failure);
 				return;
 			}
 
@@ -610,7 +610,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 
 	private void findUsageHistory(String cardNo)
 	{
-		findReceiptsForCancel(cardNo, mCancelListListener);
+		findReceiptsForCancel(cardNo, IVanSpecification.PaymentType.Credit, mCancelListListener);
 	}
 	//==========================================
 	//	Initialize Fragment Components
