@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import org.jsoup.Jsoup;
@@ -18,9 +19,11 @@ import ginu.android.library.utils.common.ApiPermission;
 import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
 import ginu.android.van.app_daou.database.PayFunDB;
+import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.UserEntity;
 import ginu.android.van.app_daou.helper.AppHelper;
 import ginu.android.van.app_daou.manager.ReceiptManager;
+import ginu.android.van.app_daou.utils.MyPermission;
 
 
 public class LoadingActivity extends AppCompatActivity {
@@ -30,7 +33,8 @@ public class LoadingActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loading);
 
-		ApiPermission.setPermission(this);
+		mMyPermission = new MyPermission();				//	ApiPermission.setPermission(this);
+		mMyPermission.setPermissions(this);
 
 		mPackageName = getApplicationInfo().packageName;
 
@@ -59,8 +63,10 @@ public class LoadingActivity extends AppCompatActivity {
 			MyTaskProgress.CallBackMethod callBackMethod = new MyTaskProgress.CallBackMethod() {
 				@Override
 				public boolean run() {
-
-					return web_update();
+					if( VanStaticData.mmIsTesting )
+						return false;				// skip check up-version on google play.
+					else
+						return web_update();
 				}
 
 				@Override
@@ -84,6 +90,14 @@ public class LoadingActivity extends AppCompatActivity {
 
 	}
 
+	//##########################################
+	//	Permission Callback Methods
+	//##########################################
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String permission[], @NonNull int[] grantResults)
+	{
+		mMyPermission.Result(requestCode, permission, grantResults);
+	}
 	//##########################################
 	//	Private Methods
 	//##########################################
@@ -168,7 +182,7 @@ public class LoadingActivity extends AppCompatActivity {
 	{
 
 		try{
-			ApiLog.Van("Receipt before 3 month:"+ ReceiptManager.getReceiptBefore3Month());
+			ApiLog.Dbg("Receipt before 3 month:"+ ReceiptManager.getReceiptBefore3Month());
 			ReceiptManager.deleteBefore3Month();
 			UserEntity key = new UserEntity(0);
 			String f_UserID = AppHelper.AppPref.getCurrentUserID();
@@ -176,7 +190,7 @@ public class LoadingActivity extends AppCompatActivity {
 			if(!f_UserID.equals("")){
 				ApiLog.Van("update 3 month:"+ReceiptManager.updateReceiptBefore3Month(f_UserID));
 			}
-			ApiLog.Van("Receipt before 3 month (after delete):"+ReceiptManager.getReceiptBefore3Month());
+			ApiLog.Dbg("Receipt before 3 month (after delete):"+ReceiptManager.getReceiptBefore3Month());
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -230,4 +244,5 @@ public class LoadingActivity extends AppCompatActivity {
 
 	private String 			mPackageName = "";
 	private boolean		mIsKeyBindingComplete = false;
+	private MyPermission			mMyPermission;
 }
