@@ -20,6 +20,8 @@
         android:layout_height="match_parent"
         android:text="@string/cancel"
         android:textSize="@dimen/large_text_size"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         android:background="@drawable/background_button_cancel"
         />
     <Space
@@ -33,6 +35,8 @@
         android:layout_height="match_parent"
         android:text="@string/ok"
         android:textSize="@dimen/large_text_size"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         android:background="@drawable/background_button_confirm"
         />
     <Space

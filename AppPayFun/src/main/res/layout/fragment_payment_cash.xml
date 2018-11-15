@@ -25,6 +25,7 @@
         android:orientation="horizontal"
         android:weightSum="100"
         android:gravity="center_vertical"
+        style="@style/DisappearFocusStyle"
         >
         <EditText
             android:id="@+id/fragment_cash_input_phone"

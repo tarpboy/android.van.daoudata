@@ -17,6 +17,10 @@ public interface FragmentCallbackInterface {
 	int CommonFragToActivityCmd_ShowCompanyNumericKeyboard = 10001003;		// only for cash payment
 	int CommonFragToActivityCmd_ChangeHeaderTitle	= 10001100;
 
+	int CommonFragToActivityCmd_ConnectBleDongle			= 10001010;
+	int CommonFragToActivityCmd_ConnectBlePrinter			= 10001011;
+	int CommonFragToActivityCmd_ConnectEarjackDongle		= 10001012;
+
 	//==================================================//
 	/*		<<	==		Home Fragment		==	>>		*/
     /**

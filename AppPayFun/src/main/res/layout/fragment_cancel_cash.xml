@@ -32,6 +32,7 @@
         android:layout_weight="10"
         android:orientation="horizontal"
         android:weightSum="100"
+        style="@style/DisappearFocusStyle"
         >
 
         <EditText
@@ -53,7 +54,7 @@
             android:layout_weight="30"
             android:layout_height="match_parent"
             android:background="@drawable/button_confirm_selector"
-            android:text="카드읽기"
+            android:text="검색"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:layout_margin="5dp"

@@ -4,7 +4,7 @@ Android vAN Main Application은 Payfun device(이하 EMV Reader)를 smartphone�
 
 이 프로젝트는 Android VAN Lib 모듈, Sub-Application 모듈을 import하여 사용한 소스이며 EMV Reader 하드웨어(DABxxx)에서 동작한다.
 
-초기 버전:
+**초기 버전**:
 
 H/W: DABxxxxx
 
@@ -15,6 +15,16 @@ sub App: android.van.app (V1.0.x)
 Android: 
 
 1. DaouData: Android.van.daoudata(V1.0.x)
+
+**Vers V1R1M0**
+
+Lib: android.van.lib (V1.1.x)
+
+sub App: android.van.app (V1.1.x)
+
+Android: 
+
+1. App: Android.van.daoudata(V1.1.x)
 
 
 
@@ -204,6 +214,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 ## Versioning
 
 1. **V1.0.0**: *daou van sub-application module*, 18/10/25
+2. **V1.1.0**: upgrade for Android8.x(Oreo)
 
 
 

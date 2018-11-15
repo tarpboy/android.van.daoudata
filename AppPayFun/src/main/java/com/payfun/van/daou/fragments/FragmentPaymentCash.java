@@ -675,7 +675,10 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 			VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn.
 
+			//	ToDo:: set default to the selected EditText
 			mEditTextSelectedTarget.setText("");					// clear selected EditText.		2018/10/25
+			if(! mEditTextSelectedTarget.isEnabled() )
+				mEditTextSelectedTarget.setEnabled(true);
 
 			switch ( cashCategoryId )
 			{
@@ -718,7 +721,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					mIsVanRequest = true;
 					setCardReaderOnClick(false);						// Not allow Reading Card
 					mCashTypeSub = IVanSpecification.CashSubType.VOLUNTARY_ISSUANCE;	// 자진발급
-					mEditTextPhone.setText("01-0000-1234");
+					mEditTextSelectedTarget.setText("01-0000-1234");
+					mEditTextSelectedTarget.setEnabled(false);
 					break;
 				default:
 					break;

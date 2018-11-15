@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:weightSum="100"
     android:gravity="center_vertical"
-    android:background="@android:color/holo_blue_light"
+    android:background="@android:color/white"
     >
     <TextView
         android:id="@+id/tv_main_status_sw_cert_no"

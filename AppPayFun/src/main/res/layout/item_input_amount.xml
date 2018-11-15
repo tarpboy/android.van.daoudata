@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     android:background="@drawable/txt_input_amount"
     android:gravity="center_vertical"
+    style="@style/DisappearFocusStyle"
     >
     <TableRow
         android:weightSum="100"
         >
         <!-- input amount   -->
+        <!-- android:cursorVisible="false" -->
         <EditText
             android:id="@+id/edInputAmount"
             android:layout_height="match_parent"
@@ -17,7 +19,7 @@
             android:layout_weight="80"
             android:background="@android:color/transparent"
             android:gravity="center_vertical|end"
-            android:cursorVisible="false"
+
 
             android:inputType="numberDecimal"
             android:maxLength="11"

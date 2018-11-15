@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -405,18 +406,16 @@ public class MainActivity extends AppCompatActivity implements
 			EmvUtils.savePublicKeyVersion(publicKeyVersion);
 			EmvUtils.saveHwSerialNumber(serialNumber);
 
-			String batteryLevel = "Battery: " + deviceInfoData.get("batteryPercentage") + " %";
+			String batteryLevel = deviceInfoData.get("batteryPercentage");
 			String hwModelInfo = EmvUtils.getHWModelName() + " " + EmvUtils.getHwModelNo();
 			String swModelInfo = DaouDataContants.SWModelName + " " + DaouDataContants.SWModelNo;
 
-/*???????	masked by David SH Kim.
-			listener에서 GUI 건디리면 안된다.
-			나중에 별도의 Handler를 이용하여 setting하도록 하자.
-
-			((TextView) findViewById(R.id.tvMenuRightBatteryInfo)).setText(batteryLevel);
-			((TextView) findViewById(R.id.tvMenuHWModelInfo)).setText(hwModelInfo);
-			((TextView) findViewById(R.id.tvMenuSWInfo)).setText(swModelInfo);
-*/
+			//	TodDo::	update main status bar.
+			Bundle bundle = new Bundle();
+			bundle.putString(MessageKeys.CommDevice , CommunicationDevice.BLUETOOTH_READER);
+			bundle.putBoolean(MessageKeys.IsConnected, true);
+			bundle.putInt( MessageKeys.BatteryLevel, Integer.parseInt(batteryLevel) );
+			sendMessage(MessageID.UPDATE_MAIN_STATUS_BAR, bundle);
 
 			KeyBindingEntity entity = new KeyBindingEntity("");
 			entity.setCsn(csn);
@@ -466,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onDevicePlugged() {
 			// TODO Auto-generated method stub
-			ApiLog.Dbg("current volumn:"+ MyReaderDevices.getCurrentVolume(mActivity) );
+			ApiLog.Dbg("current volume:"+ MyReaderDevices.getCurrentVolume(mActivity) );
 
 			if (mEmvReader != null && mEmvReader.IsEmvReaderReady() && ! VanStaticData.mmIsOnPaymentScreen )
 			{
@@ -625,7 +624,6 @@ public class MainActivity extends AppCompatActivity implements
 		public void onBTConnected(BluetoothDevice bluetoothDevice) {
 			ApiLog.Dbg(getString(R.string.bluetooth_connected) + ": " + bluetoothDevice.getAddress());
 
-			// VanStaticData.mmIsBTReaderConnected = true;		removed by David SH Kim.
 			AppHelper.AppPref.setIsBTReaderConnected(true);
 
 			VanStaticData.mmIsRequiredWait = true;
@@ -639,13 +637,14 @@ public class MainActivity extends AppCompatActivity implements
 			// VanStaticData.mmIsBTReaderConnected = false;
 			AppHelper.AppPref.setIsBTReaderConnected(false);
 			closeDialog();
-/*	???????	masked by David SH Kim.
-			listener에서 GUI 건디리면 안된다.
- 			나중에 별도의 Handler를 이용하여 setting하도록 하자.
 
-			((TextView) findViewById(R.id.tvMenuRightBatteryInfo)).setText("");
-			((TextView) findViewById(R.id.tvMenuHWModelInfo)).setText("");
-*/
+			//	ToDo::	update main status bar / Disconnected.
+			Bundle bundle = new Bundle();
+			bundle.putString(MessageKeys.CommDevice , CommunicationDevice.BLUETOOTH_READER);
+			bundle.putBoolean(MessageKeys.IsConnected, false);
+			bundle.putInt( MessageKeys.BatteryLevel, 0 );
+			sendMessage(MessageID.UPDATE_MAIN_STATUS_BAR, bundle);
+
 			ApiLog.Dbg(getString(R.string.bluetooth_disconnected));
 			EmvUtils.cleanDeviceValue();
 			if(	(mEmvReader.getEmvReaderType() != IEmvReader.DeviceType.bluetooth) ||
@@ -668,7 +667,91 @@ public class MainActivity extends AppCompatActivity implements
     //##########################################
 	//	Private Methods
 	//##########################################
+	private String mapBatteryLevelToLMH(int batteryLevel)
+	{
+		if( 0 <= batteryLevel && batteryLevel < 30 )
+			return "LOW";
+		else if( batteryLevel >= 30 && batteryLevel < 70 )
+			return "MIDDLE";
+		else if( batteryLevel <= 100)
+			return "HIGH";
 
+		return "unknown";
+	}
+
+	private void updateMainStatusBar(String whatDevice, boolean connected, int batteryLevel)
+	{
+		String levelLMH;
+		LinearLayout lLayout;
+		switch(whatDevice)
+		{
+			case	CommunicationDevice.BLUETOOTH_READER:
+				if(mImageBleDongleConnectionStatus == null || mImageBleDongleBatteryStatus == null || mTvBleDongleBatteryLevel == null)
+				{	// ToDo:: find resources
+					lLayout = findViewById(R.id.layout_main_status_bar);
+					lLayout = lLayout.findViewById(R.id.layout_main_status_bluetooth);
+					mImageBleDongleConnectionStatus = lLayout.findViewById(R.id.iv_main_status_bluetooth_conn);
+					mImageBleDongleBatteryStatus = lLayout.findViewById(R.id.iv_main_status_bluetooth_battery);
+					mTvBleDongleBatteryLevel = lLayout.findViewById(R.id.tv_main_status_bluetooth_battery_level);
+				}
+				if(connected)
+					mImageBleDongleConnectionStatus.setImageDrawable( getResources().getDrawable(R.drawable.iconconnection_a) );
+				else
+					mImageBleDongleConnectionStatus.setImageDrawable( getResources().getDrawable(R.drawable.iconconnection) );
+
+				levelLMH = mapBatteryLevelToLMH(batteryLevel);
+				switch(levelLMH)
+				{
+					case	"LOW":
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						break;
+					case "MIDDLE":
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						break;
+					case	"HIGH":
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						break;
+					default:
+						break;
+				}
+				mTvBleDongleBatteryLevel.setText(""+batteryLevel);
+				break;
+
+			case	CommunicationDevice.BLUETOOTH_PRINT:
+				if(mImageBlePrinterConnectionStatus == null || mImageBlePrinterBatteryStatus == null || mTvBlePrinterBatteryLevel == null)
+				{	// ToDo:: find resources
+					lLayout = findViewById(R.id.layout_main_status_bar);
+					lLayout = lLayout.findViewById(R.id.layout_main_status_printer);
+					mImageBlePrinterConnectionStatus = lLayout.findViewById(R.id.iv_main_status_printer_conn);
+					mImageBlePrinterBatteryStatus = lLayout.findViewById(R.id.iv_main_status_printer_battery);
+					mTvBlePrinterBatteryLevel = lLayout.findViewById(R.id.tv_main_status_printer_battery_level);
+				}
+				if(connected)
+					mImageBlePrinterConnectionStatus.setImageDrawable( getResources().getDrawable(R.drawable.iconconnection_a) );
+				else
+					mImageBlePrinterConnectionStatus.setImageDrawable( getResources().getDrawable(R.drawable.iconconnection) );
+
+				levelLMH = mapBatteryLevelToLMH(batteryLevel);
+				switch(levelLMH)
+				{
+					case	"LOW":
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						break;
+					case "MIDDLE":
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						break;
+					case	"HIGH":
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						break;
+					default:
+						break;
+				}
+				mTvBlePrinterBatteryLevel.setText(""+batteryLevel);
+				break;
+			default:
+				break;
+		}
+	}
 	private void connectDeviceOnWakeUp()
 	{
 		if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
@@ -773,6 +856,17 @@ public class MainActivity extends AppCompatActivity implements
 		//	ToDo:: not yet!
 	}
 
+	private void sendMessage( int userPrim, Bundle data)
+	{
+		//	ToDo:: transmit signal message to user app.
+		//???????????????????????? David SH Kim. not yet!! ?????????????
+
+		Message msg = mHandler.obtainMessage();
+		msg.what = userPrim;
+		msg.setData(data);
+		mHandler.sendMessage(msg);
+	}
+
 	private class MessageHandler extends Handler {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -804,6 +898,13 @@ public class MainActivity extends AppCompatActivity implements
 					mmIsWaitingTurnOnEmvBTReader = false;
 					break;
 
+				case MessageID.UPDATE_MAIN_STATUS_BAR:
+					Bundle bundle = msg.getData();
+					String whatDevice = bundle.getString("whatDevice", CommunicationDevice.BLUETOOTH_READER);
+					Boolean isConnected = AppHelper.AppPref.getIsBTReaderConnected();
+					int batteryLevel = bundle.getInt("batteryLevel");
+					updateMainStatusBar(whatDevice, isConnected, batteryLevel);
+					break;
 				default:
 					break;
 			}
@@ -823,9 +924,9 @@ public class MainActivity extends AppCompatActivity implements
 	private void showDialog() {
 
 		if (mDialog == null || !mDialog.isShowing()) {
-			mDialog = new DialogHandler(mActivity, "");
+			mDialog = new DialogHandler(mActivity, IVanString.device.device_title);
 			mDialog.setCancelable(false);
-			mDialog.setMessage( getString( R.string.msg_processing) );
+			mDialog.setMessage( IVanString.device.device_trying_connection );
 			mDialog.Create();
 			mDialog.Show();
 		}
@@ -1133,21 +1234,18 @@ public class MainActivity extends AppCompatActivity implements
 					ApiLog.Dbg("saved BT: " + btReaderInfo.getName() );
 					if (device.getName().contains(btReaderInfo.getName()) && !"".equals(btReaderInfo.getName())) {
 
-						//VanStaticData.mmIsBTReaderConnected = true;
 						AppHelper.AppPref.setIsBTReaderConnected(true);
 
-						MyToast.showToast(mActivity, R.string.bluetooth_connected);
 					}
 					break;
 				case BluetoothDevice.ACTION_ACL_DISCONNECTED:
 					ApiLog.Dbg("disconnected BT:" + device.getName());
 
-					//VanStaticData.mmIsBTReaderConnected = false;
-					AppHelper.AppPref.setIsBTReaderConnected(false);
-
-					//show show toast for case Reader
-					if(device.getName().contains("CHB10"))
+					if(device.getName().contains(btReaderInfo.getName())){
+						AppHelper.AppPref.setIsBTReaderConnected(false);
 						MyToast.showToast(mActivity, R.string.bluetooth_disconnected);
+					}
+
 					break;
 				case BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED:
 					//	ToDo:: Nothing
@@ -1168,10 +1266,22 @@ public class MainActivity extends AppCompatActivity implements
     //##########################################
 	private final String Tag = String.format("[%s] ", MainActivity.class.getSimpleName() );
 	private interface MessageID{
-		int		WAIT_FOR_BT_TURN_ON	= 0;
-		int		STOP_SEARCHING			= 100;
+		int		WAIT_FOR_BT_TURN_ON		= 100;
+		int		STOP_SEARCHING			= 101;
+		int		UPDATE_MAIN_STATUS_BAR		= 110;
 	}
 
+	private interface MessageKeys{
+		String	CommDevice				= "whatDevice";
+		String	IsConnected			= "isConnected";
+		String	BatteryLevel			= "batteryLevel";
+	}
+
+	private interface CommunicationDevice{
+		String	BLUETOOTH_READER		= "bluetoothReader";
+		String	BLUETOOTH_PRINT		= "bluetoothPrinter";
+		String	EARJACK_DONGLE		= "earJackDongle";
+	}
 
 	private final static int				SHOWING_DIALOG_LIMIT = 1;
 	private final static int				TOTAL_TIME_LIMIT = 30;
@@ -1202,6 +1312,8 @@ public class MainActivity extends AppCompatActivity implements
     private FragmentCallbackInterface.ActivityToHome        mActivityToHome;
     private FragmentCallbackInterface.ActivityToPaymentCredit  mActivityToPaymentCredit;
 
-
+	private ImageView						mImageBleDongleConnectionStatus, mImageBleDongleBatteryStatus;
+	private ImageView						mImageBlePrinterConnectionStatus, mImageBlePrinterBatteryStatus;
+	private TextView						mTvBleDongleBatteryLevel, mTvBlePrinterBatteryLevel;
 
 }
