@@ -131,13 +131,16 @@ public class MainActivity extends AppCompatActivity implements
 	//	attachBluetoothListener();
 		checkDBBeforeRunningApp();
 		mShowingDialogCount = 0;
+		mmIsWaitingTurnOnEmvBTReader = false;
     }
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		mIsResumeOnMain = true;
+//		mIsResumeOnMain = true;
 		VanStaticData.mmGET_COUPON = false;
+		mWaitTurnOnBluetoothRetryCnt = 0;
+
 		//setIsBlueTooth();
 		//wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		ApiLog.Dbg("onResume on MainActivity");
@@ -148,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements
 
 			//check if user enable app after sleep
 			if ( AppHelper.AppPref.getAppSleep() ) {
-				connectDeviceOnWakeUp();
+				waitTurnOnBTReader();
 			}
 		}
 	}
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements
 		hideNumericKeyboard();		// 1. hide key board
 
 		if( MainActivityFragmentMapper.atHome() )
-			showDownloadFinish("앱을 종료하시겠습니까?");
+			showAppFinish("앱을 종료하시겠습니까?");
 		else
 			changePage(AMainFragPages.MainHomePage);
 	}
@@ -369,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onReturnDeviceInfo( Hashtable<String, String> deviceInfoData ) {
 			ApiLog.Dbg("onReturnDeviceInfo in MainActivity");
-			closeDialog();
+			//closeDialog();
 
 			EmvUtils.setIsReadyIC(true);
 
@@ -416,6 +419,8 @@ public class MainActivity extends AppCompatActivity implements
 			bundle.putBoolean(MessageKeys.IsConnected, true);
 			bundle.putInt( MessageKeys.BatteryLevel, Integer.parseInt(batteryLevel) );
 			sendMessage(MessageID.UPDATE_MAIN_STATUS_BAR, bundle);
+
+			sendMessage(MessageID.BT_CONNECTION_COMPLETE, null);
 
 			KeyBindingEntity entity = new KeyBindingEntity("");
 			entity.setCsn(csn);
@@ -507,13 +512,7 @@ public class MainActivity extends AppCompatActivity implements
 			MyReaderDevices.restoreVolume(mActivity);
 			closeDialog();
 			// TODO Auto-generated method stub
-/** ???????	masked by David SH Kim.
- 			listener에서 GUI 건디리면 안된다.
- 			나중에 별도의 Handler를 이용하여 setting하도록 하자.
 
- 			((TextView) findViewById(R.id.tvMenuRightBatteryInfo)).setText("");
-			((TextView) findViewById(R.id.tvMenuHWModelInfo)).setText("");
- */
 			EmvUtils.cleanDeviceValue();
 		}
 
@@ -529,8 +528,7 @@ public class MainActivity extends AppCompatActivity implements
 			ApiLog.Dbg("onError on MainActivity");
 
 			ApiLog.Dbg( EmvUtils.getEmvErrorString(mActivity, errorState));
-			if( mmIsWaitingTurnOnEmvBTReader && (mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth) )
-				return;
+
 			switch (errorState){
 				case COMM_LINK_UNINITIALIZED:
 				case COMM_ERROR:
@@ -550,11 +548,16 @@ public class MainActivity extends AppCompatActivity implements
 					updateDialogMsg(msg);
 					break;
 				case FAIL_TO_START_AUDIO:
+					//	ToDo:: Nothing here
+					break;
 				case FAIL_TO_START_BT:
-					//VanStaticData.mmIsBTReaderConnected = false;
 					AppHelper.AppPref.setIsBTReaderConnected(false);
-					closeDialog();
-					MyToast.showToast(mActivity, IVanString.userNotification.msg_reconnect_device);		//R.string.msg_reconnect_device);
+/*
+					if ( mmIsWaitingTurnOnEmvBTReader ) {
+						//	ToDo:: retry connect BT during Wait Turn on. I suggest TurnOnWaitingTime(30sec) is longer than this event.
+						retryConnectBTReaderOnWaitTurnOn();
+					}
+*/
 					break;
 				case INVALID_FUNCTION_IN_CURRENT_CONNECTION_MODE:
 					mEmvReader.stopConnection();
@@ -596,7 +599,7 @@ public class MainActivity extends AppCompatActivity implements
 		public void onReturnIntegrityCheckResult(boolean result) {
 			ApiLog.Dbg("onReturnIntegrityCheckResult:" + result);
 
-			String logData = "INTERGRITY CHECK";
+			String logData = "INTEGRITY CHECK";
 			logData += "\nResult:" + result;
 			ApiExtStorage.writeIntegrityLog(logData);
 			logData = "";
@@ -629,14 +632,12 @@ public class MainActivity extends AppCompatActivity implements
 			VanStaticData.mmIsRequiredWait = true;
 			mEmvReader.integrityCheck();			// wait for onReturnIntegrityCheckResult
 
-			mTotalTime = TOTAL_TIME_LIMIT;
 		}
 
 		@Override
-		public void onBTDisconnected() {
-			// VanStaticData.mmIsBTReaderConnected = false;
+		public void onBTDisconnected()
+		{
 			AppHelper.AppPref.setIsBTReaderConnected(false);
-			closeDialog();
 
 			//	ToDo::	update main status bar / Disconnected.
 			Bundle bundle = new Bundle();
@@ -647,19 +648,17 @@ public class MainActivity extends AppCompatActivity implements
 
 			ApiLog.Dbg(getString(R.string.bluetooth_disconnected));
 			EmvUtils.cleanDeviceValue();
+/*
 			if(	(mEmvReader.getEmvReaderType() != IEmvReader.DeviceType.bluetooth) ||
-				! VanStaticData.mmIsRequiredWait || mmIsWaitingTurnOnEmvBTReader)
+				! VanStaticData.mmIsRequiredWait)
 				return;
-
-			waitTurnBTReader();
+*/
+			if( mmIsWaitingTurnOnEmvBTReader )
+				retryConnectBTReaderOnWaitTurnOn();
+			else
+				waitTurnOnBTReader();		// not decide yet!!
 		}
 
-		public void waitTurnBTReader(){
-			mmIsWaitingTurnOnEmvBTReader = true;
-		//	mTotalTime = TOTAL_TIME_LIMIT;			// added by David SH Kim. to try to connect again.
-													// ?????? Must check it makes trouble or not.!!!
-			mHandler.sendEmptyMessage(MessageID.WAIT_FOR_BT_TURN_ON);
-		}
 	}	// end of Class
 
 
@@ -752,28 +751,33 @@ public class MainActivity extends AppCompatActivity implements
 				break;
 		}
 	}
-	private void connectDeviceOnWakeUp()
-	{
-		if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
-		{
-			if( ! VanStaticData.mmIsOnPaymentScreen )
-				showDialog();
 
-			connectBT();
-		}
+
+	private void waitTurnOnBTReader()
+	{
+		Bundle bundle = new Bundle();
+		bundle.putInt(MessageKeys.BluetoothConnectionTime, MAX_WAIT_TURN_ON_BLUETOOTH_TIME);
+
+		sendMessage(MessageID.WAIT_FOR_BT_TURN_ON, bundle);
 	}
-	private void connectBT()
+
+	private void retryConnectBTReaderOnWaitTurnOn()
+	{
+		sendMessage(MessageID.BT_CONNECTION_RETRY_ON_WAITING_TURN_ON, null);
+	}
+
+	private boolean connectBT()
 	{
 		//	Check BT connected or not.
 		switch( mEmvReader.getConnectionMode() )
 		{
 			case NONE:
-				ApiLog.Dbg("No connected device, start connecting BT");
+				ApiLog.Dbg(Tag+ "No connected device, start connecting BT");
 				break;
 			case BLUETOOTH:
-				ApiLog.Dbg("BT Already connected");
+				ApiLog.Dbg(Tag+ "==========<<	BT Already connected	>>=============");
 				closeDialog();
-				return;
+				return false;
 		}
 
 		BTReaderInfo btReaderInfo = AppHelper.getBTReaderInfo();
@@ -789,7 +793,10 @@ public class MainActivity extends AppCompatActivity implements
 		} else {
 			closeDialog();
 			MyToast.showToast(mActivity, R.string.bluetooth_not_configured);
+			return false;
 		}
+
+		return true;
 	}
 
 	private boolean checkImCalledByExternalUser() {
@@ -858,48 +865,79 @@ public class MainActivity extends AppCompatActivity implements
 
 	private void sendMessage( int userPrim, Bundle data)
 	{
-		//	ToDo:: transmit signal message to user app.
-		//???????????????????????? David SH Kim. not yet!! ?????????????
+		//	ToDo:: transmit signal message to MainActivity.
 
-		Message msg = mHandler.obtainMessage();
-		msg.what = userPrim;
-		msg.setData(data);
-		mHandler.sendMessage(msg);
+		if(data == null)
+		{	//	ToDo:: tx message without data
+			mHandler.sendEmptyMessage(userPrim);
+		}
+		else
+		{	//	ToDo:: message with data
+			Message msg = mHandler.obtainMessage();
+			msg.what = userPrim;
+			msg.setData(data);
+			mHandler.sendMessage(msg);
+		}
+
+
+	}
+
+	private void removeMessage(int userPrim)
+	{
+		mHandler.removeMessages(userPrim);
 	}
 
 	private class MessageHandler extends Handler {
 		public void handleMessage(Message msg) {
+			Bundle bundle;
 			switch (msg.what) {
 				case MessageID.WAIT_FOR_BT_TURN_ON:
-					ApiLog.Dbg("Will close dialog after wait 30s to insert card with paras Total: " + mTotalTime +
-							"  isBTReaderConnected: " + AppHelper.AppPref.getIsBTReaderConnected() );
-					//		"  isBTReaderConnected: " + VanStaticData.mmIsBTReaderConnected);		changed by David SH Kim.
-					mTotalTime -= 5;		// 5 Sec :: delay time
-					if	(	(mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth) &&
-							!AppHelper.AppPref.getIsBTReaderConnected() )
-					//		!VanStaticData.mmIsBTReaderConnected )				changed by David SH Kim.
+					if(mmIsWaitingTurnOnEmvBTReader )
 					{
-						if(mTotalTime > 0) {
-							msg = obtainMessage(MessageID.WAIT_FOR_BT_TURN_ON);
-							sendMessageDelayed(msg, 5000);		// 5 Sec :: delay time
-							connectBT();
-							ApiLog.Dbg("Wait to close diaglog:" + mTotalTime);
-						}
-						else
-						{
-							mmIsWaitingTurnOnEmvBTReader = false;
-							closeDialog();
-						}
+						ApiLog.Dbg(Tag + "already trying to connect Reader");
+						return;
 					}
 
-					break;
+					if( ! connectBT() )
+						return;				// if already connected or device is not bonded, return false.
 
-				case MessageID.STOP_SEARCHING:
+					if( mWaitTurnOnBluetoothRetryCnt >= MAX_WAIT_TURN_ON_BLUETOOTH_RETRY )
+					{
+						return;
+					}
+
+					ApiLog.Dbg(Tag + ">>=========== START WAIT FOR TURN ON BLUETOOTH	==========<<");
+					mWaitTurnOnBluetoothRetryCnt++;
+
+					bundle = msg.getData();
+					int waitingTime = bundle.getInt(MessageKeys.BluetoothConnectionTime);
+
+					//	ToDo:: Wait for turning on Bluetooth reader.
+					mmIsWaitingTurnOnEmvBTReader = true;
+					showDialogProgress(IVanString.device.device_title, IVanString.device.device_trying_connection);
+
+					sendEmptyMessageDelayed(MessageID.EXPIRED_BT_TURN_ON_TIME, waitingTime);
+					break;
+				case MessageID.BT_CONNECTION_RETRY_ON_WAITING_TURN_ON:
+					//	ToDo:: this message occurs on Disconnected or Error event only during waiting turn on.
+					if( mmIsWaitingTurnOnEmvBTReader )
+						connectBT();
+					break;
+				case MessageID.EXPIRED_BT_TURN_ON_TIME:
+					ApiLog.Dbg(Tag + "===========<< EXPIRED BLUETOOTH TURN ON TIME	>>==========");
+					closeDialog();
 					mmIsWaitingTurnOnEmvBTReader = false;
+					break;
+				case MessageID.BT_CONNECTION_COMPLETE:
+					ApiLog.Dbg(Tag + "===========<< TURN ON BLUETOOTH COMPLETE	>>==========");
+					closeDialog();
+					mmIsWaitingTurnOnEmvBTReader = false;
+					mWaitTurnOnBluetoothRetryCnt = 0;
+					removeMessage(MessageID.EXPIRED_BT_TURN_ON_TIME);		// ToDo:: remove delayed message.
 					break;
 
 				case MessageID.UPDATE_MAIN_STATUS_BAR:
-					Bundle bundle = msg.getData();
+					bundle = msg.getData();
 					String whatDevice = bundle.getString("whatDevice", CommunicationDevice.BLUETOOTH_READER);
 					Boolean isConnected = AppHelper.AppPref.getIsBTReaderConnected();
 					int batteryLevel = bundle.getInt("batteryLevel");
@@ -919,26 +957,41 @@ public class MainActivity extends AppCompatActivity implements
 			mDialog.Dismiss();
 			mDialog = null;
 		}
+		if (mConfirmDlg != null){
+			mConfirmDlg.Dismiss();
+			mConfirmDlg = null;
+		}
 	}
 
 	private void showDialog() {
 
-		if (mDialog == null || !mDialog.isShowing()) {
-			mDialog = new DialogHandler(mActivity, IVanString.device.device_title);
-			mDialog.setCancelable(false);
-			mDialog.setMessage( IVanString.device.device_trying_connection );
-			mDialog.Create();
-			mDialog.Show();
+		if ( mDialog != null ) {
+			closeDialog();
 		}
+		mDialog = new DialogHandler(mActivity, IVanString.device.device_title);
+		mDialog.setCancelable(false);
+		mDialog.setMessage( IVanString.device.device_trying_connection );
+		mDialog.Create();
+		mDialog.Show();
+
 	}
+
 	private void showDialogProgress(int rsId){
 		String msg = getString(rsId);
-		showDialogProgress(msg);
+		showDialogProgress(IVanString.userNotification.user_notification_title, msg);
 	}
-	private void showDialogProgress(String msg){
-		if( mDialog == null || !mDialog.isShowing() )
+	private void showDialogProgress(String msg)
+	{
+		showDialogProgress(IVanString.userNotification.user_notification_title, msg);
+	}
+	private void showDialogProgress(String title, String msg){
+		if( mDialog != null )
+			closeDialog();
+
+		//if( mDialog == null || !mDialog.isShowing() )
 		{
-			mDialog = new DialogHandler(mActivity, "");
+			mDialog = new DialogHandler(mActivity, title);
+			mDialog.setIcon(DialogHandler.dialogMode.MODE_WARNING);
 			mDialog.setCancelable(false);
 			mDialog.setMessage( msg );
 			mDialog.setProgressBar(android.R.attr.progressBarStyleHorizontal);
@@ -952,60 +1005,71 @@ public class MainActivity extends AppCompatActivity implements
 		}
 	}
 
-	private void showFallbackDlg(String msg) {
+	private void showConfirmDlg(String msg) {
 		if(msg==null || msg.equals(""))
 			return;
-		mFallbackDlg = new DialogHandler(mActivity, IVanString.payment.emv_fallback_report);
-		mFallbackDlg.setCancelable(false);
-		mFallbackDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
-		mFallbackDlg.setMessage(msg);
-		mFallbackDlg.setPositiveButton( new DialogInterface.OnClickListener() {
+
+		if( mConfirmDlg != null )
+			closeDialog();
+
+		mConfirmDlg = new DialogHandler(mActivity, IVanString.payment.emv_fallback_report);
+		mConfirmDlg.setCancelable(false);
+		mConfirmDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
+		mConfirmDlg.setMessage(msg);
+		mConfirmDlg.setPositiveButton( new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 			}
 		});
-		mFallbackDlg.Create();
-		mFallbackDlg.Show();
+		mConfirmDlg.Create();
+		mConfirmDlg.Show();
 	}
 
 	private void showDownloadConfirm(String msg) {
 		if(msg==null || msg.equals(""))
 			return;
-		mFallbackDlg = new DialogHandler(mActivity, "가맹점 개통");
-		mFallbackDlg.setCancelable(false);
-		mFallbackDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
-		mFallbackDlg.setMessage(msg);
-		mFallbackDlg.setPositiveButton( new DialogInterface.OnClickListener() {
+		if( mConfirmDlg != null )
+			closeDialog();
+
+		mConfirmDlg = new DialogHandler(mActivity, "가맹점 개통");
+		mConfirmDlg.setCancelable(false);
+		mConfirmDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
+		mConfirmDlg.setMessage(msg);
+		mConfirmDlg.setPositiveButton( new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 
 				//	ToDo:: Profile Activity를 호출하여 바로 설정에 들어 가게 하는것이 좋을지 모르겠다.
 				//	현재는 그냥 알림으로 끝내자!!
 			}
 		});
-		mFallbackDlg.Create();
-		mFallbackDlg.Show();
+		mConfirmDlg.Create();
+		mConfirmDlg.Show();
 	}
-	private void showDownloadFinish(String msg) {
+
+	private void showAppFinish(String msg) {
 		if(msg==null || msg.equals(""))
 			return;
-		mFallbackDlg = new DialogHandler(mActivity, "앱 종료");
-		mFallbackDlg.setCancelable(false);
-		mFallbackDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
-		mFallbackDlg.setMessage(msg);
-		mFallbackDlg.setPositiveButton( new DialogInterface.OnClickListener() {
+		if( mConfirmDlg != null )
+			closeDialog();
+
+		mConfirmDlg = new DialogHandler(mActivity, "앱 종료");
+		mConfirmDlg.setCancelable(false);
+		mConfirmDlg.setIcon(DialogHandler.dialogMode.MODE_WARNING);
+		mConfirmDlg.setMessage(msg);
+		mConfirmDlg.setPositiveButton( new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 
 				//	ToDo:: exit
 				finish();
 			}
 		});
-		mFallbackDlg.setNegativeButton(new DialogInterface.OnClickListener() {
+		mConfirmDlg.setNegativeButton(new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				changePage(AMainFragPages.MainHomePage);
 			}
 		});
-		mFallbackDlg.Create();
-		mFallbackDlg.Show();
+		mConfirmDlg.Create();
+		mConfirmDlg.Show();
 	}
 	//==========================================
 	//	Broadcast Receivers and Listeners
@@ -1049,6 +1113,89 @@ public class MainActivity extends AppCompatActivity implements
 		detachDetectEmvServiceListener();
 	}
 
+	private final BroadcastReceiver mEmvReaderBroadcastReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Bundle extras = intent.getExtras();
+			if (extras != null) {
+				if (extras.containsKey("value")) {
+					ApiLog.Dbg("Value is:" + extras.get("value"));
+					mEmvReader = AppHelper.getEmvReaderInService();
+					if( mEmvReader != null)
+					{
+						if( mIsExternalCall )
+							mEmvReader.setIsForCancel(true);
+
+						ApiLog.Dbg("initEmvResources");
+						attachDetectEmvServiceListener();
+						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
+						{
+							waitTurnOnBTReader();
+							return;
+						}
+						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.audioPlug )
+						{
+							// ToDo:: Not support now.
+							if( MyReaderDevices.isHeadsetConnected(mActivity) )
+							{
+								ApiAux.sleep(4000);
+								mEmvReader.getDeviceInfo();
+							}
+						}
+						else
+						{
+							ApiLog.Dbg("!!!!==== Not support DeviceType: " + mEmvReader.getEmvReaderType() );
+						}
+					} else {
+						ApiLog.Dbg("getEmvReaderService is null");
+					}
+				}
+			}
+		}
+	};
+
+	private final BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent){
+
+			final String action = intent.getAction();
+			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+			BTReaderInfo btReaderInfo = AppHelper.getBTReaderInfo();
+			switch(action)
+			{
+				case	BluetoothDevice.ACTION_ACL_CONNECTED:
+					ApiLog.Dbg("connected BT:" + device.getName() );
+					ApiLog.Dbg("saved BT: " + btReaderInfo.getName() );
+					if (device.getName().contains(btReaderInfo.getName()) && !"".equals(btReaderInfo.getName())) {
+
+						AppHelper.AppPref.setIsBTReaderConnected(true);
+
+					}
+					break;
+				case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+					ApiLog.Dbg("disconnected BT:" + device.getName());
+
+					if(device.getName().contains(btReaderInfo.getName())){
+						AppHelper.AppPref.setIsBTReaderConnected(false);
+						MyToast.showToast(mActivity, R.string.bluetooth_disconnected);
+					}
+
+					break;
+				case BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED:
+					//	ToDo:: Nothing
+					break;
+				default:
+					ApiLog.Dbg("UnRegisted Action Occurs: " + action);
+					break;
+			}
+		}
+	};
+
+	//##########################################
+	//	Soft Key Board
+	//##########################################
     private void showNumericKeyboard(EditText editTextAmount)
 	{
 
@@ -1104,6 +1251,7 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		ApiEditTextAmount.hideKeyboard(mActivity, this);
 	}
+
     private boolean isPlayServiceAvailable(Context context, int requestCode)
     {
         boolean ret = false;
@@ -1176,87 +1324,6 @@ public class MainActivity extends AppCompatActivity implements
 		taskProgress.execute();
 	}
 
-
-	private final BroadcastReceiver mEmvReaderBroadcastReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Bundle extras = intent.getExtras();
-			if (extras != null) {
-				if (extras.containsKey("value")) {
-					ApiLog.Dbg("Value is:" + extras.get("value"));
-					mEmvReader = AppHelper.getEmvReaderInService();
-					if( mEmvReader != null)
-					{
-						if( mIsExternalCall )
-							mEmvReader.setIsForCancel(true);
-
-						ApiLog.Dbg("initEmvResources");
-						attachDetectEmvServiceListener();
-						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
-						{
-							connectBT();
-							return;
-						}
-						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.audioPlug )
-						{
-							// ToDo:: Not support now.
-							if( MyReaderDevices.isHeadsetConnected(mActivity) )
-							{
-								ApiAux.sleep(4000);
-								mEmvReader.getDeviceInfo();
-							}
-						}
-						else
-						{
-							ApiLog.Dbg("!!!!==== Not support DeviceType: " + mEmvReader.getEmvReaderType() );
-						}
-					} else {
-						ApiLog.Dbg("getEmvReaderService is null");
-					}
-				}
-			}
-		}
-	};
-
-	private final BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent){
-
-			final String action = intent.getAction();
-			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-			BTReaderInfo btReaderInfo = AppHelper.getBTReaderInfo();
-			switch(action)
-			{
-				case	BluetoothDevice.ACTION_ACL_CONNECTED:
-					ApiLog.Dbg("connected BT:" + device.getName() );
-					ApiLog.Dbg("saved BT: " + btReaderInfo.getName() );
-					if (device.getName().contains(btReaderInfo.getName()) && !"".equals(btReaderInfo.getName())) {
-
-						AppHelper.AppPref.setIsBTReaderConnected(true);
-
-					}
-					break;
-				case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-					ApiLog.Dbg("disconnected BT:" + device.getName());
-
-					if(device.getName().contains(btReaderInfo.getName())){
-						AppHelper.AppPref.setIsBTReaderConnected(false);
-						MyToast.showToast(mActivity, R.string.bluetooth_disconnected);
-					}
-
-					break;
-				case BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED:
-					//	ToDo:: Nothing
-					break;
-				default:
-					ApiLog.Dbg("UnRegisted Action Occurs: " + action);
-					break;
-			}
-		}
-	};
-
     //##########################################
     //  Public Variables
     //##########################################
@@ -1266,12 +1333,15 @@ public class MainActivity extends AppCompatActivity implements
     //##########################################
 	private final String Tag = String.format("[%s] ", MainActivity.class.getSimpleName() );
 	private interface MessageID{
-		int		WAIT_FOR_BT_TURN_ON		= 100;
-		int		STOP_SEARCHING			= 101;
+		int		WAIT_FOR_BT_TURN_ON			= 100;
+		int		BT_CONNECTION_COMPLETE		= 101;
+		int		BT_CONNECTION_RETRY_ON_WAITING_TURN_ON		=102;
+		int		EXPIRED_BT_TURN_ON_TIME		= 103;
 		int		UPDATE_MAIN_STATUS_BAR		= 110;
 	}
 
 	private interface MessageKeys{
+		String	BluetoothConnectionTime	= "bluetoothConnectionTime";
 		String	CommDevice				= "whatDevice";
 		String	IsConnected			= "isConnected";
 		String	BatteryLevel			= "batteryLevel";
@@ -1284,7 +1354,8 @@ public class MainActivity extends AppCompatActivity implements
 	}
 
 	private final static int				SHOWING_DIALOG_LIMIT = 1;
-	private final static int				TOTAL_TIME_LIMIT = 30;
+	private final static int				MAX_WAIT_TURN_ON_BLUETOOTH_TIME = 10000;		// 30sec.
+	private final static int				MAX_WAIT_TURN_ON_BLUETOOTH_RETRY = 1;
 
 	private static AppCompatActivity		mActivity;
 	private EmvApplication					mEmvApp;
@@ -1292,18 +1363,18 @@ public class MainActivity extends AppCompatActivity implements
 
 
     private int							mShowingDialogCount = 0;
-    private int							mTotalTime = 0;
+    private int							mWaitTurnOnBluetoothRetryCnt = 0;
 
     private String							mPackageName;
 	private String							mUserID = "";
 
 	private	 boolean						mIsExternalCall = false;
 //	private boolean						mIsBTReaderConnected = false;		move to VanStaticData.
-	private boolean						mIsResumeOnMain = false;
+//	private boolean						mIsResumeOnMain = false;
 
 	private Handler							mHandler	= new MessageHandler();
 	private DialogHandler					mDialog;
-	private DialogHandler					mFallbackDlg;
+	private DialogHandler					mConfirmDlg;
 
 	private UserEntity						mUserEntityKey = new UserEntity(0);
 
