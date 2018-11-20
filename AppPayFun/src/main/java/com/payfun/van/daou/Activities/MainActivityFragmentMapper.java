@@ -11,6 +11,7 @@ import com.payfun.van.daou.fragments.FragmentCancelCash;
 import com.payfun.van.daou.fragments.FragmentCancelCredit;
 import com.payfun.van.daou.fragments.FragmentCancelSelector;
 import com.payfun.van.daou.fragments.FragmentDummy;
+import com.payfun.van.daou.fragments.FragmentHistoryList;
 import com.payfun.van.daou.fragments.FragmentHome;
 import com.payfun.van.daou.fragments.FragmentPaymentCash;
 import com.payfun.van.daou.fragments.FragmentPaymentCredit;
@@ -53,8 +54,8 @@ public class MainActivityFragmentMapper
 				fragment = new FragmentPaymentCash();
 				break;
 			case AMainFragPages.HistoryListPage:
-				MainActivity.setHeaderView(null);
-				fragment = new FragmentDummy();
+				MainActivity.setHeaderView(IVanString.title.history);
+				fragment = new FragmentHistoryList();
 				break;
 			case AMainFragPages.CancelSelectorPage:
 				MainActivity.setHeaderView(null);

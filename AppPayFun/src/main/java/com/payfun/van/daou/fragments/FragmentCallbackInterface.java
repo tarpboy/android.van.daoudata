@@ -128,7 +128,7 @@ public interface FragmentCallbackInterface {
 	}
 
 	//=================================================//
-	/*		<<	==	Cancel Cash Fragment	==	>>	*/
+	/*		<<	==	Cancel Cash Fragment	==	>>		*/
 	/**
 	 *  for Cancel Cach Fragment Callbacks
 	 **/
@@ -138,6 +138,19 @@ public interface FragmentCallbackInterface {
 	}
 	interface CancelCashToActivity{
 		void cancelCashToActivityCb(int cmd, Object obj);
+	}
+
+	//=================================================//
+	/*		<<	==	History Fragment	==	>>			*/
+	/**
+	 *  for History Fragment Callbacks
+	 **/
+	// << Callback Methods  >>
+	interface ActivityToHistory{
+		void activityToHistoryCb(int cmd, Object obj);
+	}
+	interface HistoryToActivity{
+		void historyToActivityCb(int cmd, Object obj);
 	}
 
 	//==================================================//

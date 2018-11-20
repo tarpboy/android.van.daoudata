@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
+    tools:context=".Activities.MainActivity"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,15 +41,29 @@
                 android:textColor="@android:color/darker_gray"
                 android:text="@string/str_program_title"
                 android:textSize="@dimen/small_text_size" />
-            <TextView
-                android:id="@+id/tvHeaderTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical|center_horizontal"
-                android:textColor="@android:color/white"
-                android:text=""
-                android:textSize="@dimen/large_xx_text_size"
-                />
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/tvHeaderTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="90"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textColor="@android:color/black"
+                    android:text=""
+                    android:textSize="@dimen/large_xx_text_size"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="10"
+                    android:src="@drawable/blue_line_thick"
+                    />
+            </LinearLayout>
+
 
         </FrameLayout>
 

@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements
 		FragmentCallbackInterface.PrintToActivity,
 		FragmentCallbackInterface.CancelCreditToActivity,
 		FragmentCallbackInterface.CancelCashToActivity,
+		FragmentCallbackInterface.HistoryToActivity,
 		FragmentCallbackInterface.DummyToActivity
 {
 
@@ -322,6 +323,19 @@ public class MainActivity extends AppCompatActivity implements
 				break;
 		}
 	}
+
+	public void historyToActivityCb(int cmd, Object obj)
+	{
+		switch(cmd)
+		{
+			case    CommonFragToActivityCmd_ChangePage:
+				int page = (int)obj;
+				changePage(page);
+				break;
+			default:
+				break;
+		}
+	}
 	/*		<<	==	for Dummy Fragment	==	>>		*/
 	//		Must mask on release
 	public void dummyToActivityCb(int cmd, Object obj)
@@ -358,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements
 			return;
 		}
 
-		headerView.setBackgroundResource(R.drawable.bg_title_text);
+		headerView.setBackgroundResource(R.color.color_white_transparent_100);		// (R.drawable.bg_title_text); changed by David SH Kim. V1R1M2
 		MyTypeFace.setTypeFace(mActivity, headerView);
 		tvHeaderTitle.setText(title);
 	}
