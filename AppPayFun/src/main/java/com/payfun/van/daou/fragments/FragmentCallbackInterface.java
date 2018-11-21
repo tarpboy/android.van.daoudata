@@ -60,7 +60,7 @@ public interface FragmentCallbackInterface {
         void activityToPaymentCreditCb(int cmd, Object obj);
     }
     interface PaymentCreditToActivity{
-        void paymentCreditToActivityCb(int cmd, Object obj);
+        void paymentCreditToActivityCb(int cmd, Object obj, Object listener);
     }
 
 	//=================================================//

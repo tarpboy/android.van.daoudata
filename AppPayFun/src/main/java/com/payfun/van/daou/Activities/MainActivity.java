@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void paymentCreditToActivityCb(int cmd, Object obj)
+    public void paymentCreditToActivityCb(int cmd, Object obj, Object listener)
     {
         switch(cmd)
         {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements
                 changePage(page);
                 break;
 			case 	CommonFragToActivityCmd_ShowNumericKeyboard:
-				showNumericKeyboard((EditText)obj);
+				showNumericKeyboard((EditText)obj, (ApiEditTextAmount.OnKeyEventAppListener) listener );
 				break;
                 default:
                 break;
@@ -1210,7 +1210,10 @@ public class MainActivity extends AppCompatActivity implements
 	//##########################################
 	//	Soft Key Board
 	//##########################################
-    private void showNumericKeyboard(EditText editTextAmount)
+    private void showNumericKeyboard(EditText editTextAmount){
+		showNumericKeyboard(editTextAmount, null);
+	}
+	private void showNumericKeyboard(EditText editTextAmount, ApiEditTextAmount.OnKeyEventAppListener appListener)
 	{
 
 		LinearLayout kbView = findViewById(R.id.numeric_keyboard_layout);
@@ -1223,6 +1226,8 @@ public class MainActivity extends AppCompatActivity implements
 		ApiEditTextAmount.showKeyboard(this, kbView, editTextAmount);
 
 		ApiEditTextAmount.setTextChangeListener(editTextAmount);
+		if(appListener != null)
+			ApiEditTextAmount.setOnKeyEventAppListener(appListener);
 	}
 
 	private void showPhoneNumberKeyboard(EditText editText)

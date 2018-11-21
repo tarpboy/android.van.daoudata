@@ -2,6 +2,7 @@ package com.payfun.van.daou.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.payfun.van.daou.fragments.FragmentCallbackInterface.PaymentCreditToAc
 
 import java.util.Hashtable;
 
+import ginu.android.library.keyboard.ApiEditTextAmount;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
@@ -270,9 +272,14 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
     }
 
-    private void PaymentCreditToActivity(int cmd, Object obj)
+	private void PaymentCreditToActivity(int cmd, Object obj)
+	{
+		mCallback.paymentCreditToActivityCb(cmd, obj, null);
+	}
+
+    private void PaymentCreditToActivity(int cmd, Object obj, Object listener)
     {
-        mCallback.paymentCreditToActivityCb(cmd, obj);
+        mCallback.paymentCreditToActivityCb(cmd, obj, listener);
     }
 
     //==========================================
@@ -623,7 +630,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			public boolean onTouch(View v, MotionEvent event) {
 			    switch( event.getAction() ){
 					case	MotionEvent.ACTION_DOWN:
-						PaymentCreditToActivity(CommonFragToActivityCmd_ShowNumericKeyboard, mEditTextAmount);
+						PaymentCreditToActivity(CommonFragToActivityCmd_ShowNumericKeyboard, mEditTextAmount, mAmountEditTextEvent);
 						break;
 					default:
 						break;
@@ -647,11 +654,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 					break;
 				case	R.id.btn_foot_confirm:
 					String amount = ApiString.requireText(mEditTextAmount);
-					if( amount == null || amount.equals("") || amount.equals("0") ) {
-						MyToast.showToast(mmActivity, IVanString.payment.please_input_total_amount);
-						break;
-					}
-					startCheckCard( IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
+					if( verifyInputAmount(amount) )
+						startCheckCard( IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
 					break;
 				default:
 					break;
@@ -659,6 +663,20 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		}
 	};
 
+
+    ApiEditTextAmount.OnKeyEventAppListener mAmountEditTextEvent = new ApiEditTextAmount.OnKeyEventAppListener() {
+		@Override
+		public void enterKeyCb() {
+			String amount = mEditTextAmount.getText().toString().replace(",", "");
+			if(! verifyInputAmount(amount) )
+				return;
+
+			if( VanStaticData.mmSignatureAmountLimit <= Integer.parseInt(amount) )
+				;// showSignPad();
+
+			return;
+		}
+	};
 
     //##########################################
     //  private variables
