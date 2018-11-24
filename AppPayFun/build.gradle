@@ -46,6 +46,7 @@ dependencies {
     implementation project(':van_app_daou')
     implementation project(':profile')
     implementation project(':print')
+    implementation project(':daousign-jni')
 }
 
 //  MUST ADD THIS AT THE BOTTOM

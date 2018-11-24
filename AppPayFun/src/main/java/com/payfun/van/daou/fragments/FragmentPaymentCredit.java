@@ -1,6 +1,7 @@
 package com.payfun.van.daou.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.ginu.android.van.jni.daousign.ApiNativeEncryption;
 import com.payfun.van.daou.R;
 import com.payfun.van.daou.fragments.FragmentCallbackInterface.ActivityToPaymentCredit;
 import com.payfun.van.daou.fragments.FragmentCallbackInterface.PaymentCreditToActivity;
@@ -21,6 +23,9 @@ import com.payfun.van.daou.fragments.FragmentCallbackInterface.PaymentCreditToAc
 import java.util.Hashtable;
 
 import ginu.android.library.keyboard.ApiEditTextAmount;
+import ginu.android.library.signpad.SignatureHandler;
+import ginu.android.library.utils.common.ApiBitmap;
+import ginu.android.library.utils.common.ApiBmp;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
@@ -640,6 +645,15 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 		});
 
+
+		//	ToDo:: init SignPad view
+		mmSignatureHandler = new SignatureHandler();
+		LinearLayout viewSign = mFragmentView.findViewById(R.id.viewSignPad);
+		if( ! mmSignatureHandler.initSignatureView(mmActivity, viewSign) ) {
+			ApiLog.Dbg(Tag+"Fail to initialize SignView");
+			MyToast.showToast(mmActivity, "Fail to initialize SignView");
+		}
+
 		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
 		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
     }
@@ -654,7 +668,10 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 					break;
 				case	R.id.btn_foot_confirm:
 					String amount = ApiString.requireText(mEditTextAmount);
-					if( verifyInputAmount(amount) )
+					if( ! verifyInputAmount(amount) )
+						break;
+
+					if( checkSign() )
 						startCheckCard( IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
 					break;
 				default:
@@ -664,19 +681,47 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 	};
 
 
-    ApiEditTextAmount.OnKeyEventAppListener mAmountEditTextEvent = new ApiEditTextAmount.OnKeyEventAppListener() {
+    private ApiEditTextAmount.OnKeyEventAppListener mAmountEditTextEvent = new ApiEditTextAmount.OnKeyEventAppListener() {
 		@Override
 		public void enterKeyCb() {
 			String amount = mEditTextAmount.getText().toString().replace(",", "");
 			if(! verifyInputAmount(amount) )
 				return;
 
-			if( VanStaticData.mmSignatureAmountLimit <= Integer.parseInt(amount) )
-				;// showSignPad();
-
+			if( VanStaticData.mmSignatureAmountLimit <= Integer.parseInt(amount) ) {
+				mmSignatureHandler.showSignature(true);// showSignPad();
+				AppHelper.AppPref.setNeedSignature(true);			// mmNeedSignature = true;
+			}
+			else {
+				mmSignatureHandler.showSignature(false);
+				AppHelper.AppPref.setNeedSignature(false);			// mmNeedSignature = false;
+			}
 			return;
 		}
 	};
+
+    private boolean checkSign()
+	{
+		if( ! AppHelper.AppPref.getNeedSignature() )					// if( ! mmNeedSignature )
+			return true;
+
+		if( ! mmSignatureHandler.isSignatureComplete() ) {
+			MyToast.showToast(mmActivity, IVanString.payment.require_sign);
+			return false;
+		}
+
+		Bitmap bitmap = mmSignatureHandler.getSignatureBitmap();
+		mmSingImageBase64 = ApiBmp.makeImage(bitmap);
+		mmSignImageByte = ApiBmp.makeImageInByte(bitmap);
+
+		mmSignImageByte = new ApiNativeEncryption().encryptSignature(mmSignImageByte);
+		Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 300, 124, false);
+		String resizedBitmapBase64 = ApiBitmap.BitmaptoBase64(resizedBitmap);
+
+		AppHelper.AppPref.setBase64Signature(resizedBitmapBase64);
+		ApiBitmap.saveBitmap(resizedBitmap, IVanSpecification.Path.tmpSignFileName);
+		return true;
+	}
 
     //##########################################
     //  private variables
@@ -689,15 +734,13 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
     private PaymentCreditToActivity			mCallback;
 
     private View							mFragmentView;
-   // private LinearLayout					mKbView;
     private EditText						mEditTextAmount;
+   // private SignatureHandler				mSignatureHandler;
 
- //   private EmvReader						mEmvReader;
-
-	private PaymentTask						mPaymentTask;
- //   private ReceiptEntity					mReceiptEntity;
+	private PaymentTask					mPaymentTask;
     private Spinner 						mSpinnerDiviMonth;
 
 	private String							mVanName;
+	//private boolean						mNeedSignature = false;
 
 }

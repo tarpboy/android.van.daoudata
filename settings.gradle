@@ -1,4 +1,4 @@
-include ':AppPayFun', ':library', ':bbdevice', ':keyboard', ':signpad', 'receipt', 'print', 'van_app_daou', 'profile'
+include ':AppPayFun', ':library', ':bbdevice', ':keyboard', ':signpad', 'receipt', 'print', 'van_app_daou', 'profile', ':daousign-jni'
 
 project(':library').projectDir=new File('../android.van.lib/library')
 project(':bbdevice').projectDir=new File('../android.van.lib/bbdevice')
