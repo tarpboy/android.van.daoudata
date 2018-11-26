@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-import com.ginu.android.van.jni.daousign.ApiNativeEncryption;
 import com.payfun.van.daou.R;
 import com.payfun.van.daou.fragments.FragmentCallbackInterface.ActivityToPaymentCredit;
 import com.payfun.van.daou.fragments.FragmentCallbackInterface.PaymentCreditToActivity;
@@ -700,6 +699,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		}
 	};
 
+    /*
     private boolean checkSign()
 	{
 		if( ! AppHelper.AppPref.getNeedSignature() )					// if( ! mmNeedSignature )
@@ -722,7 +722,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		ApiBitmap.saveBitmap(resizedBitmap, IVanSpecification.Path.tmpSignFileName);
 		return true;
 	}
-
+	*/
     //##########################################
     //  private variables
     //##########################################

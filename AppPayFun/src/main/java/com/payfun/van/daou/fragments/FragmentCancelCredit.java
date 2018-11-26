@@ -15,6 +15,7 @@ import com.payfun.van.daou.R;
 
 import java.util.Hashtable;
 
+import ginu.android.library.signpad.SignatureHandler;
 import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
@@ -432,6 +433,9 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			return;
 		}
 
+		if( ! checkSign() )
+			return;
+
 		ApiLog.Dbg(">>==========	do CANCEL:: CREDIT	========<<");
 		ApiLog.Dbg(Tag+"ReceiptType: " + mmReceiptEntity.getType() );
 
@@ -605,6 +609,17 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			mTvTotal.setText( ApiString.formatNumberExcel( mmReceiptEntity.getTotalAmount() ) );
 			mTvReqDate.setText( mmReceiptEntity.getRequestDate() );
 			mTvApprovalNo.setText( mmReceiptEntity.getApprovalCode() );
+
+			//	ToDo:: show signPad
+			if( VanStaticData.mmSignatureAmountLimit <= Integer.parseInt( mmReceiptEntity.getTotalAmount() ) ) {
+				mmSignatureHandler.showSignature(true);// showSignPad();
+				AppHelper.AppPref.setNeedSignature(true);			// mmNeedSignature = true;
+			}
+			else {
+				mmSignatureHandler.showSignature(false);
+				AppHelper.AppPref.setNeedSignature(false);			// mmNeedSignature = false;
+			}
+
 		}
 	};
 
@@ -651,6 +666,14 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		mTvTotal = mFragmentView.findViewById(R.id.tv_cancel_credit_amount);
 		mTvApprovalNo = mFragmentView.findViewById(R.id.tv_cancel_credit_approval_no);
 		mTvReqDate = mFragmentView.findViewById(R.id.tv_cancel_credit_req_date);
+
+		//	ToDo:: init SignPad view
+		mmSignatureHandler = new SignatureHandler();
+		LinearLayout viewSign = mFragmentView.findViewById(R.id.viewSignPad);
+		if( ! mmSignatureHandler.initSignatureView(mmActivity, viewSign) ) {
+			ApiLog.Dbg(Tag+"Fail to initialize SignView");
+			MyToast.showToast(mmActivity, "Fail to initialize SignView");
+		}
 
 		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
 		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
