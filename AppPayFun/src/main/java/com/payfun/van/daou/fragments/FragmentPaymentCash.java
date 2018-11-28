@@ -471,6 +471,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			mmReceiptEntity.setCardNo( maskedKeyInData );
 			mmReceiptEntity.setBuyerName( mCashTypeSub );
 			mmReceiptEntity.setApprovalCode( ApiAux.getUnique10Num() );
+			mmReceiptEntity.setRequestDate( ApiDate.getCurrentDateFull() );
 			mmReceiptEntity.setRevDate( ApiDate.getCurrentDateFull() );
 			mmReceiptEntity.setRevStatus( IVanSpecification.ReceiptStatus.PaymentReceipt );
 /*
