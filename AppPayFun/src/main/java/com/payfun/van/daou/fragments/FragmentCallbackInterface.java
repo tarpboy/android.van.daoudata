@@ -11,11 +11,13 @@ public interface FragmentCallbackInterface {
     /**
      *  Common Commands between Fragments and Activity
     **/
-    int CommonFragToActivityCmd_ChangePage		= 10001000;
-    int CommonFragToActivityCmd_ShowNumericKeyboard = 10001001;
-	int CommonFragToActivityCmd_ShowPhoneNumericKeyboard = 10001002;		// only for cash payment
-	int CommonFragToActivityCmd_ShowCompanyNumericKeyboard = 10001003;		// only for cash payment
-	int CommonFragToActivityCmd_ChangeHeaderTitle	= 10001100;
+    int CommonFragToActivityCmd_ChangePage						= 10001000;
+    int CommonFragToActivityCmd_ShowNumericKeyboard			= 10001001;
+	int CommonFragToActivityCmd_ShowPhoneNumericKeyboard		= 10001002;		// only for cash payment
+	int CommonFragToActivityCmd_ShowCompanyNumericKeyboard	= 10001003;		// only for cash payment
+
+	int CommonFragToActivityCmd_HideSoftKeyboard				= 10001005;
+	int CommonFragToActivityCmd_ChangeHeaderTitle				= 10001100;
 
 	int CommonFragToActivityCmd_ConnectBleDongle			= 10001010;
 	int CommonFragToActivityCmd_ConnectBlePrinter			= 10001011;
@@ -90,6 +92,11 @@ public interface FragmentCallbackInterface {
 	}
 	//=================================================//
 	/*		<<	==	Print Fragment	==	>>				*/
+	// Activity to ConfigWifi Command
+	int ActivityToPrintCmd_Connected		= 20005000;
+	// ConfigWifi to Activity Command
+	int PrintToActivityCmd_PrinterBluetoothConnected		= 20005100;
+	int PrintToActivityCmd_PrinterBluetoothDisconnected	= 20005101;
 	/**
 	 *  for Print Fragment Callbacks
 	 **/

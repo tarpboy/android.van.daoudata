@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/AppPayFun" />
             <option value="$PROJECT_DIR$/../android.van.lib/bbdevice" />
+            <option value="$PROJECT_DIR$/../android.van.lib/btprinter" />
             <option value="$PROJECT_DIR$/../android.van.lib/keyboard" />
             <option value="$PROJECT_DIR$/../android.van.lib/library" />
             <option value="$PROJECT_DIR$/../android.van.lib/print" />

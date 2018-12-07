@@ -68,11 +68,14 @@ import ginu.android.van.app_daou.utils.MyTypeFace;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangeHeaderTitle;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_HideSoftKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowCompanyNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowPhoneNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_AttachEmvDetectionListener;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_DetachEmvDetectionListener;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.PrintToActivityCmd_PrinterBluetoothConnected;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.PrintToActivityCmd_PrinterBluetoothDisconnected;
 import static ginu.android.van.app_daou.database.VanStaticData.*;
 
 public class MainActivity extends AppCompatActivity implements
@@ -287,13 +290,32 @@ public class MainActivity extends AppCompatActivity implements
 
 	public void printToActivityCb(int cmd, Object obj)
 	{
+		Bundle bundle;
 		switch(cmd)
 		{
 			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
-
+			case	CommonFragToActivityCmd_HideSoftKeyboard:
+				ApiAux.hideSoftKeyboard(mActivity);
+				break;
+			case	PrintToActivityCmd_PrinterBluetoothConnected:
+				//	ToDo::	update main status bar / Connected.
+				int batteryLevel = (int)obj;
+				bundle = new Bundle();
+				bundle.putString(MessageKeys.CommDevice , CommunicationDevice.BLUETOOTH_PRINT);
+				bundle.putBoolean(MessageKeys.IsConnected, true);
+				bundle.putInt( MessageKeys.BatteryLevel, batteryLevel );
+				sendMessage(MessageID.UPDATE_MAIN_STATUS_BAR, bundle);
+				break;
+			case PrintToActivityCmd_PrinterBluetoothDisconnected:
+				bundle = new Bundle();
+				bundle.putString(MessageKeys.CommDevice , CommunicationDevice.BLUETOOTH_PRINT);
+				bundle.putBoolean(MessageKeys.IsConnected, false);
+				bundle.putInt( MessageKeys.BatteryLevel, 0 );
+				sendMessage(MessageID.UPDATE_MAIN_STATUS_BAR, bundle);
+				break;
 			default:
 				break;
 		}
@@ -953,7 +975,7 @@ public class MainActivity extends AppCompatActivity implements
 				case MessageID.UPDATE_MAIN_STATUS_BAR:
 					bundle = msg.getData();
 					String whatDevice = bundle.getString("whatDevice", CommunicationDevice.BLUETOOTH_READER);
-					Boolean isConnected = AppHelper.AppPref.getIsBTReaderConnected();
+					Boolean isConnected = bundle.getBoolean(MessageKeys.IsConnected); // AppHelper.AppPref.getIsBTReaderConnected();
 					int batteryLevel = bundle.getInt("batteryLevel");
 					updateMainStatusBar(whatDevice, isConnected, batteryLevel);
 					break;

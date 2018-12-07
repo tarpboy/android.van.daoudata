@@ -1,4 +1,4 @@
-include ':AppPayFun', ':library', ':bbdevice', ':keyboard', ':signpad', 'receipt', 'print', 'van_app_daou', 'profile'
+include ':AppPayFun', ':library', ':bbdevice', ':keyboard', ':signpad', 'receipt', 'print', 'van_app_daou', 'profile', ':btprinter'
 
 project(':library').projectDir=new File('../android.van.lib/library')
 project(':bbdevice').projectDir=new File('../android.van.lib/bbdevice')
@@ -8,3 +8,4 @@ project(':receipt').projectDir=new File('../android.van.lib/receipt')
 project(':print').projectDir=new File('../android.van.lib/print')
 project(':van_app_daou').projectDir=new File('../android.van.app/van_app_daou')
 project(':profile').projectDir=new File('../android.van.app/profile')
+project(':btprinter').projectDir=new File('../android.van.lib/btprinter')

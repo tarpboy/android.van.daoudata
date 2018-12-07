@@ -45,9 +45,19 @@
     </string-array>
     <string name="receipt_button_cancel">종료</string>
     <string name="receipt_button_ok">인쇄</string>
+    <string name="print_button_cancel">취소</string>
+    <string name="print_button_ok">완료</string>
 
     <string name="EachDay">일별</string>
     <string name="EachMonth">월별</string>
     <string name="EachQuarter">분기별</string>
     <string name="defaultContentDescription">"imageButton or imageView"</string>
+
+    <string name="str_dialog_printout_select_mode">영수증 출력 모드를 선택해주세요</string>
+    <string name="str_dialog_printout_mode_email">EMAIL</string>
+    <string name="str_dialog_printout_mode_sms">SMS</string>
+    <string name="str_dialog_printout_mode_printer">PRINTER</string>
+    <string name="str_dialog_printout_mode_email_hint">email주소를 입력해주세요</string>
+    <string name="str_dialog_printout_mode_sms_hint">전화번호를 입력해주세요</string>
+
 </resources>
