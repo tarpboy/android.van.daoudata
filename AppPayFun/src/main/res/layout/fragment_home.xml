@@ -78,7 +78,9 @@
                     android:id="@+id/btnMMCoupon"
                     style="@style/imageMenuHome"
                     android:background="@drawable/bg_btn_mm_coupon_s"
-                    android:src="@drawable/btn_mm_coupon_s" />
+                    android:src="@drawable/btn_mm_coupon_s"
+                    android:visibility="invisible"
+                    />
                 <ImageButton
                     android:id="@+id/btnMMMemberShip"
                     style="@style/imageMenuHome"

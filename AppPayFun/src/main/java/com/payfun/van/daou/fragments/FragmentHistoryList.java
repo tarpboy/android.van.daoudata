@@ -7,15 +7,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.payfun.van.daou.R;
 
+import ginu.android.van.app_daou.database.VanStaticData;
+import ginu.android.van.app_daou.helper.AppHelper;
 import ginu.android.van.app_daou.history.HistoryReceiptListDay;
 import ginu.android.van.app_daou.history.HistoryReceiptListMonth;
 import ginu.android.van.app_daou.history.HistoryReceiptListQuarter;
@@ -23,20 +22,11 @@ import ginu.android.van.app_daou.history.HistoryReceiptListTitle;
 import ginu.android.van.app_daou.history.IHistory;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
-import ginu.android.library.utils.common.ApiCalendar;
 import ginu.android.library.utils.common.ApiLog;
-import ginu.android.library.utils.gui.ApiDatePickerDialog;
-import ginu.android.library.utils.gui.MyTaskProgress;
-import ginu.android.van.app_daou.entity.CompanyEntity;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
-import ginu.android.van.app_daou.helper.AppHelper;
-import ginu.android.van.app_daou.manager.CompanyManger;
-import ginu.android.van.app_daou.manager.ReceiptManager;
 import ginu.android.van.app_daou.utils.HistoryReceiptListAdapter;
-import ginu.android.van.app_daou.utils.MyToast;
+import ginu.android.van.profile.fragments.IFragmentCallback;
 
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
 
@@ -367,6 +357,7 @@ public class FragmentHistoryList extends Fragment implements
 
 		//	ToDo:: Row 4:: list view
 		mHistoryReceiptListView = mFragmentView.findViewById(R.id.fragment_history_list_view);
+		mHistoryReceiptListView.setOnItemClickListener(mOnItemClickListener);
 
 		//	ToDo:: set the initial mode Day
 		mBtDay.setSelected(true);
@@ -418,6 +409,19 @@ public class FragmentHistoryList extends Fragment implements
 					mHistoryReceiptListTitle.refreshView();
 					break;
 			}
+		}
+	};
+
+
+	private AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			String receiptEnJson = mReceiptListAdapter.getItemJson(position);
+
+			if (receiptEnJson != null)
+				VanStaticData.setResultPayment(receiptEnJson);
+
+			historyToActivity(IFragmentCallback.CommonFragToActivityCmd_ChangePage, AMainFragPages.ReceiptViewPage);
 		}
 	};
 

@@ -635,7 +635,7 @@ public class FragmentCancelCash extends FragmentPaymentBase implements FragmentC
 			{
 				case	R.id.ed_cancel_cash_card_no:
 					if( event.getAction() == MotionEvent.ACTION_DOWN) {
-						showLocalNumberKeyboard(CashTransactionMethod.CardNo, mEdCardNo);            // default method
+						showLocalNumberKeyboard(CashTransactionMethod.PhoneNo, mEdCardNo);            // default method
 					}
 					break;
 			}

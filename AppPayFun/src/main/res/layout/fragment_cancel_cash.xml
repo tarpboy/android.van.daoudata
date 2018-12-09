@@ -42,10 +42,10 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:background="@drawable/txt_input_amount"
-            android:hint="카드정보를 입력해주세요"
+            android:hint="@string/str_cancel_cash_input_or_read_card"
             android:inputType="number"
             android:maxLength="19"
-            android:textSize="@dimen/large_text_size"
+            android:textSize="@dimen/default_text_size"
             android:textStyle="bold"
             />
         <Button

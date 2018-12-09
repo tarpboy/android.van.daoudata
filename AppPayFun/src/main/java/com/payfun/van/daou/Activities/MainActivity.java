@@ -14,8 +14,10 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,6 +47,7 @@ import ginu.android.library.keyboard.KeyboardHandler;
 import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiExtStorage;
 import ginu.android.library.utils.common.ApiLog;
+import ginu.android.library.utils.common.ApiVersion;
 import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
 import ginu.android.van.app_daou.ExternalCall.ReqPara;
@@ -136,6 +139,10 @@ public class MainActivity extends AppCompatActivity implements
 		checkDBBeforeRunningApp();
 		mShowingDialogCount = 0;
 		mmIsWaitingTurnOnEmvBTReader = false;
+
+		mmAppVersionName = ApiVersion.getVersionName( mActivity, mActivity.getClass() );
+
+		setHotKeys();
     }
 
 	@Override
@@ -192,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements
 		else
 			changePage(AMainFragPages.MainHomePage);
 	}
-
 
     //==========================
     //  Fragment Callback functions
@@ -702,6 +708,53 @@ public class MainActivity extends AppCompatActivity implements
     //##########################################
 	//	Private Methods
 	//##########################################
+	private void setHotKeys()
+	{
+		ImageButton ibtn = findViewById(R.id.menuMainHome);
+		ibtn.setOnClickListener(mHotkeyOnClickListener);
+
+		ibtn = findViewById(R.id.menuMainCredit);
+		ibtn.setOnClickListener(mHotkeyOnClickListener);
+
+		ibtn = findViewById(R.id.menuMainCash);
+		ibtn.setOnClickListener(mHotkeyOnClickListener);
+
+		ibtn = findViewById(R.id.menuMainCancelList);
+		ibtn.setOnClickListener(mHotkeyOnClickListener);
+
+		ibtn = findViewById(R.id.menuMainCancelPayment);
+		ibtn.setOnClickListener(mHotkeyOnClickListener);
+
+		ibtn = findViewById(R.id.menuMainProfile);
+		ibtn.setOnClickListener(mHotkeyOnClickListener);
+	}
+	private View.OnClickListener mHotkeyOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			switch(v.getId())
+			{
+				case	R.id.menuMainHome:
+					changePage(AMainFragPages.MainHomePage);
+					break;
+				case	R.id.menuMainCredit:
+					changePage(AMainFragPages.PaymentCreditPage);
+					break;
+				case	R.id.menuMainCash:
+					changePage(AMainFragPages.PaymentCashPage);
+					break;
+				case	R.id.menuMainCancelList:
+					changePage(AMainFragPages.HistoryListPage);
+					break;
+				case	R.id.menuMainCancelPayment:
+					changePage(AMainFragPages.CancelCreditPage);
+					break;
+				case	R.id.menuMainProfile:
+					MyToast.showToast(mActivity, "COMING SOON");
+					break;
+
+			}
+		}
+	};
 	private String mapBatteryLevelToLMH(int batteryLevel)
 	{
 		if( 0 <= batteryLevel && batteryLevel < 30 )
