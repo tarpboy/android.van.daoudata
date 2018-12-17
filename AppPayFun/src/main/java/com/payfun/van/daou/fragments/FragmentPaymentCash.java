@@ -30,6 +30,7 @@ import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
 import ginu.android.library.utils.security.ApiBase64;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
+import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
 import ginu.android.van.app_daou.daou.CashReceipt;
@@ -604,6 +605,16 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 
 		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
 		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
+
+		/*
+		 *	ToDo: for external caller
+		 *	added by David SH Kim. 2018/12/18
+		 */
+		if( VanStaticData.getIsExternalCall() ) {
+			String jsonExtCallerReqData = AppHelper.AppPref.getCallerReq();
+			ExtCallReqData reqData = ExtCallReqData.fromJsonString(jsonExtCallerReqData);
+			mEditTextAmount.setText( reqData.getTotalAmount() );
+		}
 	}
 
 	private View.OnTouchListener mTouchListener = new View.OnTouchListener(){

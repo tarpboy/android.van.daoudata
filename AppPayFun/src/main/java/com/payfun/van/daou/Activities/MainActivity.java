@@ -1,5 +1,6 @@
 package com.payfun.van.daou.Activities;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -50,9 +51,11 @@ import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiVersion;
 import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
-import ginu.android.van.app_daou.ExternalCall.ReqPara;
+import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
+import ginu.android.van.app_daou.ExternalCall.IExtCaller;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.daou.DaouDataContants;
+import ginu.android.van.app_daou.database.IVanSpecification;
 import ginu.android.van.app_daou.database.PayFunDB;
 import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.BTReaderInfo;
@@ -75,6 +78,7 @@ import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFrag
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowCompanyNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowNumericKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ShowPhoneNumericKeyboard;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_StopAppToReturnExtCaller;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_AttachEmvDetectionListener;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.HomeToActivityCmd_DetachEmvDetectionListener;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.PrintToActivityCmd_PrinterBluetoothConnected;
@@ -110,19 +114,20 @@ public class MainActivity extends AppCompatActivity implements
 
 		mPackageName = getApplicationInfo().packageName;
 
-		// check Play service available
-		String fcmToken = "";
-		if( isPlayServiceAvailable(this, 0) )
-		{
-			fcmToken = FirebaseInstanceId.getInstance().getToken();
-			ApiLog.Dbg("fcm_token: " + fcmToken);
-			if( fcmToken != null && ! fcmToken.equals("") )
-			{
-				AppHelper.AppPref.setFcmToken(fcmToken);
-				autoLogin();
+		if( ! checkImCalledByExternalUser() )
+		{				// External Call일때, autoLogin()호출하면 exception발생. 일단 여기서 막아 놓고 나중에 원인 분석하자. 시발..
+						// 지랄같은 구조다. 완전히 없에 버려야겠다. 욕밖에 안나온다.
+			// check Play service available
+			String fcmToken = "";
+			if (isPlayServiceAvailable(this, 0)) {
+				fcmToken = FirebaseInstanceId.getInstance().getToken();
+				ApiLog.Dbg("fcm_token: " + fcmToken);
+				if (fcmToken != null && !fcmToken.equals("")) {
+					AppHelper.AppPref.setFcmToken(fcmToken);
+					autoLogin();
+				}
 			}
 		}
-
 		AppHelper.AppPref.setAppSleep(false);
 
 
@@ -157,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements
 		ApiLog.Dbg("onResume on MainActivity");
 
 		if (!"".equals( AppHelper.AppPref.getDeviceTID() ) ) {
-			ExternalCallPayment();
+		//	ExternalCallPayment();				// removed by David SH Kim. 2018/12/18, do this after starting EmvReaderService complete.
 			EmvUtils.setIsReadyIC(false);
 
 			//check if user enable app after sleep
@@ -171,7 +176,9 @@ public class MainActivity extends AppCompatActivity implements
 	protected void onStop() {
 		ApiLog.Dbg("onStop on MainActivity");
 		AppHelper.AppPref.setAppSleep(true);
+
 		super.onStop();
+
 	}
 
 	@Override
@@ -183,15 +190,19 @@ public class MainActivity extends AppCompatActivity implements
 
 		detachServices();
 
+
 		if (mEmvApp != null)
-			mEmvApp.stopEmvReaderService();
+			mEmvApp.stopApp();		//mEmvApp.stopEmvReaderService();		changed by David SH Kim. 2018/12/18
 	}
 
 	@Override
 	public void onBackPressed()
 	{
-	//	super.onBackPressed();
-
+		if( VanStaticData.getIsExternalCall() )		// added by David SH Kim. 2018/12/18. for External caller
+		{
+			returnToExternalCaller();
+			super.onBackPressed();                        // exit app silently
+		}
 		hideNumericKeyboard();		// 1. hide key board
 
 		if( MainActivityFragmentMapper.atHome() )
@@ -289,6 +300,12 @@ public class MainActivity extends AppCompatActivity implements
 				String title = (String)obj;
 				setHeaderView(title);
 				break;
+			case	CommonFragToActivityCmd_StopAppToReturnExtCaller:		// added by David SH Kim. 2018/12/18. for External caller
+				if( VanStaticData.getIsExternalCall() )
+					returnToExternalCaller();
+
+				finish();
+				break;
 			default:
 				break;
 		}
@@ -321,6 +338,12 @@ public class MainActivity extends AppCompatActivity implements
 				bundle.putBoolean(MessageKeys.IsConnected, false);
 				bundle.putInt( MessageKeys.BatteryLevel, 0 );
 				sendMessage(MessageID.UPDATE_MAIN_STATUS_BAR, bundle);
+				break;
+			case	CommonFragToActivityCmd_StopAppToReturnExtCaller:		// added by David SH Kim. 2018/12/18. for External caller
+				if( VanStaticData.getIsExternalCall() )
+					returnToExternalCaller();
+
+				finish();
 				break;
 			default:
 				break;
@@ -890,16 +913,14 @@ public class MainActivity extends AppCompatActivity implements
 
 	private boolean checkImCalledByExternalUser() {
 		Intent intentCaller = getIntent();
-		String isCalled = intentCaller.getStringExtra("isCalled");
-		if ( isCalled != null && isCalled.equals("true") ) {
-			mIsExternalCall = true;
+		String callerId = intentCaller.getStringExtra("callerId");
+		if ( callerId != null && callerId.equals("daouCallerModule") ) {
 			VanStaticData.setToExit(false);
 			VanStaticData.setIsExternalCall(true);
 			return true;
 		} else {
-			mIsExternalCall = false;
 			VanStaticData.setToExit(false);
-			VanStaticData.setIsExternalCall(true);
+			VanStaticData.setIsExternalCall(false);
 			return false;
 		}
 	}
@@ -913,7 +934,7 @@ public class MainActivity extends AppCompatActivity implements
 				PayFunDB.InitializeDB( getBaseContext(), mPackageName );		// twice @LoadApp and here again ??
 
 				//	check notification
-				if( ! mIsExternalCall )
+				if( ! VanStaticData.getIsExternalCall() )
 					NoticeManager.getListWS();
 
 				return true;
@@ -937,19 +958,51 @@ public class MainActivity extends AppCompatActivity implements
 		{
 			mEmvApp.stopNotification();
 
-			final String reqParaJson = getIntent().getStringExtra("reqParaJson");
-			ApiLog.Dbg("reqParaJson:" + reqParaJson);
-			ReqPara reqPara = ReqPara.fromJsonString(reqParaJson);
-			final String userID = reqPara.getUserID();
-			final String passWD = reqPara.getPassWD();
-			ApiLog.Dbg("userID 0:" + userID);
-			doExternalCaller1CheckEmail(userID, passWD, reqParaJson);
+			Intent intent = getIntent();
+			String data = intent.getStringExtra(IExtCaller.DataKeys.reqData);
+			if(data == null)
+				finish();
+
+			ExtCallReqData reqData = ExtCallReqData.fromJsonString(data);
+			if( ! reqData.getVanName().equals(VanID.vanName) ) {
+				MyToast.showToast(mActivity, IVanString.externalCall.msg_van_error);
+				finish();
+			}
+
+			AppHelper.AppPref.resetReturnToExternalCall();	// ToDo:: reset response to ExtCaller
+
+			AppHelper.AppPref.setCallerReq(data);			// ToDo:: save caller data in string
+			String transactionType = reqData.getTransactionType();
+			String paymentType = reqData.getPaymentType();
+			switch(transactionType)
+			{
+				case IExtCaller	.TransactionType.openTerminal:
+					break;
+				case IExtCaller.TransactionType.approval:
+					if(paymentType.equals(IExtCaller.PaymentType.credit) )
+						changePage(AMainFragPages.PaymentCreditPage);
+					else
+						changePage(AMainFragPages.PaymentCashPage);
+					break;
+				case IExtCaller.TransactionType.cancel:
+					if(paymentType.equals(IExtCaller.PaymentType.credit) )
+						changePage(AMainFragPages.CancelCreditPage);
+					else
+						changePage(AMainFragPages.CancelCashPage);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
-	private void doExternalCaller1CheckEmail(String email, String pwd, String reqParaJson)
+	private void returnToExternalCaller()
 	{
 		//	ToDo:: not yet!
+		Intent returnIntent = new Intent();
+		String jsonRespData = AppHelper.AppPref.getReturnToExternalCall();
+		returnIntent.putExtra(IExtCaller.DataKeys.respData, jsonRespData);
+		setResult(Activity.RESULT_OK, returnIntent);
 	}
 
 	private void sendMessage( int userPrim, Bundle data)
@@ -1185,8 +1238,6 @@ public class MainActivity extends AppCompatActivity implements
 	private void attachDetectEmvServiceListener()
 	{
 		//	ToDo:: add additional your services
-		// if( mIsExternalCall )
-		//	mEmvReader.setIsForCancel(true);
 
 		mEmvReader.mmListenerHelper.attachDetectEmvListener( mEmvDetectListener );
 	}
@@ -1213,14 +1264,13 @@ public class MainActivity extends AppCompatActivity implements
 					mEmvReader = AppHelper.getEmvReaderInService();
 					if( mEmvReader != null)
 					{
-						if( mIsExternalCall )
-							mEmvReader.setIsForCancel(true);
 
 						ApiLog.Dbg("initEmvResources");
 						attachDetectEmvServiceListener();
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
 						{
 							waitTurnOnBTReader();
+							ExternalCallPayment();
 							return;
 						}
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.audioPlug )
@@ -1461,10 +1511,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private String							mPackageName;
 	private String							mUserID = "";
-
-	private	 boolean						mIsExternalCall = false;
-//	private boolean						mIsBTReaderConnected = false;		move to VanStaticData.
-//	private boolean						mIsResumeOnMain = false;
 
 	private Handler							mHandler	= new MessageHandler();
 	private DialogHandler					mDialog;

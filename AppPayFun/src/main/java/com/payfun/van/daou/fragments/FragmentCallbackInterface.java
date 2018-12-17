@@ -23,6 +23,8 @@ public interface FragmentCallbackInterface {
 	int CommonFragToActivityCmd_ConnectBlePrinter			= 10001011;
 	int CommonFragToActivityCmd_ConnectEarjackDongle		= 10001012;
 
+	int CommonFragToActivityCmd_StopAppToReturnExtCaller		=  10001111;	// added by David SH Kim. 2018/12/18. for External caller
+
 	//==================================================//
 	/*		<<	==		Home Fragment		==	>>		*/
     /**

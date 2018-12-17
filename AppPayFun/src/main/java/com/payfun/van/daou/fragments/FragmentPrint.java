@@ -32,11 +32,13 @@ import ginu.android.library.utils.common.ApiBitmap;
 import ginu.android.library.utils.common.ApiExtStorage;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.van.app_daou.BaseFragment.FragmentPrintBase;
+import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
 import ginu.android.van.app_daou.utils.MyToast;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_HideSoftKeyboard;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_StopAppToReturnExtCaller;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.PrintToActivityCmd_PrinterBluetoothConnected;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.PrintToActivityCmd_PrinterBluetoothDisconnected;
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
@@ -326,7 +328,10 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 					break;
 				case	R.id.btn_foot_confirm:
 					// ToDo:: print out
-					printToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
+					if( VanStaticData.getIsExternalCall() )
+						printToActivity(CommonFragToActivityCmd_StopAppToReturnExtCaller, null);
+					else
+						printToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				default:
 					break;

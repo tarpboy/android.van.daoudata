@@ -19,11 +19,15 @@ import ginu.android.library.receipt.ApiReceipt;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
 import ginu.android.van.app_daou.BaseFragment.FragmentReceiptBase;
+import ginu.android.van.app_daou.ExternalCall.ExtCallRespData;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
+import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
+import ginu.android.van.app_daou.helper.AppHelper;
 
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangeHeaderTitle;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_StopAppToReturnExtCaller;
 import static ginu.android.library.utils.gui.IFragmentConstant.ARG_SECTION_NUMBER;
 
 /**
@@ -224,6 +228,7 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 	{
 		super.onDetach();
 		ApiLog.Dbg(getString( R.string.fragment_section_format, mSectionNumber) + "onDetach");
+
 	}
 	//  ToDo:: End of onDetach
 
@@ -294,7 +299,10 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 			{
 				case	R.id.btn_foot_cancel:
 					// ToDo:: go to Home
-					receiptToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
+					if( VanStaticData.getIsExternalCall() )
+						receiptToActivity(CommonFragToActivityCmd_StopAppToReturnExtCaller, null);
+					else
+						receiptToActivity(CommonFragToActivityCmd_ChangePage, AMainFragPages.MainHomePage);
 					break;
 				case	R.id.btn_foot_confirm:
 					// ToDo:: print out
@@ -312,6 +320,16 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 		String title = getReceiptHeader(receiptEntity);
 		receiptToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, title);
 		makeReceiptData(receiptEntity);
+
+		if( VanStaticData.getIsExternalCall() )				// added by David SH Kim. 2018/12/18
+			returnToExtCaller(receiptEntity);
+	}
+
+	private void returnToExtCaller(ReceiptEntity receiptEntity)
+	{
+		ExtCallRespData respData = ExtCallRespData.fromReceipt(receiptEntity);
+		String jsonRespData = ExtCallRespData.toJsonString(respData);
+		AppHelper.AppPref.setReturnToExternalCall(jsonRespData);
 	}
 	//================================
 	//  private variables

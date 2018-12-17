@@ -42,12 +42,7 @@ public class LoadingActivity extends AppCompatActivity {
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 		int readerType = AppHelper.getReaderType();
 		ApiLog.Dbg("readerType:"+readerType);
-	/*?????? removed by David SH Kim. not need
-		boolean isBT = false;
-		if(readerTyppe == IEmvReader.DeviceType.bluetooth)
-			isBT = true;
-		EmvReader.setIsBluetooth(isBT);
-	*/
+
 		EmvReader.setEmvReaderType(readerType);
 	}
 
