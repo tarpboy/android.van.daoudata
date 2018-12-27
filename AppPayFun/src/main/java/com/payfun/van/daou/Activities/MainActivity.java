@@ -52,6 +52,7 @@ import ginu.android.library.utils.common.ApiVersion;
 import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
 import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
+import ginu.android.van.app_daou.ExternalCall.ExtCallRespData;
 import ginu.android.van.app_daou.ExternalCall.IExtCaller;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.daou.DaouDataContants;
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements
 	protected void onDestroy() {
 		ApiLog.Dbg("onDestroy");
 		super.onDestroy();
-
+		
 		dismissNumericKeyboard();		// 2. destroy key board
 
 		detachServices();
@@ -202,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements
 		{
 			returnToExternalCaller();
 			super.onBackPressed();                        // exit app silently
+			return;
 		}
 		hideNumericKeyboard();		// 1. hide key board
 
@@ -911,6 +913,10 @@ public class MainActivity extends AppCompatActivity implements
 		return true;
 	}
 
+	private void disconnectBT() {
+		mEmvReader.mmDeviceBT.disconnect();
+	}
+
 	private boolean checkImCalledByExternalUser() {
 		Intent intentCaller = getIntent();
 		String callerId = intentCaller.getStringExtra("callerId");
@@ -1001,8 +1007,17 @@ public class MainActivity extends AppCompatActivity implements
 		//	ToDo:: not yet!
 		Intent returnIntent = new Intent();
 		String jsonRespData = AppHelper.AppPref.getReturnToExternalCall();
-		returnIntent.putExtra(IExtCaller.DataKeys.respData, jsonRespData);
-		setResult(Activity.RESULT_OK, returnIntent);
+		if(jsonRespData.equals(""))
+		{
+			ExtCallRespData.saveToReturnFailToExtCaller();
+			jsonRespData = AppHelper.AppPref.getReturnToExternalCall();
+			returnIntent.putExtra(IExtCaller.DataKeys.respData, jsonRespData);
+			setResult(Activity.RESULT_CANCELED, returnIntent);
+		}
+		else {
+			returnIntent.putExtra(IExtCaller.DataKeys.respData, jsonRespData);
+			setResult(Activity.RESULT_OK, returnIntent);
+		}
 	}
 
 	private void sendMessage( int userPrim, Bundle data)

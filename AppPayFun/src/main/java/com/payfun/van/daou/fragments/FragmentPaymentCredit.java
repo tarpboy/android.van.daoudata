@@ -30,6 +30,7 @@ import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
 import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
+import ginu.android.van.app_daou.ExternalCall.IExtCaller;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
 import ginu.android.van.app_daou.daou.CreditCard;
@@ -336,6 +337,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			{
 				resetToPayAgain(true);
 				showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+				if( VanStaticData.getIsExternalCall() )
+					returnExternalCall(false, null);
 			}
 			else
 			if( "APPROVED".equalsIgnoreCase(result)) {
@@ -665,8 +668,13 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			String jsonExtCallerReqData = AppHelper.AppPref.getCallerReq();
 			ExtCallReqData reqData = ExtCallReqData.fromJsonString(jsonExtCallerReqData);
 			mEditTextAmount.setText( reqData.getTotalAmount() );
-			int installation = Integer.parseInt( reqData.getInstallation() );
-			mSpinnerDiviMonth.setSelection(installation);
+			int installment = Integer.parseInt( reqData.getInstallment() );
+			if(installment < Integer.parseInt(IExtCaller.Installment.InFull) || installment > Integer.parseInt(IExtCaller.Installment.Month_32) )
+			{
+				MyToast.showToast(mmActivity, "할부입력오류\n 직업 선택해주세요");
+				installment = 0;
+			}
+			mSpinnerDiviMonth.setSelection(installment);
 			//mmDiviMonth = reqData.getInstallation();
 		}
     }

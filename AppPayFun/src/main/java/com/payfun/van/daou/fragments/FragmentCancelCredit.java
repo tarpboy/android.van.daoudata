@@ -21,6 +21,8 @@ import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
+import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
+import ginu.android.van.app_daou.ExternalCall.IExtCaller;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.cardreader.IEmvUserMessages;
 import ginu.android.van.app_daou.daou.CashReceipt;
@@ -36,6 +38,7 @@ import ginu.android.van.app_daou.entity.EncPayInfo;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
 import ginu.android.van.app_daou.entity.TerminalInfo;
 import ginu.android.van.app_daou.helper.AppHelper;
+import ginu.android.van.app_daou.helper.CalculateHelper;
 import ginu.android.van.app_daou.helper.VanHelper;
 import ginu.android.van.app_daou.utils.DialogCancelList;
 import ginu.android.van.app_daou.utils.IVanString;
@@ -341,6 +344,9 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			{
 				resetToPayAgain(true);
 				showVanDisplayMessage( AppHelper.AppPref.getVanMsg() );
+
+				if( VanStaticData.getIsExternalCall() )
+					returnExternalCall(false, null);
 			}
 			else
 			if( "APPROVED".equalsIgnoreCase(result)) {
@@ -623,10 +629,105 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		}
 	};
 
-	private void findUsageHistory(String cardNo)
-	{
-		findReceiptsForCancel(cardNo, IVanSpecification.PaymentType.Credit, mCancelListListener);
+	private void findUsageHistory(String cardNo) {
+		if (VanStaticData.getIsExternalCall())                    // added by David SH Kim. for External Call
+		{
+			//	ToDo:: find receipt by approvalNo for External Call.
+
+			String approvalNo = mTvApprovalNo.getText().toString();
+
+			mmReceiptEntity = findReceiptForCancel(approvalNo);
+			if(mmReceiptEntity != null)
+			{	//	ToDo:: found a receipt
+				if (!cardNo.equals(mmReceiptEntity.getCardNo())) {
+					String msg = String.format("cardNo Error(ExtCall): \n" +
+							"%s of Receipt, %s of your card", mmReceiptEntity.getCardNo(), cardNo);
+					showDialog(msg);
+					return;
+				}
+
+				if(	mmCompanyEntity.getVanName().equals(IExtCaller.VanName.daoudata) &&
+					mmCompanyEntity.getPhoneCode().equals(IExtCaller.VanDivision.offlinePG) ) 	// DaouData & offline PG only
+				{	// ToDo:: renew receipt for Daou, offline PG,
+					// input has higher priority than receipt on database, DaouData Requirement.
+					mmReceiptEntity.setApprovalCode(approvalNo);
+					mmReceiptEntity.setRequestDate(mTvReqDate.getText().toString());
+					mmReceiptEntity.setTotalAmount(mTvReqDate.getText().toString());
+				}
+				else
+				{	// ToDo:: others, receipt has higher priority than input
+					mTvApprovalNo.setText(approvalNo);
+					mTvReqDate.setText(mmReceiptEntity.getRequestDate());
+					mTvTotal.setText(mmReceiptEntity.getTotalAmount());
+				}
+			}
+			else
+			{	// ToDo:: not found a receipt, make a new receipt, DaouData Requirement.
+				String totalAmount = mTvTotal.getText().toString();
+				String reqDateTime = mTvReqDate.getText().toString();
+				mmReceiptEntity= makeNewCancelReceipt(approvalNo, totalAmount, reqDateTime);
+			}
+
+		} else
+		{	//	ToDo:: find receipts by cardNo for Normal cancel job.
+			findReceiptsForCancel(cardNo, IVanSpecification.PaymentType.Credit, mCancelListListener);
+		}
 	}
+
+	/**
+	 * This is only for DaouData External Call.
+	 * DaouData requires that App don't card the input parameter is right or not.
+	 * So U need make a new receipt when no receipt on database.
+	 * @param approvalNo
+	 * @param totalAmount
+	 * @param reqDateTime
+	 * @return
+	 */
+	private ReceiptEntity makeNewCancelReceipt(String approvalNo, String totalAmount, String reqDateTime)
+	{
+		ReceiptEntity receiptEntity = null;
+
+		String vanName = mmCompanyEntity.getVanName();
+
+		//	account for point
+		String point = "0";
+		if (! mmPointRate.equals("0") ) {
+			point = CalculateHelper.getPoint(mmPointRate, totalAmount);
+			totalAmount = CalculateHelper.getTAmount(point, totalAmount);
+		}
+		if (mmCompanyEntity.getWithTax())
+			receiptEntity = CalculateHelper.calWithTax( totalAmount, point, mmCompanyEntity.getTaxRate(), mmCompanyEntity.getServiceTaxRate() );
+		else
+			receiptEntity = CalculateHelper.calNoTax( totalAmount, point, mmCompanyEntity.getTaxRate(), mmCompanyEntity.getServiceTaxRate() );
+
+		receiptEntity.setCouponDiscountRate(mmPointRate);
+		receiptEntity.setCouponDiscountAmount(point);
+		receiptEntity.setCouponID(mmCouponID);
+
+		if( VanStaticData.mmPayTypeSub == IVanSpecification.CreditSubType.ICC_SWIPE	||
+				VanStaticData.mmPayTypeSub == IVanSpecification.CreditSubType.GIFT)
+			receiptEntity.setCardNo(mmBankCardData);				// mmReceiptEntity.setCardNo(mmTrack2Data);
+		else
+			receiptEntity.setCardNo("");
+
+		receiptEntity.setVanName(vanName);
+		receiptEntity.setCompanyNo( mmCompanyEntity.getCompanyNo() );
+		receiptEntity.setMachineCode( mmCompanyEntity.getMachineCode() );
+		receiptEntity.setTypeSub( VanStaticData.mmPayTypeSub );
+		receiptEntity.setType( IVanSpecification.PaymentType.Credit );
+		receiptEntity.setReciptImage("");
+		receiptEntity.setCardInputMethod(VanStaticData.mmCardInputMethod);
+		receiptEntity.setStaffName(AppHelper.AppPref.getCurrentUserName());
+		receiptEntity.setUserID(AppHelper.AppPref.getCurrentUserID());
+		receiptEntity.setRequestDate(reqDateTime);			//DateHelper.getCurrentDateFull()//
+		receiptEntity.setMonth( ApiString.appendZeroNumber(mmDiviMonth, 2));
+		receiptEntity.setApprovalCode("");
+
+		resetCardNo();
+
+		return receiptEntity;
+	}
+
 	//==========================================
 	//	Initialize Fragment Components
 	//==========================================
@@ -677,6 +778,22 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 
 		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
 		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);
+
+		if (VanStaticData.getIsExternalCall())                    // added by David SH Kim. for External Call
+		{
+			String jsonExtCallerReqData = AppHelper.AppPref.getCallerReq();
+			ExtCallReqData reqData = ExtCallReqData.fromJsonString(jsonExtCallerReqData);
+			String approvalNo = reqData.getApprovalNo();
+			if( approvalNo == null || approvalNo.equals("") )
+			{
+				showDialog("[ExtCall]ApprovalNo Error: " + approvalNo);
+				return;
+			}
+
+			mTvApprovalNo.setText(approvalNo);
+			mTvReqDate.setText( reqData.getReqDateTime() );
+			mTvTotal.setText( reqData.getTotalAmount() );
+		}
 	}
 
 	private View.OnClickListener mButtonListener = new View.OnClickListener() {

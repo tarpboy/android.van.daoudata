@@ -68,7 +68,7 @@
             android:background="@drawable/button_confirm_selector"
             android:textColor="@android:color/white"
             android:text="카드읽기"
-            android:textSize="@dimen/large_x_text_size"
+            android:textSize="@dimen/large_text_size"
             android:layout_margin="5dp"
             />
     </LinearLayout>

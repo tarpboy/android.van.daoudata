@@ -733,7 +733,7 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 					mIsVanRequest = true;
 					setCardReaderOnClick(false);						// Not allow Reading Card
 					mCashTypeSub = IVanSpecification.CashSubType.VOLUNTARY_ISSUANCE;	// 자진발급
-					mEditTextSelectedTarget.setText("01-0000-1234");
+					mEditTextSelectedTarget.setText("010-000-1234");
 					mEditTextSelectedTarget.setEnabled(false);
 					break;
 				default:
