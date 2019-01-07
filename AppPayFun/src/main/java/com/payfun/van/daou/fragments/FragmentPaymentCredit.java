@@ -3,6 +3,8 @@ package com.payfun.van.daou.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,6 +25,7 @@ import java.util.Hashtable;
 
 import ginu.android.library.keyboard.ApiEditTextAmount;
 import ginu.android.library.signpad.SignatureHandler;
+import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiBitmap;
 import ginu.android.library.utils.common.ApiBmp;
 import ginu.android.library.utils.common.ApiDate;
@@ -47,6 +50,7 @@ import ginu.android.van.app_daou.helper.AppHelper;
 import ginu.android.van.app_daou.helper.CalculateHelper;
 import ginu.android.van.app_daou.helper.VanHelper;
 import ginu.android.van.app_daou.utils.IVanString;
+import ginu.android.van.app_daou.utils.MyReaderDevices;
 import ginu.android.van.app_daou.utils.MyToast;
 import ginu.android.van.app_daou.utils.PaymentTask;
 
@@ -379,7 +383,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		}
 
 		//	ToDo:: display Van Message when complete transaction
-		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+		if( ! VanStaticData.IsAutoTestExternalCall() )		// added by David SH Kim. for Auto Test Mode.
+			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
 
 		//	ToDo:: goto ReceiptViewFragment
 		if (VanStaticData.isReadyShowReceipt())
@@ -676,6 +681,13 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 			}
 			mSpinnerDiviMonth.setSelection(installment);
 			//mmDiviMonth = reqData.getInstallation();
+			VanStaticData.setIsAutoTestExternalCall( reqData.getIsAutoTest() );		// added by David SH Kim. for Auto Test Mode.
+
+			if( VanStaticData.IsAutoTestExternalCall() )							// added by David SH Kim. for Auto Test Mode.
+			{
+				ApiLog.Dbg(Tag + "Start Auto Test");
+				sendMessage(MessageID.AUTO_TEST_START_CREDIT_PAYMENT, null);
+			}
 		}
     }
 
@@ -745,10 +757,51 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		return true;
 	}
 	*/
+
+
+	private void sendMessage( int userPrim, Bundle data)
+	{
+		//	ToDo:: transmit signal message to MainActivity.
+
+		if(data == null)
+		{	//	ToDo:: tx message without data
+			mHandler.sendEmptyMessage(userPrim);
+		}
+		else
+		{	//	ToDo:: message with data
+			Message msg = mHandler.obtainMessage();
+			msg.what = userPrim;
+			msg.setData(data);
+			mHandler.sendMessage(msg);
+		}
+	}
+
+	private class MessageHandler extends Handler {
+		public void handleMessage(Message msg)
+		{
+			switch (msg.what){
+				case	MessageID.AUTO_TEST_START_CREDIT_PAYMENT:
+					if( MyReaderDevices.isDeviceConnected(mmActivity) ) {
+						MyToast.showToast(mmActivity, "Start AutoTest");
+						startCheckCard(IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT);
+					}
+					else {
+						mRetryCheckingDeviceConnection++;
+						if(mRetryCheckingDeviceConnection < MAX_RETRY_CHECK_DEVICE_CONNECTION)
+						sendEmptyMessageDelayed(MessageID.AUTO_TEST_START_CREDIT_PAYMENT, 2000);    // 1sec late
+					}
+					break;
+			}
+		}
+	}
+
     //##########################################
     //  private variables
     //##########################################
 	private String Tag=String.format("[%s]",FragmentPaymentCredit.class.getSimpleName() );
+	private interface MessageID{
+		int AUTO_TEST_START_CREDIT_PAYMENT	= 400;
+	}
     /*
      *  To communicate with parent activity
      *  #1. declare callback
@@ -765,4 +818,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 	private String							mVanName;
 	//private boolean						mNeedSignature = false;
 
+	private Handler						mHandler	= new MessageHandler();
+
+	private int							mRetryCheckingDeviceConnection = 0;
+	private static final int				MAX_RETRY_CHECK_DEVICE_CONNECTION = 10;
 }

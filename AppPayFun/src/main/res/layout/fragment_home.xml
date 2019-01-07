@@ -36,7 +36,89 @@
             android:layout_weight="5"
             />
         -->
-        <!-- Main Menu View #1   -->
+        <!-- Main Menu View #1: Credit Card   -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:gravity="center_vertical"
+            >
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnMMCreditCard"
+                android:background="@drawable/menu_button_credit_card"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+        </LinearLayout>
+        <!-- Main Menu View #2: Cash   -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:gravity="center_vertical"
+            >
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnMMCashCard"
+                android:background="@drawable/menu_button_cash"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+        </LinearLayout>
+        <!-- Main Menu View #3: History   -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:gravity="center_vertical"
+            >
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnMMCancelList"
+                android:background="@drawable/menu_button_history"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="25"
+            android:orientation="horizontal"
+            android:weightSum="100"
+            >
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_weight="33"
+                android:layout_height="match_parent"
+                android:id="@+id/btnMMCancelPayment"
+                android:background="@drawable/menu_box_cancel"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_weight="33"
+                android:layout_height="match_parent"
+                android:id="@+id/btnMMMemberShip"
+                android:background="@drawable/menu_box_profile"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_weight="33"
+                android:layout_height="match_parent"
+                android:id="@+id/btnMMCoupon"
+                android:background="@drawable/menu_box_profile"
+                android:scaleType="fitCenter"
+                android:visibility="invisible"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+        </LinearLayout>
+        <!--
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -88,7 +170,7 @@
                     android:src="@drawable/btn_mm_member_ship_s" />
             </TableRow>
         </TableLayout>
-
+        -->
         <!-- Notification View  -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,6 +178,7 @@
             android:layout_weight="30"
             android:fadingEdge="none"
             android:orientation="vertical"
+            android:visibility="invisible"
             >
 
             <TextView

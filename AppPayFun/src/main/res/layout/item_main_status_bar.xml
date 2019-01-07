@@ -46,7 +46,7 @@
             android:id="@+id/iv_main_status_bluetooth_battery"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/battery_green"
+            android:src="@drawable/battery_low"
             android:scaleType="centerInside"
             />
         <TextView
@@ -80,7 +80,7 @@
             android:id="@+id/iv_main_status_printer_battery"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/battery_green"
+            android:src="@drawable/battery_low"
             android:scaleType="centerInside"
             />
         <TextView

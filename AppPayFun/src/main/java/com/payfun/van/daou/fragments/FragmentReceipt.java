@@ -330,6 +330,9 @@ public class FragmentReceipt extends FragmentReceiptBase implements FragmentCall
 		ExtCallRespData respData = ExtCallRespData.fromReceipt(receiptEntity);
 		String jsonRespData = ExtCallRespData.toJsonString(respData);
 		AppHelper.AppPref.setReturnToExternalCall(jsonRespData);
+
+		if( VanStaticData.IsAutoTestExternalCall() )				// added by David SH Kim. for Auto Test Mode.
+			receiptToActivity(CommonFragToActivityCmd_StopAppToReturnExtCaller, null);
 	}
 	//================================
 	//  private variables

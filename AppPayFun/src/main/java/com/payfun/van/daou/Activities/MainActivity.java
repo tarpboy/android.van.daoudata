@@ -148,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements
 
 		mmAppVersionName = ApiVersion.getVersionName( mActivity, mActivity.getClass() );
 
+		AppHelper.AppPref.setIsBTReaderConnected(false);		// added by David SH Kim. 2018/12/27
+
 		setHotKeys();
     }
 
@@ -816,13 +818,13 @@ public class MainActivity extends AppCompatActivity implements
 				switch(levelLMH)
 				{
 					case	"LOW":
-						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_low) );
 						break;
 					case "MIDDLE":
-						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_middle) );
 						break;
 					case	"HIGH":
-						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_high) );
 						break;
 					default:
 						break;
@@ -848,13 +850,13 @@ public class MainActivity extends AppCompatActivity implements
 				switch(levelLMH)
 				{
 					case	"LOW":
-						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_low) );
 						break;
 					case "MIDDLE":
-						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_middle) );
 						break;
 					case	"HIGH":
-						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_green) );
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_high) );
 						break;
 					default:
 						break;
@@ -921,11 +923,11 @@ public class MainActivity extends AppCompatActivity implements
 		Intent intentCaller = getIntent();
 		String callerId = intentCaller.getStringExtra("callerId");
 		if ( callerId != null && callerId.equals("daouCallerModule") ) {
-			VanStaticData.setToExit(false);
+		//	VanStaticData.setToExit(false);
 			VanStaticData.setIsExternalCall(true);
 			return true;
 		} else {
-			VanStaticData.setToExit(false);
+		//	VanStaticData.setToExit(false);
 			VanStaticData.setIsExternalCall(false);
 			return false;
 		}

@@ -60,5 +60,6 @@
     <string name="str_dialog_printout_mode_email_hint">email주소를 입력해주세요</string>
     <string name="str_dialog_printout_mode_sms_hint">전화번호를 입력해주세요</string>
     <string name="str_cancel_cash_input_or_read_card">카드를 읽히거나 정보를 입력하세요</string>
+    <string name="str_payfun_copy_right">copyrigth @2016 PayFun.kr All right reserved</string>
 
 </resources>

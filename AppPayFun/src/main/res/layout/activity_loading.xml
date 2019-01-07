@@ -5,7 +5,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_load"
+    android:background="@color/color_white_transparent_100"
     tools:context="com.payfun.van.daou.Activities.LoadingActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="90"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/bg_loading_image_card"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+
+            <ImageView
+                android:layout_width="145dp"
+                android:layout_height="59.5dp"
+                android:src="@drawable/payfun_white"
+                android:layout_gravity="center"
+                android:contentDescription="@string/defaultContentDescription"
+                />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:gravity="center"
+            android:text="@string/str_payfun_copy_right"
+            android:textColor="#a6abb9"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

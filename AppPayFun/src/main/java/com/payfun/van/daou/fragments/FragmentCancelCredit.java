@@ -3,6 +3,8 @@ package com.payfun.van.daou.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.payfun.van.daou.Activities.MainActivity;
 import com.payfun.van.daou.R;
 
 import java.util.Hashtable;
@@ -20,6 +23,7 @@ import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiDate;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.common.ApiString;
+import ginu.android.library.utils.gui.MyTaskNoView;
 import ginu.android.van.app_daou.BaseFragment.FragmentPaymentBase;
 import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
 import ginu.android.van.app_daou.ExternalCall.IExtCaller;
@@ -42,6 +46,7 @@ import ginu.android.van.app_daou.helper.CalculateHelper;
 import ginu.android.van.app_daou.helper.VanHelper;
 import ginu.android.van.app_daou.utils.DialogCancelList;
 import ginu.android.van.app_daou.utils.IVanString;
+import ginu.android.van.app_daou.utils.MyReaderDevices;
 import ginu.android.van.app_daou.utils.MyToast;
 import ginu.android.van.app_daou.utils.MyTypeFace;
 import ginu.android.van.app_daou.utils.PaymentTask;
@@ -753,13 +758,17 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				VanStaticData.setIsCancelJob(true);
-				startCheckCard(IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
+				startCardReading();
 			}
 		});
 		return;
 	}
 
+	private void startCardReading()
+	{
+		VanStaticData.setIsCancelJob(true);
+		startCheckCard(IEmvUserMessages.CheckCardMode.SWIPE_OR_INSERT );
+	}
 	private void updateView(View view)
 	{
 		// ToDo: update any view element you want
@@ -794,6 +803,9 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			mTvReqDate.setText( reqData.getReqDateTime() );
 			mTvTotal.setText( reqData.getTotalAmount() );
 		}
+
+		sendMessage(MessageID.AUTO_START_CARD_READING, null);
+
 	}
 
 	private View.OnClickListener mButtonListener = new View.OnClickListener() {
@@ -812,10 +824,49 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			}
 		}
 	};
+
+	private void sendMessage( int userPrim, Bundle data)
+	{
+		//	ToDo:: transmit signal message to MainActivity.
+
+		if(data == null)
+		{	//	ToDo:: tx message without data
+			mHandler.sendEmptyMessage(userPrim);
+		}
+		else
+		{	//	ToDo:: message with data
+			Message msg = mHandler.obtainMessage();
+			msg.what = userPrim;
+			msg.setData(data);
+			mHandler.sendMessage(msg);
+		}
+	}
+
+	private class MessageHandler extends Handler{
+		public void handleMessage(Message msg) {
+			Bundle bundle;
+			switch (msg.what) {
+				case	MessageID.AUTO_START_CARD_READING:
+					if( MyReaderDevices.isDeviceConnected(mmActivity) ) {
+						startCardReading();
+					}
+					else {
+						mRetryCheckingDeviceConnection++;
+						if(mRetryCheckingDeviceConnection < MAX_RETRY_CHECK_DEVICE_CONNECTION)
+							sendEmptyMessageDelayed(MessageID.AUTO_START_CARD_READING, 2000);    // 1sec late
+					}
+					break;
+			}
+		}
+	}
 	//##########################################
 	//  private variables
 	//##########################################
 	private String Tag=String.format("[%s]",FragmentCancelCredit.class.getSimpleName() );
+
+	private interface MessageID{
+		int AUTO_START_CARD_READING	= 200;
+	}
 	/*
 	 *  To communicate with parent activity
 	 *  #1. declare callback
@@ -828,4 +879,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 	private TextView						mTvTotal, mTvApprovalNo, mTvReqDate;
 	private String							mCheckCardMode = "";
 	private PaymentTask					mPaymentTask;
+	private Handler						mHandler	= new MessageHandler();
+	private int							mRetryCheckingDeviceConnection = 0;
+	private static final int				MAX_RETRY_CHECK_DEVICE_CONNECTION = 10;
 }
