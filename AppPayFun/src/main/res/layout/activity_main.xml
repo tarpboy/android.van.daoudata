@@ -125,13 +125,13 @@
             <ImageButton
                 android:id="@+id/menuMainCancelPayment"
                 style="@style/imageMenuMain"
-                android:src="@drawable/button_main_cancel_payment_selector"
+                android:src="@drawable/button_main_cancel_credit_selector"
                 />
 
             <ImageButton
                 android:id="@+id/menuMainProfile"
                 style="@style/imageMenuMain"
-                android:src="@drawable/button_main_cancel_payment_selector"
+                android:src="@drawable/button_main_cancel_cash_selector"
                 />
 
             </LinearLayout>

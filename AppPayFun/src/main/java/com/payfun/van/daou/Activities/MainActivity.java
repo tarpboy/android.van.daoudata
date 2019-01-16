@@ -776,7 +776,7 @@ public class MainActivity extends AppCompatActivity implements
 					changePage(AMainFragPages.CancelCreditPage);
 					break;
 				case	R.id.menuMainProfile:
-					MyToast.showToast(mActivity, "COMING SOON");
+					changePage(AMainFragPages.CancelCashPage);
 					break;
 
 			}

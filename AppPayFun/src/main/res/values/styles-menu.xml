@@ -9,12 +9,12 @@
 -->
     <style name="imageMenuMain">
         <item name="android:layout_width">0dp</item>
-        <item name="android:scaleType">centerInside</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_marginStart">30dp</item>
-        <item name="android:layout_marginEnd">30dp</item>
+        <item name="android:layout_marginStart">15dp</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="imageMenuHome" parent="android:Widget.Button">
