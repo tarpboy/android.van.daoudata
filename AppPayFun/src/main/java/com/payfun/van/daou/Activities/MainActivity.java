@@ -784,11 +784,11 @@ public class MainActivity extends AppCompatActivity implements
 	};
 	private String mapBatteryLevelToLMH(int batteryLevel)
 	{
-		if( 0 <= batteryLevel && batteryLevel < 30 )
+		if( 0 < batteryLevel && batteryLevel < 30 )
 			return "LOW";
 		else if( batteryLevel >= 30 && batteryLevel < 70 )
 			return "MIDDLE";
-		else if( batteryLevel <= 100)
+		else if( batteryLevel >= 70)
 			return "HIGH";
 
 		return "unknown";
@@ -827,6 +827,7 @@ public class MainActivity extends AppCompatActivity implements
 						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_high) );
 						break;
 					default:
+						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_no) );
 						break;
 				}
 				mTvBleDongleBatteryLevel.setText(""+batteryLevel);
@@ -859,6 +860,7 @@ public class MainActivity extends AppCompatActivity implements
 						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_high) );
 						break;
 					default:
+						mImageBlePrinterBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_no) );
 						break;
 				}
 				mTvBlePrinterBatteryLevel.setText(""+batteryLevel);

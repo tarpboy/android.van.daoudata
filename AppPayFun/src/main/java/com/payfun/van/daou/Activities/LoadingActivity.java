@@ -144,18 +144,21 @@ public class LoadingActivity extends AppCompatActivity {
 	private boolean web_update()
 	{
 		try {
-			ApiLog.Dbg("try init LocalDB");
+			ApiLog.Dbg(Tag+"try init LocalDB");
 			PayFunDB.InitializeDB( getBaseContext(), mPackageName );
 			String curVersion = getApplication().getPackageManager().getPackageInfo(mPackageName, 0).versionName;
 			String newVersion = curVersion;
 			newVersion = Jsoup.connect("https://play.google.com/store/apps/details?id=" + mPackageName + "&hl=en")
 					.timeout(30000)
 					.userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-					.referrer("http://www.google.com").get().select("div[itemprop=softwareVersion]")
+					.referrer("http://www.google.com")
+					.get()
+					.select("div.hAyfc:nth-child(4) > span:nth-child(2) > div:nth-child(1) > span:nth-child(1)")
+					//.select("div[itemprop=softwareVersion]")
 					.first().ownText();
 
-			ApiLog.Dbg("NewVersion:" + newVersion);
-			return (versionValue(curVersion) < versionValue(newVersion)) ? true : false;
+			ApiLog.Dbg(Tag+"NewVersion:" + newVersion);
+			return ( versionValue(curVersion) < versionValue(newVersion) );
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -177,15 +180,15 @@ public class LoadingActivity extends AppCompatActivity {
 	{
 
 		try{
-			ApiLog.Dbg("Receipt before 3 month:"+ ReceiptManager.getReceiptBefore3Month());
+			ApiLog.Dbg(Tag+"Receipt before 3 month:"+ ReceiptManager.getReceiptBefore3Month());
 			ReceiptManager.deleteBefore3Month();
 			UserEntity key = new UserEntity(0);
 			String f_UserID = AppHelper.AppPref.getCurrentUserID();
-			ApiLog.Dbg("f_UserID:"+f_UserID);
+			ApiLog.Dbg(Tag+"f_UserID:"+f_UserID);
 			if(!f_UserID.equals("")){
-				ApiLog.Van("update 3 month:"+ReceiptManager.updateReceiptBefore3Month(f_UserID));
+				ApiLog.Van(Tag+"update 3 month:"+ReceiptManager.updateReceiptBefore3Month(f_UserID));
 			}
-			ApiLog.Dbg("Receipt before 3 month (after delete):"+ReceiptManager.getReceiptBefore3Month());
+			ApiLog.Dbg(Tag+"Receipt before 3 month (after delete):"+ReceiptManager.getReceiptBefore3Month());
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -196,7 +199,7 @@ public class LoadingActivity extends AppCompatActivity {
 
 		String keySavedYear = AppHelper.AppPref.getKeyBindingYear();
 		String currentYear = ApiDate.getYear();
-		ApiLog.Dbg("keySavedYear:"+ keySavedYear + ", currentYear:"+currentYear);
+		ApiLog.Dbg(Tag+"keySavedYear:"+ keySavedYear + ", currentYear:"+currentYear);
 		if(keySavedYear.equals(currentYear)){
 			getNotice();
 		}else{
@@ -230,6 +233,7 @@ public class LoadingActivity extends AppCompatActivity {
 	//##########################################
 	//	Private variables
 	//##########################################
+	private final String Tag = String.format("[%s]",LoadingActivity.class.getSimpleName() );
 	private final static String ERROR_INTEGRITY_TITLE			= "무결성 검사오류";
 	private final static String ERROR_MSG_DEVICE_ROOTED		= "Device is Rooted";
 	private final static String INFO_APP_UPDATE_TITLE			= "앱 업데이트 정보";

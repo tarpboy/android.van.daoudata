@@ -46,7 +46,7 @@
             android:id="@+id/iv_main_status_bluetooth_battery"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/battery_low"
+            android:src="@drawable/battery_no"
             android:scaleType="centerInside"
             />
         <TextView
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textSize="@dimen/default_text_size"
-            android:text="20"
+            android:text="0"
             android:gravity="center_vertical"
             />
     </LinearLayout>
@@ -80,7 +80,7 @@
             android:id="@+id/iv_main_status_printer_battery"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/battery_low"
+            android:src="@drawable/battery_no"
             android:scaleType="centerInside"
             />
         <TextView
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textSize="@dimen/default_text_size"
-            android:text="20"
+            android:text="0"
             android:gravity="center_vertical"
             />
     </LinearLayout>

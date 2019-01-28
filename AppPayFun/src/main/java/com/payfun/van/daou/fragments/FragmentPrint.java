@@ -281,7 +281,9 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 	protected void doPrinterBtConnected()
 	{
 		printToActivity(PrintToActivityCmd_PrinterBluetoothConnected, 50);
-		doPrintOut();
+		//doPrintOut();
+		//	ToDo:: request to print out
+		sendMessage(UserMessageID.MESSAGE_PRINT_OUT_REQ, null);
 	}
 	@Override
 	protected void doPrinterBtDisconnected()
@@ -547,6 +549,10 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 					ApiAux.sleep(300);
 					sendSMS(phoneNo);
 					break;
+				case	UserMessageID.MESSAGE_PRINT_OUT_REQ:
+					ApiAux.sleep(300);			// 링크되고 바로 보내면 프린터가 동작안한다. 지랄.
+					doPrintOut();
+					break;
 			}
 		}
 	}
@@ -557,6 +563,7 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 	private interface UserMessageID{
 		int MESSAGE_SEND_SMS_REQ		= 200;
 		int MESSAGE_SEND_EMAIL_REQ	= 201;
+		int MESSAGE_PRINT_OUT_REQ	= 202;
 	}
 	private interface UserMessageKey{
 		String emailAddress		= "emailAddress";

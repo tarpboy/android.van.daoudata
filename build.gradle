@@ -6,8 +6,8 @@ ext {
     targetSdk = 27
     minSdk = 19
     minSdkInstant = 21
-    versionCode = 3
-    versionName = "1.0.3"
+    versionCode = 4
+    versionName = "1.0.4"
     glide = "3.7.0"
 
     //  Special Declaration for libs
@@ -19,7 +19,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.0'
 
         classpath 'com.google.gms:google-services:4.0.0'
         // NOTE: Do not place your application dependencies here; they belong
