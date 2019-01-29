@@ -4,25 +4,35 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_white_transparent_100"
+    android:background="@android:color/black"
     android:weightSum="100"
+    android:gravity="center_vertical"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="50"
+        android:layout_weight="40"
         android:orientation="horizontal"
-        android:paddingTop="10dp"
         android:weightSum="100"
         >
-
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="90"
+            android:layout_height="match_parent"
+            android:id="@+id/txtCard_reading_CompanyName"
+            android:text="좋겠다 18 먹고보자"
+            android:textSize="@dimen/large_x_text_size"
+            android:textColor="#9089FF"
+            android:gravity="start|center_vertical"
+            />
+<!--
         <TextView
             android:layout_width="0dp"
             android:layout_weight="50"
             android:layout_height="match_parent"
             android:id="@+id/txtCard_reading_CompanyNo"
-            android:text=""
+            android:text="123-45-12345"
             android:textSize="@dimen/large_x_text_size"
             android:textColor="@android:color/white"
             android:gravity="start|center_vertical"
@@ -34,40 +44,67 @@
             android:layout_height="match_parent"
             android:id="@+id/txtCard_reading_MachineCode"
             android:gravity="center_vertical|end"
-            android:text=""
+            android:text="99999999"
             android:textSize="@dimen/large_x_text_size"
             android:textColor="@android:color/white" />
+-->
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="50"
+        android:layout_weight="40"
         android:orientation="horizontal"
-        android:paddingTop="10dp"
         android:weightSum="100"
         >
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="50"
+            android:layout_weight="25"
             android:layout_height="match_parent"
             android:id="@+id/txtCard_reading_CompanyOwnerName"
-            android:text=""
-            android:textSize="@dimen/large_x_text_size"
+            android:text="홍길동아버지"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="@android:color/white"
+            android:gravity="start|center_vertical"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/vertical_separator"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="35"
+            android:layout_height="match_parent"
+            android:id="@+id/txtCard_reading_CompanyNo"
+            android:text="123-45-12345"
+            android:textSize="@dimen/default_text_size"
             android:textColor="@android:color/white"
             android:gravity="start|center_vertical"
             />
 
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/vertical_separator"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            />
+
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="50"
+            android:layout_weight="35"
             android:layout_height="match_parent"
             android:id="@+id/txtCard_reading_VanName"
-            android:gravity="center_vertical|end"
-            android:text=""
-            android:textSize="@dimen/large_x_text_size"
+            android:text="다우데이타"
+            android:textSize="@dimen/default_text_size"
             android:textColor="@android:color/white"
+            android:gravity="start|center_vertical"
             />
     </LinearLayout>
 </LinearLayout>

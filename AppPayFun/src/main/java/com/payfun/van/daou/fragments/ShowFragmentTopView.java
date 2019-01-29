@@ -24,14 +24,14 @@ public class ShowFragmentTopView {
 
 		MyTypeFace.setTypeFace(activity, topView);											// ToDo:: setTypeFace
 
-		TextView textView = llTopView.findViewById(R.id.txtCard_reading_CompanyNo);		// Company Number
-		textView.setText( companyEntity.getCompanyNo() );
-
-		textView = llTopView.findViewById(R.id.txtCard_reading_MachineCode);				// MachineCode
-		textView.setText( companyEntity.getMachineCode() );
+		TextView textView = llTopView.findViewById(R.id.txtCard_reading_CompanyName);	// Company Name
+		textView.setText( companyEntity.getCompanyName());
 
 		textView = llTopView.findViewById(R.id.txtCard_reading_CompanyOwnerName);		// OwnerName
 		textView.setText( companyEntity.getCompanyOwnerName() );
+
+		textView = llTopView.findViewById(R.id.txtCard_reading_CompanyNo);				// Company Number
+		textView.setText( companyEntity.getCompanyNo() );
 
 		textView = llTopView.findViewById(R.id.txtCard_reading_VanName);					// VanName
 		textView.setText( companyEntity.getVanName() );
