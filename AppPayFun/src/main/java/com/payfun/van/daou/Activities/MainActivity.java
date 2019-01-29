@@ -1059,9 +1059,10 @@ public class MainActivity extends AppCompatActivity implements
 						return;
 					}
 
-					if( ! connectBT() )
-						return;				// if already connected or device is not bonded, return false.
-
+					if( ! connectBT() ) {
+						mEmvReader.getDeviceInfo();		// added by David SH Kim. 2019/01/26, to getDeviceInfo after profile.
+						return;                // if already connected or device is not bonded, return false.
+					}
 					if( mWaitTurnOnBluetoothRetryCnt >= MAX_WAIT_TURN_ON_BLUETOOTH_RETRY )
 					{
 						return;

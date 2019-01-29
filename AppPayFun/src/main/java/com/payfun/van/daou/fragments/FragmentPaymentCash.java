@@ -598,10 +598,15 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 		// ToDo: update any view element you want
 		VanStaticData.mmCardInputMethod = DaouDataContants.VAL_WCC_KEYIN;			// default:: KeyIn. updated by EmvReadFSM for Swiping Card
 
-		//	ToDo:: default Cash Category: 현금매출
-		mCashTypeSub = IVanSpecification.CashSubType.CASH_SALES;
-		selectCategory( R.id.fragment_cash_image_btn_select1 );
-		selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
+		//	ToDo:: default Cash Category:
+		{	//	현금매출 ==> 소득공제. 2019/01/28. 현금, 일반영수 삭제.
+			paymentCashToActivity(CommonFragToActivityCmd_ChangeHeaderTitle, "소득공제영수증");
+			mCashTypeSub = IVanSpecification.CashSubType.INCOME_DEDUCTION;            // CASH_SALES ==> INCOME_DEDUCTION;
+			selectCategory(R.id.fragment_cash_image_btn_select3);                // ( R.id.fragment_cash_image_btn_select1 ); ==> select3
+			selectCashTransactionMethodView(CashTransactionMethod.PhoneNo);
+			setCardReaderOnClick(true);                                                // added by David SH Kim. 2019/01/28,
+			mIsVanRequest = true;
+		}
 
 		LinearLayout topView = mFragmentView.findViewById(R.id.fragment_top_layout);
 		ShowFragmentTopView.setFragmentTopView(mmActivity, topView, mmCompanyEntity);

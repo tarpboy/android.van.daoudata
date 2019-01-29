@@ -82,21 +82,13 @@
         layout="@layout/item_input_amount"
         />
 
-    <!--    cash category :: 현금매출(1)/소득공재(3)   -->
+    <!--    cash category :: 현금매출(1)/소득공재(3)  ==> 소득(3)/사업자(4) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="15"
         android:orientation="horizontal"
         >
-        <ImageButton
-            android:id="@+id/fragment_cash_image_btn_select1"
-            android:layout_width="0dp"
-            android:layout_weight="50"
-            android:layout_height="match_parent"
-            android:src="@drawable/button_select1_selector"
-            android:scaleType="fitCenter"
-            />
         <ImageButton
             android:id="@+id/fragment_cash_image_btn_select3"
             android:layout_width="0dp"
@@ -104,23 +96,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/button_select3_selector"
             android:scaleType="fitCenter"
-            />
-    </LinearLayout>
-
-    <!--    cash category :: 일반영수증(2)/사업자지출증빙(4)   -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="15"
-        android:orientation="horizontal"
-        >
-        <ImageButton
-            android:id="@+id/fragment_cash_image_btn_select2"
-            android:layout_width="0dp"
-            android:layout_weight="50"
-            android:layout_height="match_parent"
-            android:src="@drawable/button_select2_selector"
-            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
             />
         <ImageButton
             android:id="@+id/fragment_cash_image_btn_select4"
@@ -129,10 +105,11 @@
             android:layout_height="match_parent"
             android:src="@drawable/button_select4_selector"
             android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
             />
     </LinearLayout>
 
-    <!--    cash category :: 자진발급(5)/Reserved(6)   -->
+    <!--    cash category :: 일반영수증(2)/사업자지출증빙(4) ==>자진(5)/현금(1)   -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -146,6 +123,36 @@
             android:layout_height="match_parent"
             android:src="@drawable/button_select5_selector"
             android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            />
+        <ImageButton
+            android:id="@+id/fragment_cash_image_btn_select1"
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:src="@drawable/button_select1_selector"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:visibility="invisible"
+            />
+    </LinearLayout>
+
+    <!--    cash category :: 자진발급(5)/Reserved(6) ==>일반영수(2)/Reserved(6)   -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="15"
+        android:orientation="horizontal"
+        >
+        <ImageButton
+            android:id="@+id/fragment_cash_image_btn_select2"
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:src="@drawable/button_select2_selector"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:visibility="invisible"
             />
         <Space
             android:layout_width="0dp"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DaouData2</string>
+    <string name="app_name">DaouData</string>
 
     <!-- Main Menu :: 1. login-->
     <string name="str_menu_login_not_yet">payfun에 로그인 해주세요</string>
