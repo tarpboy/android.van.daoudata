@@ -97,24 +97,35 @@
     </LinearLayout>
 
     <!--    Signpad View    -->
-<!--
     <LinearLayout
+        android:id="@+id/signPadContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="40"
+        android:orientation="vertical"
         android:background="@drawable/signpad_white_shape"
         android:weightSum="100"
+        android:visibility="visible"
         >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:text="사인해주세요"
+            android:textSize="@dimen/default_text_size"
+            />
         <include
             android:id="@+id/viewSignPad"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="93"
             layout="@layout/signpad"
-            android:visibility="visible"
+            android:visibility="invisible"
             android:layout_margin="10dp"
             />
     </LinearLayout>
--->
+
+<!--
     <include
         android:id="@+id/viewSignPad"
         android:layout_width="match_parent"
@@ -124,6 +135,7 @@
         android:visibility="invisible"
         android:layout_margin="10dp"
         />
+-->
     <include
         android:id="@+id/viewFootButtons"
         android:layout_height="0dp"

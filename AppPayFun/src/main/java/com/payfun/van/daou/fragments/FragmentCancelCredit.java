@@ -623,10 +623,12 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 
 			//	ToDo:: show signPad
 			if( VanStaticData.mmSignatureAmountLimit <= Integer.parseInt( mmReceiptEntity.getTotalAmount() ) ) {
+				mSignContainer.setVisibility(View.VISIBLE);
 				mmSignatureHandler.showSignature(true);// showSignPad();
 				AppHelper.AppPref.setNeedSignature(true);			// mmNeedSignature = true;
 			}
 			else {
+				mSignContainer.setVisibility(View.INVISIBLE);
 				mmSignatureHandler.showSignature(false);
 				AppHelper.AppPref.setNeedSignature(false);			// mmNeedSignature = false;
 			}
@@ -778,6 +780,9 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 		mTvReqDate = mFragmentView.findViewById(R.id.tv_cancel_credit_req_date);
 
 		//	ToDo:: init SignPad view
+		mSignContainer = mFragmentView.findViewById(R.id.signPadContainer);
+		mSignContainer.setVisibility(View.INVISIBLE);
+
 		mmSignatureHandler = new SignatureHandler();
 		LinearLayout viewSign = mFragmentView.findViewById(R.id.viewSignPad);
 		if( ! mmSignatureHandler.initSignatureView(mmActivity, viewSign) ) {
@@ -876,6 +881,7 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 
 	private static int mSectionNumber = -1;
 
+	private LinearLayout					mSignContainer;
 	private TextView						mTvTotal, mTvApprovalNo, mTvReqDate;
 	private String							mCheckCardMode = "";
 	private PaymentTask					mPaymentTask;

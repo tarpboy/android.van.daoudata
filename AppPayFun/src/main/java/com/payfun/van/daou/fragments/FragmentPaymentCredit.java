@@ -655,6 +655,9 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
 
 		//	ToDo:: init SignPad view
+		mSignContainer = mFragmentView.findViewById(R.id.signPadContainer);
+		mSignContainer.setVisibility(View.INVISIBLE);
+
 		mmSignatureHandler = new SignatureHandler();
 		LinearLayout viewSign = mFragmentView.findViewById(R.id.viewSignPad);
 		if( ! mmSignatureHandler.initSignatureView(mmActivity, viewSign) ) {
@@ -722,10 +725,12 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 				return;
 
 			if( VanStaticData.mmSignatureAmountLimit <= Integer.parseInt(amount) ) {
+				mSignContainer.setVisibility(View.VISIBLE);
 				mmSignatureHandler.showSignature(true);// showSignPad();
 				AppHelper.AppPref.setNeedSignature(true);			// mmNeedSignature = true;
 			}
 			else {
+				mSignContainer.setVisibility(View.INVISIBLE);
 				mmSignatureHandler.showSignature(false);
 				AppHelper.AppPref.setNeedSignature(false);			// mmNeedSignature = false;
 			}
@@ -810,6 +815,7 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 
     private View							mFragmentView;
     private EditText						mEditTextAmount;
+    private LinearLayout					mSignContainer;
    // private SignatureHandler				mSignatureHandler;
 
 	private PaymentTask					mPaymentTask;
