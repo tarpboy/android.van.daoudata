@@ -9,7 +9,12 @@ import android.widget.TextView;
 import com.payfun.van.daou.R;
 
 import ginu.android.van.app_daou.entity.CompanyEntity;
+import ginu.android.van.app_daou.utils.IVanString;
 import ginu.android.van.app_daou.utils.MyTypeFace;
+
+import static ginu.android.van.app_daou.daou.DaouDataContants.VAL_TERMINAL_DIVISION_GENERAL;
+import static ginu.android.van.app_daou.daou.DaouDataContants.VAL_TERMINAL_DIVISION_MULTI_VENDOR;
+import static ginu.android.van.app_daou.daou.DaouDataContants.VAL_TERMINAL_DIVISION_OFFLINE_PC;
 
 /**
  * Created by david on 2018-10-26
@@ -35,5 +40,22 @@ public class ShowFragmentTopView {
 
 		textView = llTopView.findViewById(R.id.txtCard_reading_VanName);					// VanName
 		textView.setText( companyEntity.getVanName() );
+
+		textView = llTopView.findViewById(R.id.txtCard_terminal_devision);				// Terminal Mode
+		switch( companyEntity.getPhoneCode() )
+		{
+			case	VAL_TERMINAL_DIVISION_GENERAL:
+				textView.setText(IVanString.termainalDevision.generalMode);
+				break;
+			case	VAL_TERMINAL_DIVISION_OFFLINE_PC:
+				textView.setText(IVanString.termainalDevision.offlinePG);
+				break;
+			case	VAL_TERMINAL_DIVISION_MULTI_VENDOR:
+				textView.setText(IVanString.termainalDevision.multiVendor);
+				break;
+			default:
+				textView.setText(IVanString.termainalDevision.undefined);
+				break;
+		}
 	}
 }

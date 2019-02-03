@@ -53,6 +53,7 @@ import ginu.android.library.utils.gui.DialogHandler;
 import ginu.android.library.utils.gui.MyTaskProgress;
 import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
 import ginu.android.van.app_daou.ExternalCall.ExtCallRespData;
+import ginu.android.van.app_daou.ExternalCall.ExtCallerManager;
 import ginu.android.van.app_daou.ExternalCall.IExtCaller;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.daou.DaouDataContants;
@@ -923,8 +924,10 @@ public class MainActivity extends AppCompatActivity implements
 
 	private boolean checkImCalledByExternalUser() {
 		Intent intentCaller = getIntent();
-		String callerId = intentCaller.getStringExtra("callerId");
-		if ( callerId != null && callerId.equals("daouCallerModule") ) {
+		String callerId = intentCaller.getStringExtra(ExtCallerManager.ExtCallerId);		// "callerId");
+
+		if ( callerId != null && ExtCallerManager.isMember(callerId) )
+		{
 		//	VanStaticData.setToExit(false);
 			VanStaticData.setIsExternalCall(true);
 			return true;
