@@ -14,6 +14,7 @@
     <string name="str_signpad_title">사인해주세요</string>
     <string name="str_program_title">PADD00678</string>
     <string name="str_ktc_hw_certification_no">DAP12PAYP0001000</string>
+    <string name="str_input_amount">결제금액</string>
 
     <!--    Bluetooth Message   -->
     <string name="bluetooth_connected">블루투스 장비가 연결되었습니다.</string>
@@ -61,5 +62,7 @@
     <string name="str_dialog_printout_mode_sms_hint">전화번호를 입력해주세요</string>
     <string name="str_cancel_cash_input_or_read_card">카드를 읽히거나 정보를 입력하세요</string>
     <string name="str_payfun_copy_right">copyrigth @2016 PayFun.kr All right reserved</string>
+    <string name="str_called_by_payfun_test_id">페이펀 테스트 호출ID를 사용하였습니다.\n정식 VendorID를 사용하여 주세요</string>
+    <string name="str_called_by_invalid_vendor_id">등록되지 않은 VendorID로 앱을 호출하였습니다.</string>
 
 </resources>

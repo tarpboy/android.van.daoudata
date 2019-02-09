@@ -32,7 +32,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/txtCard_reading_CompanyName"
                 android:text="좋겠다 먹고보자"
-                android:textSize="@dimen/large_x_text_size"
+                android:textSize="@dimen/large_text_size"
                 android:textColor="#9089FF"
                 android:gravity="start|center_vertical"
                 />
@@ -42,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/txtCard_terminal_devision"
                 android:text="ExtCaller"
-                android:textSize="@dimen/default_text_size"
+                android:textSize="@dimen/small_text_size"
                 android:textColor="#9089FF"
                 android:gravity="end|center_vertical"
                 />
@@ -62,7 +62,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/txtCard_reading_CompanyOwnerName"
                 android:text="(주)길동아버지"
-                android:textSize="@dimen/default_text_size"
+                android:textSize="@dimen/small_text_size"
                 android:textColor="@android:color/white"
                 android:gravity="start|center_vertical"
                 />
@@ -80,7 +80,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/txtCard_reading_CompanyNo"
                 android:text="123-45-12345"
-                android:textSize="@dimen/default_text_size"
+                android:textSize="@dimen/small_text_size"
                 android:textColor="@android:color/white"
                 android:gravity="start|center_vertical"
                 />
@@ -100,7 +100,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/txtCard_reading_VanName"
                 android:text="다우데이타"
-                android:textSize="@dimen/default_text_size"
+                android:textSize="@dimen/small_text_size"
                 android:textColor="@android:color/white"
                 android:gravity="start|center_vertical"
                 />

@@ -51,7 +51,7 @@ public class LoadingActivity extends AppCompatActivity {
 	{
 		super.onResume();
 
-		if ( ApiIntegrity.isDeviceRooted() )
+		if ( ApiIntegrity.isDeviceRooted(this) )
 			showIntegrityErrorDialog(ERROR_MSG_DEVICE_ROOTED);
 		else
 		{

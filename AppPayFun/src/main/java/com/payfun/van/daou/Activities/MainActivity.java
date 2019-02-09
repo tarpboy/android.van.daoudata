@@ -55,6 +55,7 @@ import ginu.android.van.app_daou.ExternalCall.ExtCallReqData;
 import ginu.android.van.app_daou.ExternalCall.ExtCallRespData;
 import ginu.android.van.app_daou.ExternalCall.ExtCallerManager;
 import ginu.android.van.app_daou.ExternalCall.IExtCaller;
+import ginu.android.van.app_daou.ExternalCall.IExtCallerId;
 import ginu.android.van.app_daou.cardreader.EmvUtils;
 import ginu.android.van.app_daou.daou.DaouDataContants;
 import ginu.android.van.app_daou.database.IVanSpecification;
@@ -926,13 +927,23 @@ public class MainActivity extends AppCompatActivity implements
 		Intent intentCaller = getIntent();
 		String callerId = intentCaller.getStringExtra(ExtCallerManager.ExtCallerId);		// "callerId");
 
-		if ( callerId != null && ExtCallerManager.isMember(callerId) )
+		if ( callerId != null )
 		{
-		//	VanStaticData.setToExit(false);
-			VanStaticData.setIsExternalCall(true);
-			return true;
+			if( ExtCallerManager.isMember(callerId) )
+			{	// ToDo:: found the callerID
+				if( callerId.equals(IExtCallerId.ID_00101) )
+					MyToast.showToast(mActivity,R.string.str_called_by_payfun_test_id);
+				VanStaticData.setIsExternalCall(true);
+				return true;
+			}else
+			{	// ToDo:: not found the callerID, finish app.
+				MyToast.showToast(mActivity, R.string.str_called_by_invalid_vendor_id);
+				VanStaticData.setIsExternalCall(false);
+				// finish();
+				return true;
+			}
+
 		} else {
-		//	VanStaticData.setToExit(false);
 			VanStaticData.setIsExternalCall(false);
 			return false;
 		}
