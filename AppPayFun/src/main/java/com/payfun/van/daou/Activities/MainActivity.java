@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements
 		//
 		mActivity = this;
 
+		ApiLog.enableLog(true);
+
 		if( ! changePage(AMainFragPages.MainHomePage) )
 			return;
 
@@ -1290,14 +1292,20 @@ public class MainActivity extends AppCompatActivity implements
 		detachDetectEmvServiceListener();
 	}
 
-	private void enableBLE()
+	private void enableBluetooth()
 	{
 		BluetoothManager btMng = (BluetoothManager)getSystemService(BLUETOOTH_SERVICE);
 		BluetoothAdapter btAdapter = btMng.getAdapter();
 		if (btAdapter != null) {
-			if (!btAdapter.isEnabled()) {
+			if (!btAdapter.isEnabled())
+			{	//	ToDo:: Not Enable, set Bluetooth Enable, wait onActivityResult.
 				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+			}
+			else
+			{	//	ToDo:: Enabled, start turning on EmvReader
+				waitTurnOnBTReader();
+				ExternalCallPayment();
 			}
 		}
 	}
@@ -1307,11 +1315,13 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		if( requestCode == REQUEST_ENABLE_BT)
 		{
-			if(resultCode == RESULT_OK){
+			if(resultCode == RESULT_OK)
+			{	//	ToDo:: User accept to enable Bluetooth, start turning on EmvReader
 				waitTurnOnBTReader();
 				ExternalCallPayment();
 			}
-			else {
+			else
+			{	//	ToDo:: User deny to enable Bluetooth, terminate this app.
 				showAppFinish("블루투스 사용거절하였습니다. \n 앱을 종료합니다.", false);
 			}
 		}
@@ -1332,7 +1342,7 @@ public class MainActivity extends AppCompatActivity implements
 						attachDetectEmvServiceListener();
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
 						{
-							enableBLE();
+							enableBluetooth();
 							//waitTurnOnBTReader();
 							//ExternalCallPayment();
 							return;
