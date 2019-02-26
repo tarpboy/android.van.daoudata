@@ -3,6 +3,7 @@ package com.payfun.van.daou.Activities;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements
 		hideNumericKeyboard();		// 1. hide key board
 
 		if( MainActivityFragmentMapper.atHome() )
-			showAppFinish("앱을 종료하시겠습니까?");
+			showAppFinish("앱을 종료하시겠습니까?", true);
 		else
 			changePage(AMainFragPages.MainHomePage);
 	}
@@ -1221,7 +1222,7 @@ public class MainActivity extends AppCompatActivity implements
 		mConfirmDlg.Show();
 	}
 
-	private void showAppFinish(String msg) {
+	private void showAppFinish(String msg, boolean isNegative) {
 		if(msg==null || msg.equals(""))
 			return;
 		if( mConfirmDlg != null )
@@ -1238,12 +1239,14 @@ public class MainActivity extends AppCompatActivity implements
 				finish();
 			}
 		});
-		mConfirmDlg.setNegativeButton(new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				changePage(AMainFragPages.MainHomePage);
-			}
-		});
+		if(isNegative) {
+			mConfirmDlg.setNegativeButton(new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					changePage(AMainFragPages.MainHomePage);
+				}
+			});
+		}
 		mConfirmDlg.Create();
 		mConfirmDlg.Show();
 	}
@@ -1287,6 +1290,32 @@ public class MainActivity extends AppCompatActivity implements
 		detachDetectEmvServiceListener();
 	}
 
+	private void enableBLE()
+	{
+		BluetoothManager btMng = (BluetoothManager)getSystemService(BLUETOOTH_SERVICE);
+		BluetoothAdapter btAdapter = btMng.getAdapter();
+		if (btAdapter != null) {
+			if (!btAdapter.isEnabled()) {
+				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+			}
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if( requestCode == REQUEST_ENABLE_BT)
+		{
+			if(resultCode == RESULT_OK){
+				waitTurnOnBTReader();
+				ExternalCallPayment();
+			}
+			else {
+				showAppFinish("블루투스 사용거절하였습니다. \n 앱을 종료합니다.", false);
+			}
+		}
+	}
 	private final BroadcastReceiver mEmvReaderBroadcastReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -1303,8 +1332,9 @@ public class MainActivity extends AppCompatActivity implements
 						attachDetectEmvServiceListener();
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
 						{
-							waitTurnOnBTReader();
-							ExternalCallPayment();
+							enableBLE();
+							//waitTurnOnBTReader();
+							//ExternalCallPayment();
 							return;
 						}
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.audioPlug )
@@ -1534,6 +1564,8 @@ public class MainActivity extends AppCompatActivity implements
 	private final static int				SHOWING_DIALOG_LIMIT = 1;
 	private final static int				MAX_WAIT_TURN_ON_BLUETOOTH_TIME = 10000;		// 30sec.
 	private final static int				MAX_WAIT_TURN_ON_BLUETOOTH_RETRY = 1;
+
+	private final static int 			REQUEST_ENABLE_BT = 1048;
 
 	private static AppCompatActivity		mActivity;
 	private EmvApplication					mEmvApp;
