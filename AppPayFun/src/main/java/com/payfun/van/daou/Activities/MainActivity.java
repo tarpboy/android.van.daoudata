@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
 		//
 		mActivity = this;
 
-		ApiLog.enableLog(true);
+		ApiLog.enableLog(false);
 
 		if( ! changePage(AMainFragPages.MainHomePage) )
 			return;
