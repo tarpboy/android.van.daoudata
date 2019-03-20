@@ -367,7 +367,8 @@ public class FragmentPaymentCash extends FragmentPaymentBase implements Fragment
 			VanStaticData.setResultPayment(receiptEnJson);
 
 		//	ToDo:: display Van Message when complete transaction
-		if( mIsVanRequest )											// Van Accessing Procedure only
+		if( mIsVanRequest &&									// Van Accessing Procedure only
+			isVanCompleteDialogShowForExternalCall() )			// 미처리 시,Async Dialog 미종료로 leakage 발생함 !!!! 중요 !!!! 
 			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
 
 		//	ToDo:: goto ReceiptViewFragment

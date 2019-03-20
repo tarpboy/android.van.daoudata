@@ -395,7 +395,8 @@ public class FragmentCancelCredit extends FragmentPaymentBase implements Fragmen
 			VanStaticData.setResultPayment(receiptEnJson);
 
 		//	ToDo:: display Van Message when complete transaction
-		showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
+		if( isVanCompleteDialogShowForExternalCall() )			// 미처리 시,Async Dialog 미종료로 leakage 발생함 !!!! 중요 !!!!
+			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
 
 		//	ToDo:: goto ReceiptViewFragment
 		if (VanStaticData.isReadyShowReceipt())

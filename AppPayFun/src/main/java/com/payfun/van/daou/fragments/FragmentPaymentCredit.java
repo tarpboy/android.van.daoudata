@@ -383,7 +383,8 @@ public class FragmentPaymentCredit extends FragmentPaymentBase implements
 		}
 
 		//	ToDo:: display Van Message when complete transaction
-		if( ! VanStaticData.IsAutoTestExternalCall() )		// added by David SH Kim. for Auto Test Mode.
+		if( (! VanStaticData.IsAutoTestExternalCall() ) && 		// not Auto Test Mode and
+			isVanCompleteDialogShowForExternalCall() )			// 미처리 시,Async Dialog 미종료로 leakage 발생함 !!!! 중요 !!!!
 			showVanDisplayMessage(AppHelper.AppPref.getVanMsg());
 
 		//	ToDo:: goto ReceiptViewFragment

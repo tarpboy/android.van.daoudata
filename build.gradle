@@ -6,8 +6,8 @@ ext {
     targetSdk = 27
     minSdk = 19
     minSdkInstant = 21
-    versionCode = 11
-    versionName = "2.0.0"
+    versionCode = 13
+    versionName = "2.0.2"
     glide = "3.7.0"
 
     //  Special Declaration for libs
