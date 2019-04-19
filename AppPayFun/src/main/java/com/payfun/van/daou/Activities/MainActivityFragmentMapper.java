@@ -36,7 +36,12 @@ public class MainActivityFragmentMapper
 	{
 		return mIsAtHome;
 	}
-
+	static int getCurrentPage(){
+		return mCurrentPage;
+	}
+	static Fragment getCurrentFragment(){
+		return mCurrentFragment;
+	}
 	static boolean changePage(AppCompatActivity activity, @AMainFragPages int page, Bundle savedInstanceState)
 	{
 		Fragment fragment = null;
@@ -98,6 +103,8 @@ public class MainActivityFragmentMapper
 		if( ! showFragment(activity, savedInstanceState, fragment, page, isBackStack, backStackTag) )
 			return false;
 
+		mCurrentPage = page;
+		mCurrentFragment = fragment;
 		return true;
 	}
 
@@ -160,4 +167,6 @@ public class MainActivityFragmentMapper
 	private final static String WARNING_MSG_KEY_UPDATE_WARNING	= "개시거래 실행해 주세요";
 
 	private static boolean			mIsAtHome = false;
+	private static int				mCurrentPage;
+	private static Fragment			mCurrentFragment;
 }

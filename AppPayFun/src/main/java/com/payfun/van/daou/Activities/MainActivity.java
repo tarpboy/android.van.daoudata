@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -1313,6 +1314,32 @@ public class MainActivity extends AppCompatActivity implements
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		switch(requestCode)
+		{
+			case	REQUEST_ENABLE_BT:
+				if(resultCode == RESULT_OK)
+				{	//	ToDo:: User accept to enable Bluetooth, start turning on EmvReader
+					waitTurnOnBTReader();
+					ExternalCallPayment();
+				}
+				else
+				{	//	ToDo:: User deny to enable Bluetooth, terminate this app.
+					showAppFinish("블루투스 사용거절하였습니다. \n 앱을 종료합니다.", false);
+				}
+				break;
+			default:		// for Google Api
+				//Fragment fragment;
+				if(MainActivityFragmentMapper.getCurrentPage() == AMainFragPages.PrintViewPage) {
+					Fragment fragment = MainActivityFragmentMapper.getCurrentFragment();
+					FragmentCallbackInterface.ActivityToPrint activityToPrint = (FragmentCallbackInterface.ActivityToPrint) fragment;
+					Bundle bundle = new Bundle();
+					bundle.putInt("reqCode", requestCode);
+					bundle.putInt("resCode", resultCode);
+					activityToPrint.activityToPrintCb(FragmentCallbackInterface.ActivityToPrintCmd_DoOnActionResult,bundle, data);
+				}
+				break;
+		}
+/*
 		if( requestCode == REQUEST_ENABLE_BT)
 		{
 			if(resultCode == RESULT_OK)
@@ -1325,6 +1352,7 @@ public class MainActivity extends AppCompatActivity implements
 				showAppFinish("블루투스 사용거절하였습니다. \n 앱을 종료합니다.", false);
 			}
 		}
+*/
 	}
 	private final BroadcastReceiver mEmvReaderBroadcastReceiver = new BroadcastReceiver()
 	{

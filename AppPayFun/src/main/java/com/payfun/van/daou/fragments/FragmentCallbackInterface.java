@@ -96,6 +96,7 @@ public interface FragmentCallbackInterface {
 	/*		<<	==	Print Fragment	==	>>				*/
 	// Activity to ConfigWifi Command
 	int ActivityToPrintCmd_Connected		= 20005000;
+	int ActivityToPrintCmd_DoOnActionResult		= 20005001;
 	// ConfigWifi to Activity Command
 	int PrintToActivityCmd_PrinterBluetoothConnected		= 20005100;
 	int PrintToActivityCmd_PrinterBluetoothDisconnected	= 20005101;
@@ -104,7 +105,7 @@ public interface FragmentCallbackInterface {
 	 **/
 	// << Callback Methods  >>
 	interface ActivityToPrint{
-		void activityToPrintCb(int cmd, Object obj);
+		void activityToPrintCb(int cmd, Object... obj);
 	}
 	interface PrintToActivity{
 		void printToActivityCb(int cmd, Object obj);

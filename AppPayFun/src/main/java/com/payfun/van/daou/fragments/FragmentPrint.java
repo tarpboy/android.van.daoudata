@@ -21,21 +21,29 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.ginu.android.library.googleapi.GoogleApiHandler;
+import com.ginu.android.library.googleapi.gmail.GmailApiHandler;
+import com.ginu.android.library.googleapi.gmail.IGmailApi;
+import com.ginu.android.library.googleapi.gmail.TransmitEmailAsyncTask;
 import com.payfun.van.daou.R;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 
 import ginu.android.library.print.APrintItemKeys;
 import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiBitmap;
 import ginu.android.library.utils.common.ApiExtStorage;
 import ginu.android.library.utils.common.ApiLog;
+import ginu.android.library.utils.gui.CustomImageToast;
 import ginu.android.van.app_daou.BaseFragment.FragmentPrintBase;
 import ginu.android.van.app_daou.database.VanStaticData;
 import ginu.android.van.app_daou.entity.ReceiptEntity;
+import ginu.android.van.app_daou.helper.AppHelper;
 import ginu.android.van.app_daou.utils.MyToast;
 
+import static com.payfun.van.daou.fragments.FragmentCallbackInterface.ActivityToPrintCmd_DoOnActionResult;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_ChangePage;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_HideSoftKeyboard;
 import static com.payfun.van.daou.fragments.FragmentCallbackInterface.CommonFragToActivityCmd_StopAppToReturnExtCaller;
@@ -260,13 +268,16 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 	 *     - parent Activity tx data to this fragment
 	 */
 
-	public void activityToPrintCb(int cmd, Object obj) {
+	public void activityToPrintCb(int cmd, Object... obj) {
 		switch(cmd)
 		{
-			//case    ActivityToHomeCmd_DeviceAdapter:
-			//    mDeviceAdapter = (DeviceAdapter) obj;       //deviceAdapter;
-			//   break;
-
+			case    ActivityToPrintCmd_DoOnActionResult:
+				Bundle bundle = (Bundle) obj[0];
+				int requestCode = bundle.getInt("reqCode");
+				int resultCode = bundle.getInt("resCode");
+				Intent data = (Intent) obj[1];
+				doOnActivityResult(requestCode,resultCode,data);
+			   break;
 			default:
 				break;
         }
@@ -296,6 +307,10 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 	//=================================
 	private void setView(LayoutInflater inflater, ViewGroup container, View view) {
 
+		// Initialize credentials and service object.
+		mGoogleApiHandler = new GoogleApiHandler(mmActivity, mGApiCallbackMethod);
+		mGoogleApiHandler.initAccountCredential( GmailApiHandler.getScopes() );
+
 		//  ToDo:: set all event listeners like button on click listener if you have
 		Button btn = (Button)mmFragmentView.findViewById(R.id.btn_foot_confirm);
 		btn.setText( getString( R.string.print_button_ok) );
@@ -317,6 +332,27 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 
 		//connectPrinter();
 	}
+
+	private GoogleApiHandler.GoogleApiCallbackMethod mGApiCallbackMethod = new GoogleApiHandler.GoogleApiCallbackMethod() {
+		@Override
+		public void saveAccountName(String accountName) {
+
+			//	ToDo:: save account name on preference.
+			AppHelper.AppPref.setGoogleAccountName(accountName);
+
+			//	ToDo:: request to send email again after picking GoogleAcount
+			Bundle bundle = new Bundle();
+			bundle.putString(UserMessageKey.emailAddress, mToEmailAddress);
+			sendMessage(UserMessageID.MESSAGE_SEND_EMAIL_REQ, bundle);
+		}
+
+		@Override
+		public String getAccountName() {
+			//	ToDo:: get account name on preference.
+
+			return AppHelper.AppPref.getGoogleAccountName();
+		}
+	};
 
 	private View.OnClickListener mButtonListener = new View.OnClickListener() {
 		@Override
@@ -340,6 +376,10 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 			}
 		}
 	};
+
+	private void doOnActivityResult(int requestCode, int resultCode, Intent data) {
+		mGoogleApiHandler.onActivityResult(requestCode, resultCode, data);
+	}
 
 	private void showPrintView()
 	{
@@ -513,15 +553,45 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 
 	private void sendEmail(String info)
 	{
-		Intent email = new Intent(Intent.ACTION_SEND);
-		email.putExtra(Intent.EXTRA_EMAIL, new String[]{info});
-		String subject = mmTablePrint.get(APrintItemKeys.item_27).value;				// 회사명
-		subject += "가 발행한 영수증입니다.";
-		email.putExtra(Intent.EXTRA_SUBJECT, subject);
-		email.setType("image/png");
-		email.putExtra(Intent.EXTRA_TEXT, getEmailContentSale() );
-		email.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(getBitmapFile()));
-		mmActivity.startActivity(Intent.createChooser(email, "Choose an Email client: "));
+		if(true)
+		{
+			if (!mGoogleApiHandler.isGooglePlayServicesAvailable()) {
+				mGoogleApiHandler.acquireGooglePlayServices();
+				MyToast.showToast(mmActivity, "구글플레이 서비스 취득중");
+				return;
+			}
+			if (mGoogleApiHandler.getSelectedAccountName() == null || mGoogleApiHandler.getSelectedAccountName().equals("") ) {
+				mGoogleApiHandler.chooseAccount();
+				mToEmailAddress = info;
+				//	ToDo:: retransmit on REQUEST_ACCOUNT_PICKER.
+				//	see mGApiCallbackMethod()
+				return;
+			}
+			HashMap<String, String> emailInfo = new HashMap<>();
+			emailInfo.put(IGmailApi.InfoKey.To, info);
+			emailInfo.put(IGmailApi.InfoKey.From, mGoogleApiHandler.getSelectedAccountName());
+			String subject = mmTablePrint.get(APrintItemKeys.item_27).value;				// 회사명
+			subject += "가 발행한 영수증입니다.";
+			emailInfo.put(IGmailApi.InfoKey.Subject, subject);
+			emailInfo.put(IGmailApi.InfoKey.Body, getEmailContentSale() );
+			String fileName =
+			emailInfo.put(IGmailApi.InfoKey.FileName, ApiExtStorage.getExSD(null) + "email.png");
+			String appName = mmActivity.getResources().getString(R.string.app_name);
+			new TransmitEmailAsyncTask(mmActivity, appName, mGoogleApiHandler, emailInfo).execute();
+		}
+		else
+		{
+			Intent email = new Intent(Intent.ACTION_SEND);
+			email.putExtra(Intent.EXTRA_EMAIL, new String[]{info});
+			String subject = mmTablePrint.get(APrintItemKeys.item_27).value;				// 회사명
+			subject += "가 발행한 영수증입니다.";
+			email.putExtra(Intent.EXTRA_SUBJECT, subject);
+			email.setType("image/png");
+			email.putExtra(Intent.EXTRA_TEXT, getEmailContentSale() );
+			email.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(getBitmapFile()));
+			mmActivity.startActivity(Intent.createChooser(email, "Choose an Email client: "));
+		}
+
 	}
 	private void sendSMS(String info)
 	{
@@ -556,6 +626,7 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 			}
 		}
 	}
+
 
 	//##########################################
 	//  private variables
@@ -603,4 +674,8 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 	private DialogPrintOutMode				mDialogPrintOutMode;
 
 	private MessageHandler					mHandler = new MessageHandler();
+
+	private GoogleApiHandler				mGoogleApiHandler;
+
+	private String							mToEmailAddress = "";
 }
