@@ -25,6 +25,7 @@ import com.ginu.android.library.googleapi.GoogleApiHandler;
 import com.ginu.android.library.googleapi.gmail.GmailApiHandler;
 import com.ginu.android.library.googleapi.gmail.IGmailApi;
 import com.ginu.android.library.googleapi.gmail.TransmitEmailAsyncTask;
+import com.payfun.van.daou.BuildConfig;
 import com.payfun.van.daou.R;
 
 import java.io.File;
@@ -35,6 +36,7 @@ import ginu.android.library.print.APrintItemKeys;
 import ginu.android.library.utils.common.ApiAux;
 import ginu.android.library.utils.common.ApiBitmap;
 import ginu.android.library.utils.common.ApiExtStorage;
+import ginu.android.library.utils.common.ApiFileProvider;
 import ginu.android.library.utils.common.ApiLog;
 import ginu.android.library.utils.gui.CustomImageToast;
 import ginu.android.van.app_daou.BaseFragment.FragmentPrintBase;
@@ -540,6 +542,7 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 
 	private String getEmailContentSale() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("결제 영수증");
 		return sb.toString();
 	}
 
@@ -553,53 +556,43 @@ public class FragmentPrint extends FragmentPrintBase implements FragmentCallback
 
 	private void sendEmail(String info)
 	{
-		if(true)
-		{
-			if (!mGoogleApiHandler.isGooglePlayServicesAvailable()) {
-				mGoogleApiHandler.acquireGooglePlayServices();
-				MyToast.showToast(mmActivity, "구글플레이 서비스 취득중");
-				return;
-			}
-			if (mGoogleApiHandler.getSelectedAccountName() == null || mGoogleApiHandler.getSelectedAccountName().equals("") ) {
-				mGoogleApiHandler.chooseAccount();
-				mToEmailAddress = info;
-				//	ToDo:: retransmit on REQUEST_ACCOUNT_PICKER.
-				//	see mGApiCallbackMethod()
-				return;
-			}
-			HashMap<String, String> emailInfo = new HashMap<>();
-			emailInfo.put(IGmailApi.InfoKey.To, info);
-			emailInfo.put(IGmailApi.InfoKey.From, mGoogleApiHandler.getSelectedAccountName());
-			String subject = mmTablePrint.get(APrintItemKeys.item_27).value;				// 회사명
-			subject += "가 발행한 영수증입니다.";
-			emailInfo.put(IGmailApi.InfoKey.Subject, subject);
-			emailInfo.put(IGmailApi.InfoKey.Body, getEmailContentSale() );
-			String fileName =
-			emailInfo.put(IGmailApi.InfoKey.FileName, ApiExtStorage.getExSD(null) + "email.png");
-			String appName = mmActivity.getResources().getString(R.string.app_name);
-			new TransmitEmailAsyncTask(mmActivity, appName, mGoogleApiHandler, emailInfo).execute();
-		}
-		else
-		{
-			Intent email = new Intent(Intent.ACTION_SEND);
-			email.putExtra(Intent.EXTRA_EMAIL, new String[]{info});
-			String subject = mmTablePrint.get(APrintItemKeys.item_27).value;				// 회사명
-			subject += "가 발행한 영수증입니다.";
-			email.putExtra(Intent.EXTRA_SUBJECT, subject);
-			email.setType("image/png");
-			email.putExtra(Intent.EXTRA_TEXT, getEmailContentSale() );
-			email.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(getBitmapFile()));
-			mmActivity.startActivity(Intent.createChooser(email, "Choose an Email client: "));
-		}
 
+		if (!mGoogleApiHandler.isGooglePlayServicesAvailable()) {
+			mGoogleApiHandler.acquireGooglePlayServices();
+			MyToast.showToast(mmActivity, "구글플레이 서비스 취득중");
+			return;
+		}
+		if (mGoogleApiHandler.getSelectedAccountName() == null || mGoogleApiHandler.getSelectedAccountName().equals("") ) {
+			mGoogleApiHandler.chooseAccount();
+			mToEmailAddress = info;
+			//	ToDo:: retransmit on REQUEST_ACCOUNT_PICKER.
+			//	see mGApiCallbackMethod()
+			return;
+		}
+		HashMap<String, String> emailInfo = new HashMap<>();
+		emailInfo.put(IGmailApi.InfoKey.To, info);
+		emailInfo.put(IGmailApi.InfoKey.From, mGoogleApiHandler.getSelectedAccountName());
+		String subject = mmTablePrint.get(APrintItemKeys.item_27).value;				// 회사명
+		subject += "가 발행한 영수증입니다.";
+		emailInfo.put(IGmailApi.InfoKey.Subject, subject);
+		emailInfo.put(IGmailApi.InfoKey.Body, getEmailContentSale() );
+		String fileName =
+		emailInfo.put(IGmailApi.InfoKey.FileName, ApiExtStorage.getExSD(null) + "email.png");
+		String appName = mmActivity.getResources().getString(R.string.app_name);
+		new TransmitEmailAsyncTask(mmActivity, appName, mGoogleApiHandler, emailInfo).execute();
 	}
+
 	private void sendSMS(String info)
 	{
 		Intent sms = new Intent(Intent.ACTION_SEND);
 		sms.setType("image/png");
 		sms.putExtra("address", info);
 		sms.putExtra("exit_on_sent", true);
-		sms.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(getBitmapFile()));
+		sms.putExtra("sms_body", getEmailContentSale() );
+		File shareFile = getBitmapFile();
+		Uri uri = ApiFileProvider.getUri(mmActivity, BuildConfig.APPLICATION_ID, shareFile);
+		ApiFileProvider.clientPermission(mmActivity, sms, uri);
+		sms.putExtra(Intent.EXTRA_STREAM, uri);
 		mmActivity.startActivity(sms);
 	}
 
