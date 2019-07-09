@@ -178,6 +178,7 @@ public class LoadingActivity extends AppCompatActivity {
 
 	void removeReceiptBefore3Month()
 	{
+
 		try{
 			ApiLog.Dbg(Tag+"Receipt before 3 month:"+ ReceiptManager.getReceiptBefore3Month());
 			ReceiptManager.deleteBefore3Month();

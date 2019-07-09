@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements
 
 		//	register EmvReader Broadcast Receiver
 		attachEmvReaderBroadcastReceiver();
+	//	attachBluetoothListener();
 		checkDBBeforeRunningApp();
 		mShowingDialogCount = 0;
 		mmIsWaitingTurnOnEmvBTReader = false;
@@ -161,12 +162,16 @@ public class MainActivity extends AppCompatActivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+//		mIsResumeOnMain = true;
 		VanStaticData.mmGET_COUPON = false;
 		mWaitTurnOnBluetoothRetryCnt = 0;
 
+		//setIsBlueTooth();
+		//wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		ApiLog.Dbg("onResume on MainActivity");
 
 		if (!"".equals( AppHelper.AppPref.getDeviceTID() ) ) {
+		//	ExternalCallPayment();				// removed by David SH Kim. 2018/12/18, do this after starting EmvReaderService complete.
 			EmvUtils.setIsReadyIC(false);
 
 			//check if user enable app after sleep
@@ -223,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements
     {
         switch(cmd)
         {
-            case CommonFragToActivityCmd_ChangePage:
+            case    CommonFragToActivityCmd_ChangePage:
                 int page = (int)obj;
                 changePage(page);
                 break;
@@ -242,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements
     {
         switch(cmd)
         {
-            case CommonFragToActivityCmd_ChangePage:
+            case    CommonFragToActivityCmd_ChangePage:
                 int page = (int)obj;
                 changePage(page);
                 break;
@@ -258,11 +263,11 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
-			case CommonFragToActivityCmd_ChangeHeaderTitle:
+			case	CommonFragToActivityCmd_ChangeHeaderTitle:
 				String title = (String)obj;
 				setHeaderView(title);
 				break;
@@ -297,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
@@ -321,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements
 		Bundle bundle;
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
@@ -359,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
@@ -371,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
@@ -384,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
@@ -398,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements
 	{
 		switch(cmd)
 		{
-			case CommonFragToActivityCmd_ChangePage:
+			case    CommonFragToActivityCmd_ChangePage:
 				int page = (int)obj;
 				changePage(page);
 				break;
@@ -442,6 +447,7 @@ public class MainActivity extends AppCompatActivity implements
 		@Override
 		public void onReturnDeviceInfo( Hashtable<String, String> deviceInfoData ) {
 			ApiLog.Dbg("onReturnDeviceInfo in MainActivity");
+			//closeDialog();
 
 			EmvUtils.setIsReadyIC(true);
 
@@ -621,7 +627,12 @@ public class MainActivity extends AppCompatActivity implements
 					break;
 				case FAIL_TO_START_BT:
 					AppHelper.AppPref.setIsBTReaderConnected(false);
-
+/*
+					if ( mmIsWaitingTurnOnEmvBTReader ) {
+						//	ToDo:: retry connect BT during Wait Turn on. I suggest TurnOnWaitingTime(30sec) is longer than this event.
+						retryConnectBTReaderOnWaitTurnOn();
+					}
+*/
 					break;
 				case INVALID_FUNCTION_IN_CURRENT_CONNECTION_MODE:
 					mEmvReader.stopConnection();
@@ -712,7 +723,11 @@ public class MainActivity extends AppCompatActivity implements
 
 			ApiLog.Dbg(getString(R.string.bluetooth_disconnected));
 			EmvUtils.cleanDeviceValue();
-
+/*
+			if(	(mEmvReader.getEmvReaderType() != IEmvReader.DeviceType.bluetooth) ||
+				! VanStaticData.mmIsRequiredWait)
+				return;
+*/
 			if( mmIsWaitingTurnOnEmvBTReader )
 				retryConnectBTReaderOnWaitTurnOn();
 			else
@@ -808,7 +823,7 @@ public class MainActivity extends AppCompatActivity implements
 				levelLMH = mapBatteryLevelToLMH(batteryLevel);
 				switch(levelLMH)
 				{
-					case "LOW":
+					case	"LOW":
 						mImageBleDongleBatteryStatus.setImageDrawable( getResources().getDrawable( R.drawable.battery_low) );
 						break;
 					case "MIDDLE":
@@ -891,7 +906,7 @@ public class MainActivity extends AppCompatActivity implements
 
 		BTReaderInfo btReaderInfo = AppHelper.getBTReaderInfo();
 		ApiLog.Dbg("connecting BT:" + btReaderInfo.getName() + ", " + btReaderInfo.getAddress());
-		if (btReaderInfo != null && !"".equals( btReaderInfo.getName() ) )
+		if ( btReaderInfo!=null && !"".equals( btReaderInfo.getName() ) )
 		{
 			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -914,15 +929,14 @@ public class MainActivity extends AppCompatActivity implements
 
 	private boolean checkImCalledByExternalUser() {
 		Intent intentCaller = getIntent();
-		String callerId = intentCaller.getStringExtra(ExtCallerManager.ExtCallerId);
+		String callerId = intentCaller.getStringExtra(ExtCallerManager.ExtCallerId);		// "callerId");
 
 		if ( callerId != null )
 		{
 			if( ExtCallerManager.isMember(callerId) )
 			{	// ToDo:: found the callerID
-				if( callerId.equals(IExtCallerId.ID_00101) ) {
-					MyToast.showToast(mActivity, R.string.str_called_by_payfun_test_id);
-				}
+				if( callerId.equals(IExtCallerId.ID_00101) )
+					MyToast.showToast(mActivity,R.string.str_called_by_payfun_test_id);
 				VanStaticData.setIsExternalCall(true);
 				return true;
 			}else
@@ -1247,6 +1261,16 @@ public class MainActivity extends AppCompatActivity implements
 		IntentFilter intentFilter = new IntentFilter("InitializationBroadcast");
 		registerReceiver(mEmvReaderBroadcastReceiver, intentFilter);
 	}
+	private void attachBluetoothListener()
+	{
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+		intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+		intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+
+		registerReceiver(mBluetoothReceiver, intentFilter);
+
+	}
 
 	/**
 	 * @ Must attach this after registering EmvReaderService.
@@ -1315,9 +1339,21 @@ public class MainActivity extends AppCompatActivity implements
 				}
 				break;
 		}
-
+/*
+		if( requestCode == REQUEST_ENABLE_BT)
+		{
+			if(resultCode == RESULT_OK)
+			{	//	ToDo:: User accept to enable Bluetooth, start turning on EmvReader
+				waitTurnOnBTReader();
+				ExternalCallPayment();
+			}
+			else
+			{	//	ToDo:: User deny to enable Bluetooth, terminate this app.
+				showAppFinish("블루투스 사용거절하였습니다. \n 앱을 종료합니다.", false);
+			}
+		}
+*/
 	}
-
 	private final BroadcastReceiver mEmvReaderBroadcastReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -1335,6 +1371,8 @@ public class MainActivity extends AppCompatActivity implements
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.bluetooth )
 						{
 							enableBluetooth();
+							//waitTurnOnBTReader();
+							//ExternalCallPayment();
 							return;
 						}
 						if( mEmvReader.getEmvReaderType() == IEmvReader.DeviceType.audioPlug )
@@ -1481,6 +1519,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void autoLogin()
 	{
+
 		final String phoneNo = MyPhoneNumber.get(this);
 		final String deviceID = android.provider.Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 		final String fcmToken = AppHelper.AppPref.getFcmToken();
@@ -1496,13 +1535,7 @@ public class MainActivity extends AppCompatActivity implements
 		MyTaskProgress.CallBackMethod callBackMethod = new MyTaskProgress.CallBackMethod() {
 			@Override
 			public boolean run() {
-				mUserID = null;
-
-				/*
 				mUserID = UserManager.checkLoginV2(phoneNo, deviceID, fcmToken);
-
-				return ( mUserID != null );
-				*/
 
 				return ( mUserID != null );
 			}
@@ -1510,7 +1543,8 @@ public class MainActivity extends AppCompatActivity implements
 			@Override
 			public boolean res(boolean result) {
 				ApiLog.Dbg("USER_ID: " + mUserID);
-				if( ! result ) {
+				if( ! result )
+				{
 					AppHelper.AppPref.setUserEmail("");
 					AppHelper.AppPref.setUserPassword("");
 					return false;
@@ -1520,7 +1554,8 @@ public class MainActivity extends AppCompatActivity implements
 				AppHelper.AppPref.setUserPassword("");
 				AppHelper.AppPref.setCurrentUserID(mUserID);
 				AppHelper.AppPref.setIsLogin(true);
-				if( AppHelper.AppPref.getIsLogin() ) {
+				if( AppHelper.AppPref.getIsLogin() )
+				{
 					String userID = AppHelper.AppPref.getCurrentUserID();
 					if( !CompanyManger.isExistCompanyLocal(userID) )
 					{
@@ -1588,6 +1623,9 @@ public class MainActivity extends AppCompatActivity implements
 	private UserEntity						mUserEntityKey = new UserEntity(0);
 
 	private EmvDetectListener				mEmvDetectListener = new EmvDetectListener();
+
+    private FragmentCallbackInterface.ActivityToHome        mActivityToHome;
+    private FragmentCallbackInterface.ActivityToPaymentCredit  mActivityToPaymentCredit;
 
 	private ImageView						mImageBleDongleConnectionStatus, mImageBleDongleBatteryStatus;
 	private ImageView						mImageBlePrinterConnectionStatus, mImageBlePrinterBatteryStatus;
